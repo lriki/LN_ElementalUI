@@ -8,8 +8,13 @@ Input._onKeyDown = function(event: any) {
         return _Input_onKeyDown.call(this, event);
     }
 
+    console.log("Input._onKeyDown", event);
+
     if (event.ctrlKey && event.key == "@") {
         FlexWindowsManager.instance.reloadDesigns();
+    }
+    else if (event.key == "e") {
+        FlexWindowsManager.instance.displayWindowInfo = !FlexWindowsManager.instance.displayWindowInfo;
     }
     else {
         _Input_onKeyDown.call(this, event);

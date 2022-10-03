@@ -1,4 +1,6 @@
 import fs from "fs";
+import { DListItem, DListItemProps } from "ts/design/DListItem";
+import { UIElementFactory } from "ts/ui/UIElementFactory";
 import { WindowBuilder } from "./WindowBuilder";
 import { WindowDesign, WindowProps } from "./WindowDesign";
 //import { JSDOM } from 'jsdom';
@@ -46,6 +48,25 @@ function Window(props: WindowProps): WindowDesign {
     return new WindowDesign(props);
 }
 
+
+
+export interface ContentPresenterProps {
+    
+}
+
+function ContentPresenter(props: ContentPresenterProps): ContentPresenterProps {
+    return props;
+}
+
+
+
+
+function ListItem(props: DListItemProps): DListItem {
+    return new DListItem(props);
+}
+
+
+
 function Picture(props: PictureProps) {
     return new PictureDef(props);
 }
@@ -63,18 +84,24 @@ function EasingAnimation(props: EasingAnimationProps) {
 
 export class FlexWindowsManager {
     public static instance: FlexWindowsManager;
+    public displayWindowInfo: boolean;
+    
     private _windowDesigns: Map<string, WindowDesign>;
     private _loadedFileCount;
     private _settingFiles: string[];
     private _isReady: boolean;
     private _windowBuilder: WindowBuilder;
+    private _uiElementFactory: UIElementFactory;
+    
 
     public constructor() {
+        this.displayWindowInfo = false;
         this._windowDesigns = new Map<string, WindowDesign>();
         this._loadedFileCount = 0;
         this._settingFiles = [];
         this._isReady = false;
         this._windowBuilder = new WindowBuilder();
+        this._uiElementFactory = new UIElementFactory();
         this.updateIndexFile();
         this.beginLoadSettingFiles();
     }
@@ -83,12 +110,25 @@ export class FlexWindowsManager {
         return this._isReady;
     }
 
+    public get windowBuilder(): WindowBuilder {
+        return this._windowBuilder;
+    }
+
+    public get uiElementFactory(): UIElementFactory {
+        return this._uiElementFactory;
+    }
+
     public registerElementComponent(): void {
 
     }
 
     public registerValueComponent(): void {
 
+    }
+
+    public findWindowDesign(window: Window_Base): WindowDesign | undefined {
+        const className = window.constructor.name;
+        return this._windowDesigns.get(className);
     }
 
     /** 既に存在している Window に対して、テンプレートを適用する */
@@ -148,8 +188,8 @@ export class FlexWindowsManager {
     public evalSetting(str: string): void {
         let data: any = undefined;
         eval(str);
-        if (data) {
-            this._windowDesigns.set(data.class, data);
+        if (data instanceof WindowDesign) {
+            this._windowDesigns.set(data.props.class, data);
         }
     }
 

@@ -1,8 +1,11 @@
+import { DElement } from "ts/design/DElement";
 
 
 export interface WindowProps {
     class: string;
     rect?: number[];
+    itemTemplate: DElement;
+    children?: DElement[];
 }
 
 /**
@@ -15,6 +18,8 @@ export class WindowDesign {
     // name: string;
     // content: string;
 
+    
+
     public revision: number;
 
 
@@ -22,4 +27,5 @@ export class WindowDesign {
         this.props = props;
         this.revision = 1;
     }
+
 }

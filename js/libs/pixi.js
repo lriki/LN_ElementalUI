@@ -9692,7 +9692,6 @@ var PIXI = (function (exports) {
 	     * @private
 	     */
 	    Ticker.prototype._requestIfNeeded = function () {
-			
 	        if (this._requestId === null && this._head.next) {
 	            // ensure callbacks get correct delta
 	            this.lastTime = performance.now();
