@@ -7,7 +7,7 @@
         "esModuleInterop": true,
 
         "baseUrl": "./",
-        "typeRoots" : ["./node_modules/@types", "./@types"],
+        "typeRoots" : ["./node_modules/@types", "ts/@types"],
 
         // for Debug
         "sourceMap": true,

@@ -843,6 +843,22 @@ declare interface WindowLayer {
 
 
 /**
+ * The weather effect which displays rain, storm, or snow.
+ * 
+ * @class
+ * @extends PIXI.Container
+ */
+declare interface Weather {
+		
+	/**
+	 * 
+	 * @return  
+	 */
+	new (): Weather;
+}
+
+
+/**
  * The color filter for WebGL.
  * 
  * @class

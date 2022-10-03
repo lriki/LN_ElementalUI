@@ -9,6 +9,10 @@ declare global {
  * The superclass of Spriteset_Map and Spriteset_Battle.
  */
 export class Spriteset_Base extends Sprite {
+
+    _effectsContainer: Tilemap;
+    _effectSprites: Sprite[];
+    _animationSprites: (Sprite_Animation | Sprite_AnimationMV)[];
         
     constructor();
 
@@ -43,7 +47,7 @@ export class Spriteset_Base extends Sprite {
     createAnimation(): void;
     createAnimationSprite(): void;
 
-    //isMVAnimation(animation: RPG.DataAnimation): boolean;
+    isMVAnimation(animation: IDataAnimation): boolean;
 
     //makeTargetSprites(targets: T[]): S[];
 
@@ -238,20 +242,38 @@ export class Sprite_Character extends Sprite {
 
 }
 
+
 /**
  * -----------------------------------------------------------------------------
- * Sprite_Animation
+ * Sprite_Damage
  * 
- * The sprite for displaying an animation.
+ * The sprite for displaying a popup damage.
  */
-export class Sprite_Animation {
-    _animation: IDataAnimation;
-    _frameIndex: number;
+ export class Sprite_Damage extends Sprite {
+    constructor();
+    initialize(): void;
+    destroy(options : any): void;
+    setup(target : any): void;
+    setupCriticalEffect(): void;
+    fontFace(): string;
+    fontSize(): void;
+    damageColor(): string;
+    outlineColor(): string;
+    outlineWidth(): number;
+    createMiss(): void;
+    createDigits(value : any): void;
+    createChildSprite(width : number, height : any): Sprite_Damage.prototype.CreateChildSpriteRet;
+    createBitmap(width : number, height : any): Bitmap;
+    update(): void;
+    updateChild(sprite : Sprite_Damage.prototype.UpdateChild0): void;
+    updateFlash(): void;
+    updateOpacity(): void;
+    isPlaying(): boolean;
+
+    _duration: number;
     _flashColor: number[];
     _flashDuration: number;
-
-    processFlashTimings(): void;
+    _colorType: number;
 }
-
 
 }

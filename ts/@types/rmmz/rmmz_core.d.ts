@@ -324,12 +324,6 @@ export class Sprite extends PIXI.Sprite {
 
 }
 
-export class Weather  extends PIXI.Container {
-	constructor();
-}
-
-
-
 export class Tilemap extends PIXI.Container {
 
 	public static TILE_ID_B: number;
@@ -360,6 +354,7 @@ export class Tilemap extends PIXI.Container {
 
     constructor();
 
+	public initialize(): void;
     public destroy(): void;
     public isReady(): boolean;
     public setBitmaps(bitmaps: Bitmap[]): void;

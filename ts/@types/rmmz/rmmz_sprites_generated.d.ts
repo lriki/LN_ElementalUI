@@ -179,19 +179,48 @@ declare class Sprite_Enemy {
     new (): Sprite_Enemy;
 }
 
+
+/**
+ * -----------------------------------------------------------------------------
+ * Sprite_Animation
+ * 
+ * The sprite for displaying an animation.
+ */
+declare class Sprite_Animation extends Sprite {
+        
+    targetObjects: unknown[];
+    
+    /**
+     * 
+     * @return  
+     */
+    new (): Sprite_Animation;
+
+    setup(targets: Sprite[], animation: IDataAnimation, mirror: boolean, delay: number, previous: (Sprite_Animation | Sprite_AnimationMV | null)): void;
+
+    isPlaying(): boolean;
+}
+
+
 /**
  * -----------------------------------------------------------------------------
  * Sprite_AnimationMV
  * 
  * The sprite for displaying an old format animation.
  */
-declare class Sprite_AnimationMV {
+declare class Sprite_AnimationMV extends Sprite {
         
+    targetObjects: unknown[];
+
     /**
      * 
      * @return  
      */
     new (): Sprite_AnimationMV;
+
+    setup(targets: Sprite[], animation: IDataAnimation, mirror: boolean, delay: number, previous: (Sprite_Animation | Sprite_AnimationMV | null)): void;
+
+    isPlaying(): boolean;
 }
 
 
@@ -211,124 +240,6 @@ declare class Sprite_Battleback {
 }
 
 
-/**
- * -----------------------------------------------------------------------------
- * Sprite_Damage
- * 
- * The sprite for displaying a popup damage.
- */
-declare class Sprite_Damage {
-        
-    /**
-     * 
-     */
-    new ();
-        
-    /**
-     * 
-     */
-    initialize(): void;
-        
-    /**
-     * 
-     * @param options 
-     */
-    destroy(options : any): void;
-        
-    /**
-     * 
-     * @param target 
-     */
-    setup(target : any): void;
-        
-    /**
-     * 
-     */
-    setupCriticalEffect(): void;
-        
-    /**
-     * 
-     * @return  
-     */
-    fontFace(): string;
-        
-    /**
-     * 
-     */
-    fontSize(): void;
-        
-    /**
-     * 
-     * @return  
-     */
-    damageColor(): string;
-        
-    /**
-     * 
-     * @return  
-     */
-    outlineColor(): string;
-        
-    /**
-     * 
-     * @return  
-     */
-    outlineWidth(): number;
-        
-    /**
-     * 
-     */
-    createMiss(): void;
-        
-    /**
-     * 
-     * @param value 
-     */
-    createDigits(value : any): void;
-        
-    /**
-     * 
-     * @param width 
-     * @param height 
-     * @return  
-     */
-    createChildSprite(width : number, height : any): Sprite_Damage.prototype.CreateChildSpriteRet;
-        
-    /**
-     * 
-     * @param width 
-     * @param height 
-     * @return  
-     */
-    createBitmap(width : number, height : any): Bitmap;
-        
-    /**
-     * 
-     */
-    update(): void;
-        
-    /**
-     * 
-     * @param sprite 
-     */
-    updateChild(sprite : Sprite_Damage.prototype.UpdateChild0): void;
-        
-    /**
-     * 
-     */
-    updateFlash(): void;
-        
-    /**
-     * 
-     */
-    updateOpacity(): void;
-        
-    /**
-     * 
-     * @return  
-     */
-    isPlaying(): boolean;
-}
 
 /**
  * -----------------------------------------------------------------------------
@@ -614,7 +525,6 @@ declare class Sprite_Destination {
  * The set of sprites on the battle screen.
  */
 declare class Spriteset_Battle {
-    _baseSprite: Sprite;
         
     /**
      * 

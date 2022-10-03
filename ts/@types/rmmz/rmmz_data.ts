@@ -40,12 +40,12 @@ declare interface IDataClass
     id?: number;
     expParams?: number[];
     traits?: IDataTrait[];
-    learnings?: {
-        level?: number;
-        note?: string;
-        skillId?: number;
+    learnings: {
+        level: number;
+        note: string;
+        skillId: number;
     }[];
-    name?: string;
+    name: string;
     note?: string;
     params?: number[][];
     meta?: any;
@@ -98,7 +98,7 @@ declare interface IDataSkill
 declare interface IDataAllItem
 {
     id: number;
-    description?: string;
+    description: string;
     name: string;
     note: string;
     iconIndex: number;
@@ -124,9 +124,9 @@ declare interface IDataItem extends IDataAllItem
 
 declare interface IDataEquipItem extends IDataAllItem
 {
-    etypeId?: number;
-    traits?: IDataTrait[];
-    params?: number[];
+    etypeId: number;
+    traits: IDataTrait[];
+    params: number[];
 }
 
 declare interface IDataWeapon extends IDataEquipItem
@@ -145,31 +145,31 @@ declare interface IDataAction
     conditionParam1?: number;
     conditionParam2?: number;
     conditionType?: number;
-    rating?: number;
-    skillId?: number;
+    rating: number;
+    skillId: number;
 }
 
 declare interface IDataDropItem
 {
-    kind?: number;
-    dataId?: number;
-    denominator?: number;
+    kind: number;
+    dataId: number;
+    denominator: number;
 }
 
 declare interface IDataEnemy
 {
-    id?: number;
-    actions?: IDataAction[];
-    battlerHue?: number;
-    battlerName?: string;
-    dropItems?: IDataDropItem[];
-    exp?: number;
-    traits?: IDataTrait[];
-    gold?: number;
-    name?: string;
-    note?: string;
-    params?: number[];
-    meta?: any;
+    id: number;
+    actions: IDataAction[];
+    battlerHue: number;
+    battlerName: string;
+    dropItems: IDataDropItem[];
+    exp: number;
+    traits: IDataTrait[];
+    gold: number;
+    name: string;
+    note: string;
+    params: number[];
+    meta: any;
 }
 
 declare interface IDataPage
@@ -188,26 +188,26 @@ declare interface IDataPage
         turnEnding?: boolean;
         turnValid?: boolean;
     };
-    list?: {
-        code?: number;
-        indent?: number;
-        parameters?: number[];
+    list: {
+        code: number;
+        indent: number;
+        parameters: string[];
     }[];
     span?: number;
 }
 
 declare interface IDataTroop
 {
-    id?: number;
-    members?: {
-        enemyId?: number;
-        x?: number;
-        y?: number;
-        hidden?: boolean;
+    id: number;
+    members: {
+        enemyId: number;
+        x: number;
+        y: number;
+        hidden: boolean;
     }[];
-    name?: string;
-    pages?: IDataPage[];
-    meta?: any;
+    name: string;
+    pages: IDataPage[];
+    meta: any;
 }
 
 declare interface IDataState
@@ -235,7 +235,7 @@ declare interface IDataState
     restriction: number;
     stepsToRemove: number;
     traits: IDataTrait[];
-    meta?: any;
+    meta: any;
 }
 
 declare interface IDataTileset
@@ -251,9 +251,9 @@ declare interface IDataTileset
 
 declare interface IDataList
 {
-    code?: number;
-    indent?: number;
-    parameters?: number[];
+    code: number;
+    indent: number;
+    parameters: any[];
 }
 
 declare interface IDataCommonEvent
@@ -305,10 +305,10 @@ declare interface IDataSystem
     battlerName?: string;
     battleSystem?: number;
     boat?: IVehicle;
-    currencyUnit?: string;
+    currencyUnit: string;
     defeatMe?: IDataSound;
     editMapId?: number;
-    elements?: string[];
+    elements: string[];
     equipTypes?: string[];
     gameTitle?: string;
     gameoverMe?: IDataSound;
@@ -326,13 +326,13 @@ declare interface IDataSystem
     optSideView?: boolean;
     optSlipDeath?: boolean;
     optTransparent?: boolean;
-    partyMembers?: number[];
+    partyMembers: number[];
     ship?: IVehicle;
     skillTypes?: string[];
     sounds?: IDataSound[];
-    startMapId?: number;
-    startX?: number;
-    startY?: number;
+    startMapId: number;
+    startX: number;
+    startY: number;
     switches?: string[];
     terms: {
         basic: string[];
@@ -408,7 +408,7 @@ declare interface IDataSystem
         offsetX?: number;
         offsetY?: number;
     }[];
-    variables?: string[];
+    variables: string[];
     versionId?: number;
     victoryMe?: IDataSound;
     weaponTypes?: string;
@@ -452,13 +452,13 @@ declare interface IDataMapEventPage
         variableValid?: boolean;
         variableValue?: number;
     };
-    directionFix?: boolean;
-    image?: {
-        tileId?: number;
-        characterName?: string;
-        direction?: number;
-        pattern?: number;
-        characterIndex?: number;
+    directionFix: boolean;
+    image: {
+        tileId: number;
+        characterName: string;
+        direction: number;
+        pattern: number;
+        characterIndex: number;
     }
     list: IDataList[];
     moveFrequency?: number;
@@ -474,10 +474,10 @@ declare interface IDataMapEventPage
     moveSpeed?: number;
     moveType?: number;
     priorityType?: number;
-    stepAnime?: boolean;
+    stepAnime: boolean;
     through?: boolean;
     trigger?: number;
-    walkAnime?: boolean;
+    walkAnime: boolean;
 }
 
 declare interface IDataMapEvent
@@ -519,35 +519,44 @@ declare interface IDataMap
     meta: any;
 }
 
-declare interface IDataAnimationRotation {
-    x: number,
-    y: number,
-    z: number,
-}
-
-declare interface IDataAnimationFlashTiming {
-    frame: number,
-    duration: number,
-    color: number[],
-}
-
-declare interface IDataAnimationSoundTiming {
-    frame: number,
-    se: IDataSound,
-}
-
 declare interface IDataAnimation {
-    id: number,
-    displayType: number,
-    effectName: string,
-    flashTimings: IDataAnimationFlashTiming[],
-    name: string,
-    offsetX: number,
-    offsetY: number,
-    rotation: IDataAnimationRotation,
-    scale: number,
-    soundTimings: IDataAnimationSoundTiming[],
-    speed: number,
+    id: number;
+    name: string;
+    displayType: number;
+    effectName: string;
+    flashTimings: unknown[];
+    offsetX: number;
+    offsetY: number;
+    rotation: { x: number; y: number; z: number; };
+    scale: number;
+    soundTimings: unknown[];
+    speed: number;
+    timings: unknown[];
+
+    // animation1Hue: number;
+    // animation1Name: string;
+    // animation2Hue: number;
+    // animation2Name: string;
+    // flashColor: number[];
+    // flashDuration: number;
+    // flashScope: number;
+    // frames: {
+    //     cellMax: number;
+    //     cellMin: number;
+    //     flashColor: number[];
+    //     flashDuration: number;
+    //     flashScope: number;
+    //     frameMax: number;
+    //     frameMin: number;
+    //     se: IDataSound;
+    //     shake: number;
+    //     tone: number[];
+    // }[];
+    // position: number;
+    // se: IDataSound;
+    // speed: number;
+    // timing: number;
+    // meta: any;
 }
 
 declare var $dataActors      : IDataActor[];

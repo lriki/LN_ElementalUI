@@ -1,0 +1,20 @@
+<Scene_Title>
+    <Window_TitleCommand rect="100,20,200,200">
+        <Window_TitleCommand.Behaviors>
+            <Behavior type="FadeIn" duration="60" />
+        </Window_TitleCommand.Behaviors>
+    </Window_TitleCommand>
+
+    <Picture bitmap="black.png">
+        <Picture.Styles>
+            <Style>
+                <EasingAnimation property="rotation" start="0.0" end="Math.PI" duration="10" />
+            </Style>
+            <Style>
+                <EasingAnimation property="rotation" start="0.0" end="Math.PI" duration="10" />
+            </Style>
+        </Picture.Styles>
+
+    </Picture>
+
+</Scene_Title>
