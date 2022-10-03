@@ -1,0 +1,60 @@
+//=============================================================================
+// LN_FilmicFilter.js
+// ----------------------------------------------------------------------------
+// Copyright (c) 2021 lriki
+// This software is released under the MIT License.
+// http://opensource.org/licenses/mit-license.php
+// ----------------------------------------------------------------------------
+// [GitHub] : https://github.com/lriki/LN_FilmicFilter
+// [Twitter]: https://twitter.com/lriki8
+//=============================================================================
+
+/*:ja
+ * @target MZ
+ * @plugindesc LN_FilmicFilter v1.0.2 (MIT License)
+ * @author LRIKI
+ *
+ * @help グラフィックスをより豊かに見せるための撮影効果を付加します。
+ *
+ * 使い方は次のページを参照してください。
+ * https://github.com/lriki/LN_FilmicFilter/blob/main/README.md
+ *
+ * 変更履歴は次のページを参照してください。
+ * https://github.com/lriki/LN_FilmicFilter/releases
+ *
+ * 既知の不具合や要望は次のページを参照してください。
+ * https://github.com/lriki/LN_FilmicFilter/issues
+ *
+ * @param EditorKey
+ * @text エディタの表示キー
+ * @desc デフォルトのF11キーでエディタが表示できない場合に、キーを変更できます。例えば A キーで表示する場合 a と入力してください。
+ * @default F11
+ * @type string
+ *
+ * @command SetFilmicFilter
+ * @text SetFilmicFilter
+ * @desc フィルタを適用します。
+ *
+ * @arg filterId
+ * @type number
+ * @min -1
+ * @default 0
+ * @text フィルタID
+ * @desc 適用するフィルタファイルの番号です。 (例: 2-夕焼け.json の場合は 2 を指定する)
+ *
+ * @arg duration
+ * @type number
+ * @default 30
+ * @text 時間
+ * @desc 変化にかける時間です。フレーム単位で指定します。
+ *
+ * @arg wait
+ * @type boolean
+ * @default true
+ * @text 完了までウェイト
+ * @desc 変化が完了するまでイベントを待機します。
+ */
+ 
+ 
+
+ 
