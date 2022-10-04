@@ -2,7 +2,7 @@ import { assert } from "ts/core/Common";
 import { DListItem } from "ts/design/DListItem";
 import { VUIRect } from "../UICommon";
 import { VUIContainer } from "../UIContainer";
-import { UIWindowContext } from "../UIContext";
+import { UIContext } from "../UIContext";
 import { UIText } from "./UIText";
 
 export class UIListItem extends VUIContainer {
@@ -16,11 +16,11 @@ export class UIListItem extends VUIContainer {
 
         if (this._data.text !== undefined) {
             const text = new UIText(this._data.text);
-            this.addChild(text);
+            this.addLogicalChild(text);
         }
     }
     
-    override arrangeOverride(context: UIWindowContext, finalArea: VUIRect): VUIRect {
+    override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
         const window = context.window as Window_Selectable;
         assert(window);
         

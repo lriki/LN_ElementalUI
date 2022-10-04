@@ -1,8 +1,14 @@
 import fs from "fs";
 import { DListItem, DListItemProps } from "ts/design/DListItem";
 import { UIElementFactory } from "ts/ui/UIElementFactory";
+import { SceneDesign, SceneProps } from "../design/SceneDesign";
 import { WindowBuilder } from "./WindowBuilder";
-import { WindowDesign, WindowProps } from "./WindowDesign";
+import { DWindow, WindowProps } from "../design/DWindow";
+import { DPartProps } from "ts/design/DPart";
+import { DContentPresenter, DContentPresenterProps } from "ts/design/DContentPresenter";
+import { UIScene } from "ts/ui/UIScene";
+import { assert } from "./Common";
+import { DElement, DPart } from "ts/design/DElement";
 //import { JSDOM } from 'jsdom';
 
 
@@ -43,19 +49,20 @@ export interface EasingAnimationProps {
 
 
 
+function Scene(props: SceneProps): SceneDesign {
+    return new SceneDesign(props);
+}
 
-function Window(props: WindowProps): WindowDesign {
-    return new WindowDesign(props);
+
+function Window(props: WindowProps): DWindow {
+    return new DWindow(props);
 }
 
 
 
-export interface ContentPresenterProps {
-    
-}
 
-function ContentPresenter(props: ContentPresenterProps): ContentPresenterProps {
-    return props;
+function ContentPresenter(props: DContentPresenterProps): DContentPresenter {
+    return new DContentPresenter(props);
 }
 
 
@@ -67,18 +74,22 @@ function ListItem(props: DListItemProps): DListItem {
 
 
 
-function Picture(props: PictureProps) {
-    return new PictureDef(props);
-}
+// function Picture(props: PictureProps) {
+//     return new PictureDef(props);
+// }
 
 function Style(props: StyleProps) {
     return new StyleDef(props);
 }
 
-function EasingAnimation(props: EasingAnimationProps) {
-    return props;
-}
+// function EasingAnimation(props: EasingAnimationProps) {
+//     return props;
+// }
 
+function Part(props: DPartProps): DElement {
+    return new DPart(props);
+    //return FlexWindowsManager.instance.clonePartElement(props);
+}
 
 
 
@@ -86,7 +97,8 @@ export class FlexWindowsManager {
     public static instance: FlexWindowsManager;
     public displayWindowInfo: boolean;
     
-    private _windowDesigns: Map<string, WindowDesign>;
+    private _sceneDesigns: Map<string, SceneDesign>;
+    private _windowDesigns: Map<string, DWindow>;
     private _loadedFileCount;
     private _settingFiles: string[];
     private _isReady: boolean;
@@ -96,18 +108,30 @@ export class FlexWindowsManager {
 
     public constructor() {
         this.displayWindowInfo = false;
-        this._windowDesigns = new Map<string, WindowDesign>();
+        this._sceneDesigns = new Map<string, SceneDesign>();
+        this._windowDesigns = new Map<string, DWindow>();
         this._loadedFileCount = 0;
         this._settingFiles = [];
         this._isReady = false;
         this._windowBuilder = new WindowBuilder();
         this._uiElementFactory = new UIElementFactory();
+    }
+
+    public initialize(): void {
         this.updateIndexFile();
-        this.beginLoadSettingFiles();
+        this.beginLoadDesignFiles();
     }
 
     public get isReady(): boolean {
         return this._isReady;
+    }
+
+    public get sceneDesigns(): ReadonlyMap<string, SceneDesign> {
+        return this._sceneDesigns;
+    }
+
+    public get windowDesigns(): ReadonlyMap<string, DWindow> {
+        return this._windowDesigns;
     }
 
     public get windowBuilder(): WindowBuilder {
@@ -126,9 +150,23 @@ export class FlexWindowsManager {
 
     }
 
-    public findWindowDesign(window: Window_Base): WindowDesign | undefined {
+    public findSceneDesign(window: Scene_Base): SceneDesign | undefined {
+        const className = window.constructor.name;
+        return this._sceneDesigns.get(className);
+    }
+
+    public findWindowDesign(window: Window_Base): DWindow | undefined {
         const className = window.constructor.name;
         return this._windowDesigns.get(className);
+    }
+
+    
+    public clonePartElement(props: DPartProps): DElement {
+        const className = props.class;
+        const design = this._windowDesigns.get(className);
+        assert(design);
+        const newDesign = design.clone();
+        return newDesign;
     }
 
     /** 既に存在している Window に対して、テンプレートを適用する */
@@ -165,7 +203,7 @@ export class FlexWindowsManager {
         }
     }
 
-    private beginLoadSettingFiles(): void {
+    private beginLoadDesignFiles(): void {
         this.loadDataFile("windows/index.json", (obj) => {
             this._settingFiles = (obj as string[]);
             this._loadedFileCount = 0;
@@ -177,6 +215,7 @@ export class FlexWindowsManager {
                         this._loadedFileCount++;
 
                         if (this._loadedFileCount >= this._settingFiles.length) {
+                            this.buildDesigns();
                             this._isReady = true;
                         }
                     });
@@ -188,32 +227,24 @@ export class FlexWindowsManager {
     public evalSetting(str: string): void {
         let data: any = undefined;
         eval(str);
-        if (data instanceof WindowDesign) {
+        if (data instanceof SceneDesign) {
+            this._sceneDesigns.set(data.props.class, data);
+        }
+        else if (data instanceof DWindow) {
             this._windowDesigns.set(data.props.class, data);
         }
     }
 
-
-    public initialize(): void {
-        console.log("FlexWindowsManager.initialize");
-        // this.loadTextFile("windows/Scene_Title.js", str => {
-            
-
-        //     let data = null;
-        //     eval(str);
-        //     console.log(data);
-        // });
-
-        // this.loadXmlFile("windows/Scene_Name.xml", (obj: XMLDocument) => {
-        //     console.log(obj);
-        //     console.log(obj.nodeName);
-        //     console.log(obj.nodeType);
-        //     console.log(obj.nodeValue);
-        //     const root = obj.firstElementChild;
-        //     console.log(root?.getAttribute("class"));
-
-        // });
+    public buildDesigns(): void {
+        this._windowDesigns.forEach((value, key) => {
+            value.link(this);
+        });
+        this._sceneDesigns.forEach((value, key) => {
+            value.link(this);
+        });
     }
+
+
 
     private loadDataFile(src: string, onLoad: (obj: any) => void) {
         if (this.isNode()) {

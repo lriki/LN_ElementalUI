@@ -1,25 +1,35 @@
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
-import { UIWindowContext } from "ts/ui/UIContext";
+import { UIContext } from "ts/ui/UIContext";
+import { UIWindow } from "ts/ui/UIWindow";
 
 declare global {
     interface Window_Base {
         _flexWindowDesignRevision: number | undefined;
         _flexInfoContents: Bitmap | undefined;
         _flexInfoSprite: Sprite | undefined;
-        _flexUILayoutContext: UIWindowContext | undefined;
+        _flexUIWindow: UIWindow | undefined;
     }
 }
 
 const _Window_Base_initialize = Window_Base.prototype.initialize;
 Window_Base.prototype.initialize = function(rect: Rectangle): void {
+    // 本来であれば LogicalChild に追加した後の Layout で位置が決定されるのが自然だが、
     // Rect は先にオーバーライドしておかないと、初期レイアウトが上手く動かない。
     let actualRect = rect;
-    const manager = FlexWindowsManager.instance;
-    const design = manager.findWindowDesign(this);
-    if (design) {
-        actualRect = manager.windowBuilder.makeRect(design, rect);
-        this._flexUILayoutContext = new UIWindowContext(this, design);
+    //const manager = FlexWindowsManager.instance;
+    const currentScene = SceneManager._scene;
+    const uiScene = currentScene._flexUIScene;
+    if (uiScene) {
+        const initialRect = uiScene.getRmmzWindowInitialRect(this.constructor.name);
+        if (initialRect) {
+            actualRect = new Rectangle(initialRect.x, initialRect.y, initialRect.width, initialRect.height);
+        }
     }
+    // const design = manager.findWindowDesign(this);
+    // if (design) {
+    //     actualRect = manager.windowBuilder.makeRect(design, rect);
+    //     this._flexUIWindow = new UIWindow(this, design);
+    // }
     
     _Window_Base_initialize.call(this, actualRect);
 }
@@ -59,7 +69,7 @@ Window_Base.prototype.update = function() {
     if (this._flexInfoSprite) {
         this._flexInfoSprite.visible = FlexWindowsManager.instance.displayWindowInfo;
     }
-    if (this._flexUILayoutContext) {
-        this._flexUILayoutContext.update();
-    }
+    // if (this._flexUILayoutContext) {
+    //     this._flexUILayoutContext.update();
+    // }
 }

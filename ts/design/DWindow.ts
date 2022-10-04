@@ -1,11 +1,10 @@
-import { DElement } from "ts/design/DElement";
+import { DElement, DElementProps } from "ts/design/DElement";
 
 
-export interface WindowProps {
+export interface WindowProps extends DElementProps {
     class: string;
     rect?: number[];
     itemTemplate: DElement;
-    children?: DElement[];
 }
 
 /**
@@ -13,7 +12,7 @@ export interface WindowProps {
  * 
  * Window が new されたとき (initialize() されたとき) に、このデザインを適用する。
  */
-export class WindowDesign {
+export class DWindow extends DElement {
     public readonly props: WindowProps;
     // name: string;
     // content: string;
@@ -24,8 +23,13 @@ export class WindowDesign {
 
 
     constructor(props: WindowProps) {
+        super(props);
         this.props = props;
         this.revision = 1;
+    }
+
+    public clone(): DElement {
+        return new DWindow({...this.props});
     }
 
 }

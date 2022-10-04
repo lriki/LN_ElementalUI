@@ -1,5 +1,4 @@
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
-import { UIWindowContext } from "ts/ui/UIContext";
 
 
 const _Window_Command_refresh = Window_Command.prototype.refresh;

@@ -1,5 +1,5 @@
 import { VUIRect, VUISize } from "./UICommon";
-import { UIWindowContext } from "./UIContext";
+import { UIContext } from "./UIContext";
 import { VUIElement } from "./UIElement";
 
 export class VUIContainer extends VUIElement {
@@ -11,7 +11,7 @@ export class VUIContainer extends VUIElement {
     }
 
 
-    public addChild(element: VUIElement): VUIElement {
+    override addLogicalChild(element: VUIElement): VUIElement {
         element.itemIndex = this._children.length;
         this._children.push(element);
         return element;
@@ -21,20 +21,33 @@ export class VUIContainer extends VUIElement {
         return this._children;
     }
 
-    override measureOverride(context: UIWindowContext, constraint: VUISize): void {
+    // public findLogicalChildByClass(className: string): VUIElement | undefined {
+    //     if(this.props.class === className) {
+    //         return this;
+    //     }
+    //     for(const child of this.children) {
+    //         const result = child.findElementByClass(className);
+    //         if(result) {
+    //             return result;
+    //         }
+    //     }
+    //     return undefined;
+    // }
+
+    override measureOverride(context: UIContext, constraint: VUISize): void {
         for (const child of this._children) {
             child.measure(context, constraint);
         }
     }
 
-    override arrangeOverride(context: UIWindowContext, finalArea: VUIRect): VUIRect {
+    override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
         for (const child of this._children) {
             child.arrange(context, finalArea);
         }
         return super.arrangeOverride(context, finalArea);
     }
     
-    override draw(context: UIWindowContext): void {
+    override draw(context: UIContext): void {
         for (const child of this._children) {
             child.draw(context);
         }

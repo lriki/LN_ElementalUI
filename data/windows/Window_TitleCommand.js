@@ -3,11 +3,25 @@ data = Window({
     rect: [0, 0, 640, 480],
     itemTemplate: ListItem({}),
     children: [
-        ContentPresenter({}),
+        //ContentPresenter({}),
         ListItem({
             text: "\\I[10]おまけ",
             script: "$gameVariables.setValue(1, 1);",
             symbol: "newGame",
+            x: 0,   // default
+            y: 0,   // default
+            transitions: [
+                //Transition({property: "x", duration: 0.5, delay: 0.5, easing: "easeOutQuad"}),
+            ],
+            styles: [
+                Style({
+                    state: "opening",
+                    x: -10,
+                    // transitions: [
+                    //     Transition({property: "opacity", start: -10, end: 0, duration: 0.5, delay: 0.5, easing: "easeOutQuad"}),
+                    // ]
+                })
+            ]
         }),
         // ListItem({
         //     text: "New Game",

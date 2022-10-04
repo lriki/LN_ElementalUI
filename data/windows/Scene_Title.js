@@ -1,11 +1,7 @@
 data = Scene({
     class: "Scene_Title",
     children: [
-        Grid({
-            rows: [
-                GridRow({height: 1}),
-            ]
-        })
+        Part({class: "Window_TitleCommand", x: 100, y: 200})
     ],
 });
 /*

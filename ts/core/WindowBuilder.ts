@@ -4,11 +4,11 @@ import { UIListItem } from "ts/ui/elements/UIListItem";
 import { UIElementFactory } from "ts/ui/UIElementFactory";
 import { assert } from "./Common";
 import { FlexWindowsManager } from "./FlexWindowsManager";
-import { WindowDesign } from "./WindowDesign";
+import { DWindow } from "../design/DWindow";
 
 
 export class WindowBuilder {
-    public applyDesign(window: Window_Base, design: WindowDesign) {
+    public applyDesign(window: Window_Base, design: DWindow) {
         const rect = design.props.rect;
         if (rect) {
             if (rect[0] !== undefined) window.x = rect[0];
@@ -29,10 +29,10 @@ export class WindowBuilder {
 
     }
 
-    public applyCommandListContents(window: Window_Command, design: WindowDesign, baseMakeList: () => void): void {
+    public applyCommandListContents(rmmzWindow: Window_Command, design: DWindow, baseMakeList: () => void): void {
         const manager = FlexWindowsManager.instance;
-        const context = window._flexUILayoutContext;
-        assert(context);
+        const window = rmmzWindow._flexUIWindow;
+        assert(window);
         
         let index = 0;
         const children = design.props.children || [];
@@ -45,11 +45,11 @@ export class WindowBuilder {
 
         // ItemPresenter
         {
-            let firstOriginalIndex = window._list.length;
+            let firstOriginalIndex = rmmzWindow._list.length;
             baseMakeList();
             // 元の makeCommandList() によって追加されたアイテムの分の UIElement を作成する。
-            for (let i = firstOriginalIndex; i < window._list.length; i++) {
-                const command = window._list[i];
+            for (let i = firstOriginalIndex; i < rmmzWindow._list.length; i++) {
+                const command = rmmzWindow._list[i];
                 const element = new DListItem({
                     text: command.name,
                     symbol: command.symbol,
@@ -57,7 +57,7 @@ export class WindowBuilder {
                 });
                 const uielement = new UIListItem(element);
                 uielement.rmmzCommandIndex = i;
-                context.root.addChild(uielement);
+                window.addLogicalChild(uielement);
             }
         }
 
@@ -66,9 +66,9 @@ export class WindowBuilder {
             const element = children[index];
             if (element instanceof DListItem) {
                 const uielement = new UIListItem(element);
-                uielement.rmmzCommandIndex = window._list.length;
-                context.root.addChild(uielement);
-                window.addCommand(element.text, element.symbol, element.enabled, undefined);
+                uielement.rmmzCommandIndex = rmmzWindow._list.length;
+                window.addLogicalChild(uielement);
+                rmmzWindow.addCommand(element.text, element.symbol, element.enabled, undefined);
             }
         }
         
@@ -78,7 +78,7 @@ export class WindowBuilder {
         }
     }
 
-    public makeRect(design: WindowDesign, src: Rectangle): Rectangle {
+    public makeRect(design: DWindow, src: Rectangle): Rectangle {
         const rect = design.props.rect;
         if (rect) {
             const newRect = new Rectangle(src.x, src.y, src.width, src.height);

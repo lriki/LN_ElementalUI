@@ -1,20 +1,20 @@
 import { assert } from "ts/core/Common";
 import { VUIRect, VUISize } from "../UICommon";
 import { VUIContainer } from "../UIContainer";
-import { UIWindowContext } from "../UIContext";
+import { UIContext } from "../UIContext";
 
 /**
  * Window_Selectable に準じた Item の配置を行うことを示す。
  */
 export class UISelectableLayout extends VUIContainer {
 
-    override measureOverride(context: UIWindowContext, constraint: VUISize): void {
+    override measureOverride(context: UIContext, constraint: VUISize): void {
         for (const child of this.children()) {
             child.measure(context, constraint);
         }
     }
 
-    override arrangeOverride(context: UIWindowContext, finalArea: VUIRect): VUIRect {
+    override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
         const window = context.window as Window_Selectable;
         assert(window);
 

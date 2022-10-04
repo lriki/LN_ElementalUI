@@ -1,5 +1,6 @@
+import { assert } from "ts/core/Common";
 import { VUIRect, VUISize, VUIThickness } from "./UICommon";
-import { UIWindowContext } from "./UIContext";
+import { UIContext } from "./UIContext";
 
 export class VUIElement {
     private _margin: VUIThickness;
@@ -53,6 +54,15 @@ export class VUIElement {
         this.x = 0;
         this.y = 0;
         this.opacity = 1.0;
+    }
+
+    // private onApplyDesign(): void {
+
+    // }
+
+    public addLogicalChild(element: VUIElement): VUIElement {
+        throw new Error("Unreachable.");
+        return element;
     }
 
     protected calcContentOuter(): VUIThickness {
@@ -120,7 +130,7 @@ export class VUIElement {
         return this._desiredHeight;
     }
 
-    public measure(context: UIWindowContext, size: VUISize): void {
+    public measure(context: UIContext, size: VUISize): void {
         this.measureOverride(context, size);
     }
 
@@ -129,10 +139,10 @@ export class VUIElement {
      * @param context 
      * @param constraint : この要素を配置できる領域の最大サイズ。通常は親要素のサイズが渡されます。
      */
-    protected measureOverride(context: UIWindowContext, constraint: VUISize): void {
+    protected measureOverride(context: UIContext, constraint: VUISize): void {
     }
 
-    public arrange(context: UIWindowContext, finalArea: VUIRect): VUIRect {
+    public arrange(context: UIContext, finalArea: VUIRect): VUIRect {
         const rect: VUIRect = {
             x: finalArea.x + this._margin.left,
             y: finalArea.y + this._margin.top,
@@ -141,7 +151,7 @@ export class VUIElement {
         return this.arrangeOverride(context, rect);
     }
 
-    protected arrangeOverride(context: UIWindowContext, finalArea: VUIRect): VUIRect {
+    protected arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
         this.setActualRect(finalArea);
         return finalArea;
     }
@@ -164,7 +174,7 @@ export class VUIElement {
     //     return this._actualHeight;
     // }
     
-    public draw(context: UIWindowContext): void {
+    public draw(context: UIContext): void {
         
     }
 }

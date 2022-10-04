@@ -1,5 +1,5 @@
 import { VUISize } from "../UICommon";
-import { UIWindowContext } from "../UIContext";
+import { UIContext } from "../UIContext";
 import { VUIElement } from "../UIElement";
 
 export class UIText extends VUIElement {
@@ -21,13 +21,13 @@ export class UIText extends VUIElement {
         return this;
     }
 
-    protected measureOverride(context: UIWindowContext, constraint: VUISize): void {
+    protected measureOverride(context: UIContext, constraint: VUISize): void {
         const size = context.window.textSizeEx(this._text);
         const outer = this.calcContentOuter();
         this.setDesiredSize(size.width + outer.left + outer.right, size.height + outer.top + outer.bottom);
     }
 
-    public draw(context: UIWindowContext): void {
+    public draw(context: UIContext): void {
         //console.log("draw UIText", this);
 
         const window = context.window;
