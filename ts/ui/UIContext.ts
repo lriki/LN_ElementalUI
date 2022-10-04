@@ -7,7 +7,7 @@ import { UIFrameLayout } from "./UIFrameLayout";
 import { UIScene } from "./UIScene";
 
 export class UIContext {
-    public _window: Window_Base | undefined;
+    private _window: Window_Base | undefined;
 
     private _owner: UIScene;
     //private _window: Window_Base;
@@ -15,6 +15,7 @@ export class UIContext {
     private _invalidateLayout: boolean;
     private _invalidateDraw: boolean;
     private _firstUpdate: boolean;
+    private _layoutInitialing: boolean = false;
 
     public constructor(owner: UIScene) {
         this._owner = owner;
@@ -24,7 +25,11 @@ export class UIContext {
         this._firstUpdate = true;
     }
 
-    public get window(): Window_Base {
+    public get layoutInitialing(): boolean {
+        return this._layoutInitialing;
+    }
+
+    public get currentWindow(): Window_Base {
         assert(this._window);
         return this._window;
     }
@@ -54,8 +59,18 @@ export class UIContext {
         this._owner.updateStyle();
     }
 
-    public layout(width: number, height: number): void {
-        if (!this._owner) return;
+    /** Windows の初期 Rect を確定するための layout. */
+    public layoutInitial(width: number, height: number): void {
+        assert(this._owner);
+        this._layoutInitialing = true;
+        this._owner.updateStyle();
+        this._owner.measure(this, { width: width, height: height });
+        this._owner.arrange(this, { x: 0, y: 0, width: width, height: height });
+        this._layoutInitialing = false;
+    }
+
+    private layout(width: number, height: number): void {
+        assert(this._owner);
 
         this._owner.measure(
             this, {
@@ -67,6 +82,8 @@ export class UIContext {
             x: 0, y: 0,
             width: width,
             height: height });
+
+        this._owner.updateRmmzRect();
 
         this._invalidateLayout = false;
     }

@@ -11,16 +11,26 @@ export interface DElementProps extends StyleProps {
 }
 
 export class DElement {
-    readonly props: DElementProps;
-    readonly defaultStyle: DStyle;
+    public props: DElementProps;
+    protected _defaultStyle: DStyle;
 
     constructor(props: DElementProps) {
         this.props = props;
-        this.defaultStyle = new DStyle(props);
+        this._defaultStyle = new DStyle(this.props);
+    }
+
+    public get defaultStyle(): DStyle {
+        return this._defaultStyle;
     }
 
     public clone(): DElement {
         return new DElement({...this.props});
+    }
+
+    public mergeProps(base : DElementProps): void {
+        const result: DElementProps = {...base, ...this.props};
+        this.props = result;
+        this._defaultStyle = new DStyle(this.props);
     }
 
     public get children(): readonly DElement[] {

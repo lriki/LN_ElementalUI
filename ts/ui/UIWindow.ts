@@ -27,22 +27,41 @@ export class UIWindow extends VUIContainer {
     }
     
     public attachRmmzWindow(rmmzWindow: Window_Base): void {
-        assert(rmmzWindow._flexUIWindow);
+        assert(!rmmzWindow._flexUIWindow);
         this._rmmzWindow = rmmzWindow;
         rmmzWindow._flexUIWindow = this;
+        this.onSetRmmzRect(this.actualRect());
     }
 
     override measure(context: UIContext, size: VUISize): void {
-        const oldWindow = context.changeWindow(this._rmmzWindow);
-        this.measureOverride(context, size);
-        context.changeWindow(oldWindow);
+        if (context.layoutInitialing) {
+            // 子要素の masure 不要
+        }
+        else {
+            const oldWindow = context.changeWindow(this._rmmzWindow);
+            this.measureOverride(context, size);
+            context.changeWindow(oldWindow);
+        }
     }
 
     override arrange(context: UIContext, finalArea: VUIRect): VUIRect {
-        const oldWindow = context.changeWindow(this._rmmzWindow);
-        const result = super.arrange(context, finalArea);
-        context.changeWindow(oldWindow);
-        return result;
+        if (context.layoutInitialing) {
+            // 子要素の arrange 不要
+            console.log("actualStyle", this.actualStyle);
+            this.setActualRect(finalArea);
+            return finalArea;
+        }
+        else {
+            const oldWindow = context.changeWindow(this._rmmzWindow);
+            const result = super.arrange(context, finalArea);
+            context.changeWindow(oldWindow);
+            return result;
+        }
     }
     
+    protected onSetRmmzRect(actualRect: VUIRect): void {
+        if (this._rmmzWindow) {
+            this._rmmzWindow.move(actualRect.x, actualRect.y, actualRect.width, actualRect.height);
+        }
+    }
 }

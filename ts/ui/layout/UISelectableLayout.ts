@@ -15,7 +15,7 @@ export class UISelectableLayout extends VUIContainer {
     }
 
     override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
-        const window = context.window as Window_Selectable;
+        const window = context.currentWindow as Window_Selectable;
         assert(window);
 
         for (const child of this.children()) {

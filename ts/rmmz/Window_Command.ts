@@ -5,14 +5,14 @@ const _Window_Command_refresh = Window_Command.prototype.refresh;
 Window_Command.prototype.refresh = function() {
     this.clearCommandList();
 
-    const manager = FlexWindowsManager.instance;
-    const design = manager.findWindowDesign(this);
-    if (design) {
-        manager.windowBuilder.applyCommandListContents(this, design, () => this.makeCommandList());
-    }
-    else {
+    // const manager = FlexWindowsManager.instance;
+    // const design = manager.findWindowDesign(this);
+    // if (design) {
+    //     manager.windowBuilder.applyCommandListContents(this, design, () => this.makeCommandList());
+    // }
+    // else {
         this.makeCommandList();
-    }
+    // }
 
     Window_Selectable.prototype.refresh.call(this);
 }

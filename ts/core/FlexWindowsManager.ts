@@ -156,6 +156,7 @@ export class FlexWindowsManager {
         const design = this._windowDesigns.get(className);
         assert(design);
         const newDesign = design.clone();
+        newDesign.mergeProps(props);
         return newDesign;
     }
 

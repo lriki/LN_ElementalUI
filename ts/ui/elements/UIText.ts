@@ -23,7 +23,7 @@ export class UIText extends VUIElement {
     }
 
     protected measureOverride(context: UIContext, constraint: VUISize): void {
-        const size = context.window.textSizeEx(this._text);
+        const size = context.currentWindow.textSizeEx(this._text);
         const outer = this.calcContentOuter();
         this.setDesiredSize(size.width + outer.left + outer.right, size.height + outer.top + outer.bottom);
     }
@@ -31,7 +31,7 @@ export class UIText extends VUIElement {
     public draw(context: UIContext): void {
         //console.log("draw UIText", this);
 
-        const window = context.window;
+        const window = context.currentWindow;
         if (this.actualStyle.opacity > 0.0) {
             const rect = this.actualRect();
             if (this._color) {

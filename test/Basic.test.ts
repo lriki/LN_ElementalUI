@@ -20,7 +20,7 @@ test("Basic1", () => {
     assert(commandWindowData);
 
     const titleScene = manager.uiElementFactory.instantiateScene(titleSceneData);
-    titleScene.context.layout(800, 600);
+    titleScene.context.layoutInitial(800, 600);
 
     console.log("");
 

@@ -56,6 +56,13 @@ export class VUIContainer extends VUIElement {
         return super.arrangeOverride(context, finalArea);
     }
     
+    override updateRmmzRect(): void {
+        super.updateRmmzRect();
+        for (const child of this._children) {
+            child.updateRmmzRect();
+        }
+    }
+
     override draw(context: UIContext): void {
         for (const child of this._children) {
             child.draw(context);

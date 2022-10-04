@@ -370,6 +370,13 @@ export class VUIElement {
         return this._actualRect;
     }
 
+    public updateRmmzRect(): void {
+        this.onSetRmmzRect(this._actualRect);
+    }
+
+    protected onSetRmmzRect(actualRect: VUIRect): void {
+    }
+
     // public actualWidth(): number {
     //     return this._actualWidth;
     // }

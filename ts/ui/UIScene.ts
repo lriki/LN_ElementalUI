@@ -42,7 +42,8 @@ export class UIScene extends VUIContainer {
     
     /** RMMZ コアスクリプト側で new された Window を論理的な子要素として管理下に入れる */
     public attachRmmzWindowIfNeeded(window: Window_Base): void {
-        assert(window._flexUIWindow);
+        if (window._flexUIWindow) return;
+
         const element = this.findLogicalChildByClass(window.constructor.name);
         if (element instanceof UIWindow) {
             element.attachRmmzWindow(window);
