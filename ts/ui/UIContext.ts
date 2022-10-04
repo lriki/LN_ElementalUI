@@ -35,21 +35,23 @@ export class UIContext {
         return old;
     }
 
-    // public get root(): VUIContainer {
-    //     return this._root;
-    // }
-
     public update(width: number, height: number): void {
         if (this._firstUpdate) {
             //FlexWindowsManager.instance.applyDesign(this._window);
             this._firstUpdate = false;
         }
         if (this._invalidateLayout) {
+            this.updateStyle();
             this.layout(width, height);
         }
         if (this._invalidateDraw) {
             this.draw();
         }
+    }
+
+    public updateStyle(): void {
+        if (!this._owner) return;
+        this._owner.updateStyle();
     }
 
     public layout(width: number, height: number): void {

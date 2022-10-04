@@ -23,6 +23,6 @@ Scene_Base.prototype.addWindow = function(window) {
     _Scene_Base_addWindow.call(this, window);
 
     if (this._flexUIScene && window._flexUIWindow) {
-        this._flexUIScene.attachExsistingRmmzWindow(window);
+        this._flexUIScene.attachRmmzWindowIfNeeded(window);
     }
 };

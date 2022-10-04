@@ -25,11 +25,6 @@ Window_Base.prototype.initialize = function(rect: Rectangle): void {
             actualRect = new Rectangle(initialRect.x, initialRect.y, initialRect.width, initialRect.height);
         }
     }
-    // const design = manager.findWindowDesign(this);
-    // if (design) {
-    //     actualRect = manager.windowBuilder.makeRect(design, rect);
-    //     this._flexUIWindow = new UIWindow(this, design);
-    // }
     
     _Window_Base_initialize.call(this, actualRect);
 }

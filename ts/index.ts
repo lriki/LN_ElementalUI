@@ -1,5 +1,6 @@
 
 import "./core/FlexWindowsManager"
+import "./animation/PIXI_Container"
 import "./rmmz/PluginManager"
 // import "./rmmz/PluginParameters"
 import "./rmmz/Input"

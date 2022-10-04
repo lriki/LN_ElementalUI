@@ -1,17 +1,22 @@
 import { assert } from "ts/core/Common";
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
 import { DPartProps } from "./DPart";
+import { DStyle, StyleProps } from "./DStyle";
+import { DTransition } from "./DTransition";
 
-export interface DElementProps {
+export interface DElementProps extends StyleProps {
     class?: string;
     children?: DElement[];
+    transitions?: DTransition[];
 }
 
 export class DElement {
     readonly props: DElementProps;
+    readonly defaultStyle: DStyle;
 
     constructor(props: DElementProps) {
         this.props = props;
+        this.defaultStyle = new DStyle(props);
     }
 
     public clone(): DElement {
@@ -20,6 +25,10 @@ export class DElement {
 
     public get children(): readonly DElement[] {
         return this.props.children ?? [];
+    }
+
+    public get transitions(): readonly DTransition[] {
+        return this.props.transitions ?? [];
     }
 
     public findElementByClass(className: string): DElement | undefined {
@@ -32,6 +41,10 @@ export class DElement {
                 return result;
             }
         }
+        return undefined;
+    }
+
+    public findStyle(stateName: string): DStyle | undefined {
         return undefined;
     }
     

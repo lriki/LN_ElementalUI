@@ -1,3 +1,4 @@
+import { DElement } from "ts/design/DElement";
 import { VUIRect, VUISize } from "./UICommon";
 import { UIContext } from "./UIContext";
 import { VUIElement } from "./UIElement";
@@ -5,8 +6,8 @@ import { VUIElement } from "./UIElement";
 export class VUIContainer extends VUIElement {
     private _children: VUIElement[];
 
-    public constructor() {
-        super();
+    public constructor(design: DElement) {
+        super(design);
         this._children = [];
     }
 
@@ -21,18 +22,26 @@ export class VUIContainer extends VUIElement {
         return this._children;
     }
 
-    // public findLogicalChildByClass(className: string): VUIElement | undefined {
-    //     if(this.props.class === className) {
-    //         return this;
-    //     }
-    //     for(const child of this.children) {
-    //         const result = child.findElementByClass(className);
-    //         if(result) {
-    //             return result;
-    //         }
-    //     }
-    //     return undefined;
-    // }
+    override findLogicalChildByClass(className: string): VUIElement | undefined {
+        const result1 = super.findLogicalChildByClass(className);
+        if (result1) {
+            return result1;
+        }
+        for(const child of this._children) {
+            const result = child.findLogicalChildByClass(className);
+            if(result) {
+                return result;
+            }
+        }
+        return undefined;
+    }
+
+    override updateStyle(): void {
+        for (const child of this._children) {
+            child.updateStyle();
+        }
+        super.updateStyle();
+    }
 
     override measureOverride(context: UIContext, constraint: VUISize): void {
         for (const child of this._children) {

@@ -1,3 +1,4 @@
+import { DText } from "ts/design/DText";
 import { VUISize } from "../UICommon";
 import { UIContext } from "../UIContext";
 import { VUIElement } from "../UIElement";
@@ -6,9 +7,9 @@ export class UIText extends VUIElement {
     private _text: string;
     private _color: string | undefined;
     
-    public constructor(text: string) {
-        super();
-        this._text = text;
+    public constructor(design: DText) {
+        super(design);
+        this._text = design.text;
     }
 
     public setText(value: string): this {
@@ -31,7 +32,7 @@ export class UIText extends VUIElement {
         //console.log("draw UIText", this);
 
         const window = context.window;
-        if (this.opacity > 0.0) {
+        if (this.actualStyle.opacity > 0.0) {
             const rect = this.actualRect();
             if (this._color) {
                 window.changeTextColor(this._color);
@@ -40,7 +41,7 @@ export class UIText extends VUIElement {
                 window.resetTextColor();
             }
 
-            window.contents.paintOpacity = this.opacity * 255;
+            window.contents.paintOpacity = this.actualStyle.opacity * 255;
             //window.drawText(this._text, rect.x, rect.y, rect.width, "left");
             window.drawTextEx(this._text, rect.x, rect.y, rect.width);
         }

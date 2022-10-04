@@ -291,6 +291,15 @@ export class Bitmap {
 }
 
 
+/**
+ * The root object of the display tree.
+ * 
+ * @class
+ * @extends PIXI.Container
+ */
+ export class Stage extends PIXI.Container {
+		
+}
 
 export type RGBA = [number, number, number, number];
 

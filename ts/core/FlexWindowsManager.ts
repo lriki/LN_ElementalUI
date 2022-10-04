@@ -9,6 +9,7 @@ import { DContentPresenter, DContentPresenterProps } from "ts/design/DContentPre
 import { UIScene } from "ts/ui/UIScene";
 import { assert } from "./Common";
 import { DElement, DPart } from "ts/design/DElement";
+import { DStyle, StyleProps } from "ts/design/DStyle";
 //import { JSDOM } from 'jsdom';
 
 
@@ -25,17 +26,6 @@ export class PictureDef {
     }
 }
 
-
-export interface StyleProps {
-    x: string;
-}
-
-export class StyleDef {
-    props: StyleProps;
-    constructor(props: StyleProps) {
-        this.props = props;
-    }
-}
 
 export interface EasingAnimationProps {
     start: number;
@@ -79,7 +69,7 @@ function ListItem(props: DListItemProps): DListItem {
 // }
 
 function Style(props: StyleProps) {
-    return new StyleDef(props);
+    return new DStyle(props);
 }
 
 // function EasingAnimation(props: EasingAnimationProps) {
