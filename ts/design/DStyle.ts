@@ -1,7 +1,15 @@
 
-export class DStyleValue {
 
+export class DStyleScriptValue {
+    public readonly script: string;
+
+    public constructor(script: string) {
+        this.script = script;
+    }
 }
+
+export type DStyleValue = number | DStyleScriptValue;
+
 
 export interface StyleProps {
     state?: string;
@@ -34,6 +42,9 @@ export interface StyleProps {
 
     // Window.frameVisible
     frameVisible?: boolean;
+
+    // unils
+    rect?: DStyleValue;
 }
 
 export class DStyle {

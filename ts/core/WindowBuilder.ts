@@ -8,26 +8,26 @@ import { DWindow } from "../design/DWindow";
 
 
 export class WindowBuilder {
-    public applyDesign(window: Window_Base, design: DWindow) {
-        const rect = design.props.rect;
-        if (rect) {
-            if (rect[0] !== undefined) window.x = rect[0];
-            if (rect[1] !== undefined) window.y = rect[1];
-            if (rect[2] !== undefined) window.width = rect[2];
-            if (rect[3] !== undefined) window.height = rect[3];
-        }
+    // public applyDesign(window: Window_Base, design: DWindow) {
+    //     const rect = design.props.rect;
+    //     if (rect) {
+    //         if (rect[0] !== undefined) window.x = rect[0];
+    //         if (rect[1] !== undefined) window.y = rect[1];
+    //         if (rect[2] !== undefined) window.width = rect[2];
+    //         if (rect[3] !== undefined) window.height = rect[3];
+    //     }
 
-        window._flexWindowDesignRevision = design.revision;
-
-
-
-        // (window as any).itemLineRect = function(index: number) {
-        //     console.log("itemLineRect !!!!");
-        //     return new Rectangle(0, 0, 100, 100);
-        // }
+    //     window._flexWindowDesignRevision = design.revision;
 
 
-    }
+
+    //     // (window as any).itemLineRect = function(index: number) {
+    //     //     console.log("itemLineRect !!!!");
+    //     //     return new Rectangle(0, 0, 100, 100);
+    //     // }
+
+
+    // }
 
     public applyCommandListContents(rmmzWindow: Window_Command, design: DWindow, baseMakeList: () => void): void {
         const manager = FlexWindowsManager.instance;
@@ -78,20 +78,20 @@ export class WindowBuilder {
         }
     }
 
-    public makeRect(design: DWindow, src: Rectangle): Rectangle {
-        const rect = design.props.rect;
-        if (rect) {
-            const newRect = new Rectangle(src.x, src.y, src.width, src.height);
-            if (rect[0] !== undefined) newRect.x = rect[0];
-            if (rect[1] !== undefined) newRect.y = rect[1];
-            if (rect[2] !== undefined) newRect.width = rect[2];
-            if (rect[3] !== undefined) newRect.height = rect[3];
-            return newRect;
-        }
-        else {
-            return src;
-        }
-    }
+    // public makeRect(design: DWindow, src: Rectangle): Rectangle {
+    //     const rect = design.props.rect;
+    //     if (rect) {
+    //         const newRect = new Rectangle(src.x, src.y, src.width, src.height);
+    //         if (rect[0] !== undefined) newRect.x = rect[0];
+    //         if (rect[1] !== undefined) newRect.y = rect[1];
+    //         if (rect[2] !== undefined) newRect.width = rect[2];
+    //         if (rect[3] !== undefined) newRect.height = rect[3];
+    //         return newRect;
+    //     }
+    //     else {
+    //         return src;
+    //     }
+    // }
 
     public applyElement(window: Window_Base, element: DElement): void {
         console.log("a");

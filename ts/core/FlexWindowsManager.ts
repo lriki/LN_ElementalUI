@@ -9,7 +9,7 @@ import { DContentPresenter, DContentPresenterProps } from "ts/design/DContentPre
 import { UIScene } from "ts/ui/UIScene";
 import { assert } from "./Common";
 import { DElement, DPart } from "ts/design/DElement";
-import { DStyle, StyleProps } from "ts/design/DStyle";
+import { DStyle, DStyleScriptValue, StyleProps } from "ts/design/DStyle";
 import { DTransition, DTransitionProps } from "ts/design/DTransition";
 //import { JSDOM } from 'jsdom';
 
@@ -87,6 +87,9 @@ function Transition(props: DTransitionProps): DTransition {
     //return FlexWindowsManager.instance.clonePartElement(props);
 }
 
+function Script(script: string): DStyleScriptValue {
+    return new DStyleScriptValue(script);
+}
 
 export class FlexWindowsManager {
     public static instance: FlexWindowsManager;
@@ -166,13 +169,13 @@ export class FlexWindowsManager {
     }
 
     /** 既に存在している Window に対して、テンプレートを適用する */
-    public applyDesign(window: Window_Base): void {
-        const className = window.constructor.name;
-        const data = this._windowDesigns.get(className);
-        if (data) {
-            this._windowBuilder.applyDesign(window, data);
-        }
-    }
+    // public applyDesign(window: Window_Base): void {
+    //     const className = window.constructor.name;
+    //     const data = this._windowDesigns.get(className);
+    //     if (data) {
+    //         this._windowBuilder.applyDesign(window, data);
+    //     }
+    // }
 
     // private loadWindowTemplate(className: string): WindowTemplate {
     //     const data = this._windowTemplates.get(className);

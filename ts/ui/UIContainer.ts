@@ -37,11 +37,11 @@ export class VUIContainer extends VUIElement {
         return undefined;
     }
 
-    override updateStyle(): void {
+    override updateStyle(context: UIContext): void {
         for (const child of this._children) {
-            child.updateStyle();
+            child.updateStyle(context);
         }
-        super.updateStyle();
+        super.updateStyle(context);
     }
 
     override measureOverride(context: UIContext, constraint: VUISize): void {

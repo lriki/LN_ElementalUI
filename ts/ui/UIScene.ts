@@ -16,6 +16,11 @@ export class UIScene extends VUIContainer {
         this._context = new UIContext(this);
     }
 
+    public get owner(): Scene_Base {
+        assert(this._owner);
+        return this._owner;
+    }
+
     public get context(): UIContext {
         return this._context;
     }

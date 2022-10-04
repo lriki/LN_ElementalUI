@@ -1,7 +1,7 @@
 data = Scene({
     class: "Scene_Title",
     children: [
-        Part({class: "Window_TitleCommand", x: 100, y: 200})
+        Part({class: "Window_TitleCommand", rect: Script("scene.commandWindowRect()")  /*, x: 100, y: 200, width: 200, height: 200*/ }),
     ],
 });
 /*

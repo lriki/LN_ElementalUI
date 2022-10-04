@@ -3,7 +3,7 @@ import { DElement, DElementProps } from "ts/design/DElement";
 
 export interface WindowProps extends DElementProps {
     class: string;
-    rect?: number[];
+    //rect?: number[];
     itemTemplate: DElement;
 }
 

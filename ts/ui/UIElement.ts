@@ -5,6 +5,7 @@ import { DElement } from "ts/design/DElement";
 import { DStyle } from "ts/design/DStyle";
 import { VUIRect, VUISize, VUIThickness } from "./UICommon";
 import { UIContext } from "./UIContext";
+import { UIStyle } from "./UIStyle";
 
 export enum UIVisualStates {
     Default = "Default",
@@ -19,6 +20,8 @@ export enum UIInvalidateFlags {
     Style = 1 << 1,
     Layout = 1 << 2,
     Visual = 1 << 3,
+
+    Opening = 1 << 4,
     All = 0xFFFF,
 }
 
@@ -99,6 +102,7 @@ export class VUIElement {
     // private _actualHeight: number;
     public _parent: VUIElement | undefined;
 
+    private _styles: UIStyle[];
     public readonly actualStyle: UIActualStyle;
 
     private _visualState: UIVisualStates;
@@ -112,6 +116,7 @@ export class VUIElement {
     // x: number;
     // y: number;
     // opacity: number;    // 0~1.0
+
 
     
 
@@ -148,17 +153,23 @@ export class VUIElement {
         // this.y = 0;
         // this.opacity = 1.0;
 
+        this._styles = [new UIStyle(design.defaultStyle)];
+        for (const style of design.props.styles ?? []) {
+            this._styles.push(new UIStyle(style));
+        }
+
+
         this.actualStyle = new UIActualStyle();
         this._invalidateFlags = UIInvalidateFlags.All;
 
-        // 最初は opening で設定し、次の update 時に default が適用されるようにする
         this._visualState = UIVisualStates.Default;
-        if (this.applyStyleByName("Opening", true)) {
-            this.setInvalidate(UIInvalidateFlags.Style);
-        }
-        else {
-            this.unsetInvalidate(UIInvalidateFlags.Style);
-        }
+        // 最初は opening で設定し、次の update 時に default が適用されるようにする
+        // if (this.applyStyleByName("Opening", true)) {
+        //     this.setInvalidate(UIInvalidateFlags.Style);
+        // }
+        // else {
+        //     this.unsetInvalidate(UIInvalidateFlags.Style);
+        // }
 
         var min = 1;
         var max = 1000000000;
@@ -259,7 +270,7 @@ export class VUIElement {
     // }
 
     //--------------------------------------------------------------------------
-    // Style framework
+    // Style
 
     public setValue(propertyName: string, value: number, reset: boolean): void {
         const obj = this.actualStyle as any;
@@ -268,12 +279,15 @@ export class VUIElement {
             return;
         }
 
+        if (obj[propertyName] === value) {
+            return;
+        }
+
         const container = this.findPIXIContainer();
         const transition = this.design.transitions.find(x => x.property === propertyName);
         if (container && transition) {
             const start = obj[propertyName] as number;
             VAnimation.startAt(container, `${this.id}.${propertyName}`, start, value, transition.duration, easing.linear, v => {
-                console.log(v);
                 obj[propertyName] = v;
                 this.setInvalidate(UIInvalidateFlags.Layout | UIInvalidateFlags.Visual);
             }, transition.delay);
@@ -283,8 +297,10 @@ export class VUIElement {
         }
     }
     
-    public applyStyle(style: DStyle, reset: boolean): void {
-        const props = style.props;
+    public applyStyle(context: UIContext, style: UIStyle, reset: boolean): void {
+        style.evaluate(context, this);
+        const props = style;
+        //const defaultRect = this.onGetDefaultRect();
         if (props.marginLeft) this.setValue("marginLeft", props.marginLeft, reset);
         if (props.marginTop) this.setValue("marginTop", props.marginTop, reset);
         if (props.marginRight) this.setValue("marginRight", props.marginRight, reset);
@@ -299,6 +315,11 @@ export class VUIElement {
         if (props.y) this.setValue("y", props.y, reset);
         if (props.width) this.setValue("width", props.width, reset);
         if (props.height) this.setValue("height", props.height, reset);
+        // this.setValue("x", props.x ?? defaultRect.x, reset);
+        // this.setValue("y", props.y ?? defaultRect.y, reset);
+        // this.setValue("width", props.width ?? defaultRect.width, reset);
+        // this.setValue("height", props.height ?? defaultRect.height, reset);
+
 
         //if (props.windowskin) this.setValue("windowskin", props.windowskin);
         //if (props.colorTone) this.setValue("colorTone", props.colorTone);
@@ -320,25 +341,38 @@ export class VUIElement {
         }
     }
 
-    public updateStyle(): void {
+    public updateStyle(context: UIContext): void {
         if (this.isInvalidate(UIInvalidateFlags.Style)) {
             this.unsetInvalidate(UIInvalidateFlags.Style);
-            this.applyStyleByName(this._visualState, false);
+            this.applyStyleByName(context, this._visualState, false);
         }
     }
 
-    private applyStyleByName(state: string, reset: boolean): boolean {
-        const style = this.design.findStyle(state);
+    public findStyle(stateName: string): UIStyle | undefined {
+        for (const style of this._styles) {
+            if (style.stateName === stateName) {
+                return style;
+            }
+        }
+        return undefined;
+    }
+
+    private applyStyleByName(context: UIContext, state: string, reset: boolean): boolean {
+        const style = this.findStyle(state);
         if (style) {
-            this.applyStyle(style, reset);
+            this.applyStyle(context, style, reset);
             return true;
         }
         else {
-            this.applyStyle(this.design.defaultStyle, reset);
+            this.applyStyle(context, this._styles[0], reset);
             return false;
         }
     }
 
+    protected onGetDefaultRect(): VUIRect {
+        // 設定忘れで見えなくなってしまうことを防ぐためにデフォルト値を設定しておく
+        return { x: 0, y: 0, width: 64, height: 64 };
+    }
 
 
 
@@ -372,12 +406,21 @@ export class VUIElement {
     protected measureOverride(context: UIContext, constraint: VUISize): void {
     }
 
+    /**
+     * 
+     * @param context 
+     * @param finalArea 親要素のローカル座標において、 親要素がこの要素に対して割り当てた領域のサイズ（レイアウトスロットの Rect）
+     * @returns 
+     */
     public arrange(context: UIContext, finalArea: VUIRect): VUIRect {
+        const width = this.actualStyle.width ?? finalArea.width;
+        const height = this.actualStyle.height ?? finalArea.height;
+
         const rect: VUIRect = {
             x: finalArea.x + this._margin.left,
             y: finalArea.y + this._margin.top,
-            width: finalArea.width - this._margin.left - this._margin.right,
-            height: finalArea.height - this._margin.top - this._margin.bottom};
+            width: width - this._margin.left - this._margin.right,
+            height: height - this._margin.top - this._margin.bottom};
         return this.arrangeOverride(context, rect);
     }
 

@@ -9,9 +9,11 @@ import { UIFrameLayout } from "./UIFrameLayout";
 
 export class UIWindow extends VUIContainer {
     private _rmmzWindow: Window_Base | undefined;
+    private _defaultRect: VUIRect;
 
     public constructor(design: DWindow) {
         super(design);
+        this._defaultRect = {x: 0, y: 0, width: 0, height: 0};
     }
 
     public get rmmzWindow(): Window_Base {
@@ -30,7 +32,21 @@ export class UIWindow extends VUIContainer {
         assert(!rmmzWindow._flexUIWindow);
         this._rmmzWindow = rmmzWindow;
         rmmzWindow._flexUIWindow = this;
+
+        this._defaultRect = {
+            x: this._rmmzWindow.x,
+            y: this._rmmzWindow.y,
+            width: this._rmmzWindow.width,
+            height: this._rmmzWindow.height,
+        };
+
         this.onSetRmmzRect(this.actualRect());
+    }
+
+    override updateStyle(context: UIContext): void {
+        const oldWindow = context.changeWindow(this._rmmzWindow);
+        super.updateStyle(context);
+        context.changeWindow(oldWindow);
     }
 
     override measure(context: UIContext, size: VUISize): void {
@@ -62,6 +78,15 @@ export class UIWindow extends VUIContainer {
         const oldWindow = context.changeWindow(this._rmmzWindow);
         super.draw(context);
         context.changeWindow(oldWindow);
+    }
+
+    protected onGetDefaultRect(): VUIRect {
+        if (this._rmmzWindow) {
+            return this._defaultRect;
+        }
+        else {
+            return super.onGetDefaultRect();
+        }
     }
 
     protected onSetRmmzRect(actualRect: VUIRect): void {

@@ -24,6 +24,10 @@ export class UIContext {
         return this._layoutInitialing;
     }
 
+    public get owner(): UIScene {
+        return this._owner;
+    }
+
     public get currentWindow(): Window_Base {
         assert(this._window);
         return this._window;
@@ -36,7 +40,6 @@ export class UIContext {
     }
 
     public update(width: number, height: number): void {
-        console.log("update");
         if (this._firstUpdate) {
             //FlexWindowsManager.instance.applyDesign(this._window);
             this._firstUpdate = false;
@@ -52,7 +55,7 @@ export class UIContext {
 
     public updateStyle(): void {
         if (!this._owner) return;
-        this._owner.updateStyle();
+        this._owner.updateStyle(this);
     }
 
     /** Windows の初期 Rect を確定するための layout. */
