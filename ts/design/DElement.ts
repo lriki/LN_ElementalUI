@@ -8,6 +8,7 @@ export interface DElementProps extends StyleProps {
     class?: string;
     children?: DElement[];
     transitions?: DTransition[];
+    styles?: DStyle[];
 }
 
 export class DElement {
@@ -55,6 +56,14 @@ export class DElement {
     }
 
     public findStyle(stateName: string): DStyle | undefined {
+        const styles = this.props.styles;
+        if (styles) {
+            for (const style of styles) {
+                if (style.props.state === stateName) {
+                    return style;
+                }
+            }
+        }
         return undefined;
     }
     

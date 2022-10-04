@@ -2,6 +2,15 @@ data = Window({
     class: "Window_TitleCommand",
     rect: [0, 0, 640, 480],
     itemTemplate: ListItem({}),
+    transitions: [
+        Transition({property: "x", duration: 0.5, delay: 0.0, easing: "easeOutQuad"}),
+    ],
+    styles: [
+        Style({
+            state: "Opening",
+            x: -10,
+        })
+    ],
     children: [
         //ContentPresenter({}),
         ListItem({

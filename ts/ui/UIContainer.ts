@@ -15,6 +15,7 @@ export class VUIContainer extends VUIElement {
     override addLogicalChild(element: VUIElement): VUIElement {
         element.itemIndex = this._children.length;
         this._children.push(element);
+        element._parent = this;
         return element;
     }
 
@@ -55,7 +56,7 @@ export class VUIContainer extends VUIElement {
         }
         return super.arrangeOverride(context, finalArea);
     }
-    
+
     override updateRmmzRect(): void {
         super.updateRmmzRect();
         for (const child of this._children) {

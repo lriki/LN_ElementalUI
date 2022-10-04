@@ -7,11 +7,19 @@ import { VUIRect, VUISize, VUIThickness } from "./UICommon";
 import { UIContext } from "./UIContext";
 
 export enum UIVisualStates {
-    Default = "default",
-    Opning = "opening",
-    Hover = "hover",
-    Pressed = "pressed",
-    Disabled = "disabled",
+    Default = "Default",
+    Opning = "Opening",
+    Hover = "Hover",
+    Pressed = "Pressed",
+    Disabled = "Disabled",
+}
+
+export enum UIInvalidateFlags {
+    None = 0,
+    Style = 1 << 1,
+    Layout = 1 << 2,
+    Visual = 1 << 3,
+    All = 0xFFFF,
 }
 
 
@@ -94,7 +102,7 @@ export class VUIElement {
     public readonly actualStyle: UIActualStyle;
 
     private _visualState: UIVisualStates;
-    private _visualStateChanged: boolean;
+    private _invalidateFlags: UIInvalidateFlags;
 
     row: number;
     col: number;
@@ -141,14 +149,15 @@ export class VUIElement {
         // this.opacity = 1.0;
 
         this.actualStyle = new UIActualStyle();
+        this._invalidateFlags = UIInvalidateFlags.All;
 
         // 最初は opening で設定し、次の update 時に default が適用されるようにする
         this._visualState = UIVisualStates.Default;
-        if (this.applyStyleByName("opening")) {
-            this._visualStateChanged = true;
+        if (this.applyStyleByName("Opening", true)) {
+            this.setInvalidate(UIInvalidateFlags.Style);
         }
         else {
-            this._visualStateChanged = false;
+            this.unsetInvalidate(UIInvalidateFlags.Style);
         }
 
         var min = 1;
@@ -160,6 +169,21 @@ export class VUIElement {
     // private onApplyDesign(): void {
 
     // }
+
+    public setInvalidate(flags: UIInvalidateFlags): void {
+        this._invalidateFlags |= flags;
+        if (this._parent) {
+            this._parent.setInvalidate(flags);
+        }
+    }
+
+    public unsetInvalidate(flags: UIInvalidateFlags): void {
+        this._invalidateFlags &= ~flags;
+    }
+
+    public isInvalidate(flags: UIInvalidateFlags): boolean {
+        return (this._invalidateFlags & flags) !== 0;
+    }
 
     public findPIXIContainer(): PIXI.Container | undefined {
         if (this._parent) {
@@ -249,7 +273,9 @@ export class VUIElement {
         if (container && transition) {
             const start = obj[propertyName] as number;
             VAnimation.startAt(container, `${this.id}.${propertyName}`, start, value, transition.duration, easing.linear, v => {
+                console.log(v);
                 obj[propertyName] = v;
+                this.setInvalidate(UIInvalidateFlags.Layout | UIInvalidateFlags.Visual);
             }, transition.delay);
         }
         else {
@@ -290,25 +316,25 @@ export class VUIElement {
     public setVisualState(state: UIVisualStates): void {
         if (this._visualState == state) {
             this._visualState = state;
-            this._visualStateChanged = true;
+            this.setInvalidate(UIInvalidateFlags.Style);
         }
     }
 
     public updateStyle(): void {
-        if (this._visualStateChanged) {
-            this._visualStateChanged = false;
-            this.applyStyleByName(this._visualState);
+        if (this.isInvalidate(UIInvalidateFlags.Style)) {
+            this.unsetInvalidate(UIInvalidateFlags.Style);
+            this.applyStyleByName(this._visualState, false);
         }
     }
 
-    private applyStyleByName(state: string): boolean {
-        const style = this.design.findStyle(this._visualState);
+    private applyStyleByName(state: string, reset: boolean): boolean {
+        const style = this.design.findStyle(state);
         if (style) {
-            this.applyStyle(style, false);
+            this.applyStyle(style, reset);
             return true;
         }
         else {
-            this.applyStyle(this.design.defaultStyle, false);
+            this.applyStyle(this.design.defaultStyle, reset);
             return false;
         }
     }

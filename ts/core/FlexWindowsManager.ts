@@ -10,6 +10,7 @@ import { UIScene } from "ts/ui/UIScene";
 import { assert } from "./Common";
 import { DElement, DPart } from "ts/design/DElement";
 import { DStyle, StyleProps } from "ts/design/DStyle";
+import { DTransition, DTransitionProps } from "ts/design/DTransition";
 //import { JSDOM } from 'jsdom';
 
 
@@ -81,6 +82,10 @@ function Part(props: DPartProps): DElement {
     //return FlexWindowsManager.instance.clonePartElement(props);
 }
 
+function Transition(props: DTransitionProps): DTransition {
+    return new DTransition(props);
+    //return FlexWindowsManager.instance.clonePartElement(props);
+}
 
 
 export class FlexWindowsManager {

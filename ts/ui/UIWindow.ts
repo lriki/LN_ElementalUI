@@ -47,7 +47,6 @@ export class UIWindow extends VUIContainer {
     override arrange(context: UIContext, finalArea: VUIRect): VUIRect {
         if (context.layoutInitialing) {
             // 子要素の arrange 不要
-            console.log("actualStyle", this.actualStyle);
             this.setActualRect(finalArea);
             return finalArea;
         }
@@ -59,6 +58,12 @@ export class UIWindow extends VUIContainer {
         }
     }
     
+    override draw(context: UIContext): void {
+        const oldWindow = context.changeWindow(this._rmmzWindow);
+        super.draw(context);
+        context.changeWindow(oldWindow);
+    }
+
     protected onSetRmmzRect(actualRect: VUIRect): void {
         if (this._rmmzWindow) {
             this._rmmzWindow.move(actualRect.x, actualRect.y, actualRect.width, actualRect.height);
