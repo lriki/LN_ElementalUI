@@ -2,6 +2,7 @@ import { assert } from "ts/core/Common";
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
 import { DWindow } from "ts/design/DWindow";
 import { UISelectableLayout } from "./layout/UISelectableLayout";
+import { VUIRect } from "./UICommon";
 import { VUIContainer } from "./UIContainer";
 import { UIInvalidateFlags } from "./UIElement";
 import { UIFrameLayout } from "./UIFrameLayout";
@@ -31,6 +32,17 @@ export class UIContext {
     public get currentWindow(): Window_Base {
         assert(this._window);
         return this._window;
+    }
+
+    public get currentContainer(): PIXI.Container {
+        if (this._window) {
+            return this._window;
+        }
+        return this._owner.owner;
+    }
+
+    public getRectInCurrentContaier(actualRect: VUIRect): VUIRect {
+        return actualRect;  // TODO:
     }
 
     public changeWindow(window: Window_Base | undefined): Window_Base | undefined {

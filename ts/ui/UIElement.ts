@@ -421,7 +421,9 @@ export class VUIElement {
             y: finalArea.y + this._margin.top,
             width: width - this._margin.left - this._margin.right,
             height: height - this._margin.top - this._margin.bottom};
-        return this.arrangeOverride(context, rect);
+        const result = this.arrangeOverride(context, rect);
+        this.onLayoutFixed(context, this._actualRect);
+        return result;
     }
 
     protected arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
@@ -444,6 +446,10 @@ export class VUIElement {
     }
 
     protected onSetRmmzRect(actualRect: VUIRect): void {
+    }
+
+    protected onLayoutFixed(context: UIContext,actualRect: VUIRect): void {
+
     }
 
     // public actualWidth(): number {

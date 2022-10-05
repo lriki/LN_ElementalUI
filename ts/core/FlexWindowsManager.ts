@@ -5,12 +5,9 @@ import { SceneDesign, SceneProps } from "../design/SceneDesign";
 import { WindowBuilder } from "./WindowBuilder";
 import { DWindow, WindowProps } from "../design/DWindow";
 import { DPartProps } from "ts/design/DPart";
-import { DContentPresenter, DContentPresenterProps } from "ts/design/DContentPresenter";
-import { UIScene } from "ts/ui/UIScene";
 import { assert } from "./Common";
 import { DElement, DPart } from "ts/design/DElement";
-import { DStyle, DStyleScriptValue, StyleProps } from "ts/design/DStyle";
-import { DTransition, DTransitionProps } from "ts/design/DTransition";
+import { evalDesignScript } from "./DesignScripEvaluator";
 //import { JSDOM } from 'jsdom';
 
 
@@ -36,60 +33,6 @@ export interface EasingAnimationProps {
 }
 
 
-
-
-
-
-function Scene(props: SceneProps): SceneDesign {
-    return new SceneDesign(props);
-}
-
-
-function Window(props: WindowProps): DWindow {
-    return new DWindow(props);
-}
-
-
-
-
-function ContentPresenter(props: DContentPresenterProps): DContentPresenter {
-    return new DContentPresenter(props);
-}
-
-
-
-
-function ListItem(props: DListItemProps): DListItem {
-    return new DListItem(props);
-}
-
-
-
-// function Picture(props: PictureProps) {
-//     return new PictureDef(props);
-// }
-
-function Style(props: StyleProps) {
-    return new DStyle(props);
-}
-
-// function EasingAnimation(props: EasingAnimationProps) {
-//     return props;
-// }
-
-function Part(props: DPartProps): DElement {
-    return new DPart(props);
-    //return FlexWindowsManager.instance.clonePartElement(props);
-}
-
-function Transition(props: DTransitionProps): DTransition {
-    return new DTransition(props);
-    //return FlexWindowsManager.instance.clonePartElement(props);
-}
-
-function Script(script: string): DStyleScriptValue {
-    return new DStyleScriptValue(script);
-}
 
 export class FlexWindowsManager {
     public static instance: FlexWindowsManager;
@@ -224,8 +167,7 @@ export class FlexWindowsManager {
     }
 
     public evalSetting(str: string): void {
-        let data: any = undefined;
-        eval(str);
+        const data = evalDesignScript(str);
         if (data instanceof SceneDesign) {
             this._sceneDesigns.set(data.props.class, data);
         }
