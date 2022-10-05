@@ -34,11 +34,22 @@ export class UIContext {
         return this._window;
     }
 
-    public get currentContainer(): PIXI.Container {
+    // public get currentContainer(): PIXI.Container {
+    //     if (this._window) {
+    //         return this._window;
+    //     }
+    //     return this._owner.owner;
+    // }
+
+    public addSprite(foreground: Sprite | undefined, background: Sprite | undefined): void {
         if (this._window) {
-            return this._window;
+            if (background) this._window._contentsBackSprite.addChild(background);
+            if (foreground) this._window._clientArea.addChild(foreground);
         }
-        return this._owner.owner;
+        else {
+            if (background) this._owner.owner.addChild(background);
+            if (foreground) this._owner.owner.addChild(foreground);
+        }
     }
 
     public getRectInCurrentContaier(actualRect: VUIRect): VUIRect {

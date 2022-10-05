@@ -65,7 +65,7 @@ export class UIWindow extends UIWindowBase {
         }
 
         // Choose max.
-        const boxSize = super.measureBasicBoxSize();
+        const boxSize = super.measureBasicBorderBoxSize();
         return {
             width: Math.max(boxSize.width, contentAreaSize.width, itemsAreaSize.width),
             height: Math.max(boxSize.height, contentAreaSize.height, itemsAreaSize.height) };

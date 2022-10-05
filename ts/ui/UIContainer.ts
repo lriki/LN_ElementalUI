@@ -48,7 +48,7 @@ export class VUIContainer extends VUIElement {
         for (const child of this._children) {
             child.measure(context, constraint);
         }
-        return this.measureBasicBoxSize();
+        return this.measureBasicBorderBoxSize();
     }
 
     override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {

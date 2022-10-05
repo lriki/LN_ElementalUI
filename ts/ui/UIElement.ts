@@ -25,6 +25,13 @@ export enum UIInvalidateFlags {
     All = 0xFFFF,
 }
 
+export enum UIElementFlags {
+    None = 0,
+    RequireForegroundSprite = 1 << 1,
+    RequireBackgroundSprite = 1 << 2,
+    ReadySprites = 1 << 3,
+    All = 0xFFFF,
+}
 
 export class UIActualStyle {
     
@@ -49,6 +56,8 @@ export class UIActualStyle {
     opacity: number;           // 全体
     backOpacity: number;
     contentsOpacity: number;
+
+    background: string | undefined;// = "red";
 
     // Window.origin
     originX: number;
@@ -96,7 +105,7 @@ export class VUIElement {
     private _padding: VUIThickness;
     private _desiredWidth: number;
     private _desiredHeight: number;
-    private _actualRect: VUIRect;   // margin は含まない
+    private _actualBorderBoxRect: VUIRect;   // margin は含まない
     public itemIndex: number;
     // private _actualWidth: number;
     // private _actualHeight: number;
@@ -104,9 +113,15 @@ export class VUIElement {
 
     private _styles: UIStyle[];
     public readonly actualStyle: UIActualStyle;
+    
+    private _foregroundBitmap: Bitmap | undefined;
+    private _foregroundSprite: Sprite | undefined;
+    private _backgroundBitmap: Bitmap | undefined;
+    private _backgroundSprite: Sprite | undefined;
 
     private _visualState: UIVisualStates;
     private _invalidateFlags: UIInvalidateFlags;
+    private _flags: UIElementFlags;
 
     row: number;
     col: number;
@@ -136,7 +151,7 @@ export class VUIElement {
         };
         this._desiredWidth = 0;
         this._desiredHeight = 0;
-        this._actualRect = {
+        this._actualBorderBoxRect = {
             x: 0,
             y: 0,
             width: 0,
@@ -161,6 +176,7 @@ export class VUIElement {
 
         this.actualStyle = new UIActualStyle();
         this._invalidateFlags = UIInvalidateFlags.All;
+        this._flags = UIElementFlags.None;
 
         this._visualState = UIVisualStates.Default;
         // 最初は opening で設定し、次の update 時に default が適用されるようにする
@@ -176,6 +192,24 @@ export class VUIElement {
         this.id = Math.floor( Math.random() * (max + 1 - min) ) + min;
     }
 
+    public destroy(): void {
+        if (this._foregroundSprite) {
+            this._foregroundSprite.destroy();
+            this._foregroundSprite = undefined;
+        }
+        if (this._foregroundBitmap) {
+            this._foregroundBitmap.destroy();
+            this._foregroundBitmap = undefined;
+        }
+        if (this._backgroundSprite) {
+            this._backgroundSprite.destroy();
+            this._backgroundSprite = undefined;
+        }
+        if (this._backgroundBitmap) {
+            this._backgroundBitmap.destroy();
+            this._backgroundBitmap = undefined;
+        }
+    }
 
     // private onApplyDesign(): void {
 
@@ -194,6 +228,18 @@ export class VUIElement {
 
     public isInvalidate(flags: UIInvalidateFlags): boolean {
         return (this._invalidateFlags & flags) !== 0;
+    }
+
+    public setFlags(flags: UIElementFlags): void {
+        this._flags |= flags;
+    }
+
+    public unsetFlags(flags: UIElementFlags): void {
+        this._flags &= ~flags;
+    }
+
+    public hasFlags(flags: UIElementFlags): boolean {
+        return (this._flags & flags) !== 0;
     }
 
     public findPIXIContainer(): PIXI.Container | undefined {
@@ -389,7 +435,7 @@ export class VUIElement {
     // Layout
 
     /** 子要素は考慮せず、この UIElement のスタイルを元にした最小サイズ。 */
-    protected measureBasicBoxSize(): VUISize {
+    protected measureBasicBorderBoxSize(): VUISize {
         const width = (this.actualStyle.width ?? 0) + this.actualStyle.paddingLeft + this.actualStyle.paddingRight;
         const height = (this.actualStyle.height ?? 0) + this.actualStyle.paddingTop + this.actualStyle.paddingBottom;
         return { width, height };
@@ -438,7 +484,7 @@ export class VUIElement {
      *                   スクロール領域の場合は Inf が渡されることがあるので注意してください。
      */
     protected measureOverride(context: UIContext, constraint: VUISize): VUISize {
-        return this.measureBasicBoxSize();
+        return this.measureBasicBorderBoxSize();
     }
 
     /**
@@ -457,7 +503,29 @@ export class VUIElement {
             width: width - this._margin.left - this._margin.right,
             height: height - this._margin.top - this._margin.bottom};
         const result = this.arrangeOverride(context, rect);
-        this.onLayoutFixed(context, this._actualRect);
+        this.onLayoutFixed(context, this._actualBorderBoxRect);
+
+
+        // update viual
+        {
+            if (this.isInvalidate(UIInvalidateFlags.Visual)) {
+                this.unsetInvalidate(UIInvalidateFlags.Visual);
+
+                if (this.actualStyle.background) {
+                    this.setFlags(UIElementFlags.RequireBackgroundSprite);
+                }
+                this.onRefreshVisual(context); // TODO: temp
+    
+                if (this.actualStyle.background) {
+                    const sprite = this.prepareBackgroundSprite(context);
+                    const bitmap = sprite.bitmap;
+                    assert(bitmap);
+                    bitmap.fillRect(0, 0, bitmap.width, bitmap.height, this.actualStyle.background);
+                }
+            }
+
+        }
+
         return result;
     }
 
@@ -467,17 +535,17 @@ export class VUIElement {
     }
 
     protected setActualRect(rect: VUIRect): void {
-        this._actualRect = {...rect};
-        this._actualRect.x += this.actualStyle.x;
-        this._actualRect.y += this.actualStyle.y;
+        this._actualBorderBoxRect = {...rect};
+        this._actualBorderBoxRect.x += this.actualStyle.x;
+        this._actualBorderBoxRect.y += this.actualStyle.y;
     }
 
     public actualRect(): VUIRect{
-        return this._actualRect;
+        return this._actualBorderBoxRect;
     }
 
     public updateRmmzRect(): void {
-        this.onSetRmmzRect(this._actualRect);
+        this.onSetRmmzRect(this._actualBorderBoxRect);
     }
 
     protected onSetRmmzRect(actualRect: VUIRect): void {
@@ -485,6 +553,59 @@ export class VUIElement {
 
     protected onLayoutFixed(context: UIContext,actualRect: VUIRect): void {
 
+    }
+
+    //--------------------------------------------------------------------------
+    // Visual
+
+    private prepareSprites(context: UIContext): void {
+        if (!this.hasFlags(UIElementFlags.ReadySprites)) {
+            this.setFlags(UIElementFlags.ReadySprites);
+            if (this.hasFlags(UIElementFlags.RequireForegroundSprite)) {
+                if (!this._foregroundBitmap) {
+                    this._foregroundBitmap = new Bitmap(this._actualBorderBoxRect.width, this._actualBorderBoxRect.height);
+                }
+                if (!this._foregroundSprite) {
+                    this._foregroundSprite = new Sprite(this._foregroundBitmap);
+                }
+            }
+            if (this.hasFlags(UIElementFlags.RequireBackgroundSprite)) {
+                if (!this._backgroundBitmap) {
+                    this._backgroundBitmap = new Bitmap(this._actualBorderBoxRect.width, this._actualBorderBoxRect.height);
+                }
+                if (!this._backgroundSprite) {
+                    this._backgroundSprite = new Sprite(this._backgroundBitmap);
+                }
+            }
+            context.addSprite(this._foregroundSprite, this._backgroundSprite);
+        }
+
+        
+        if (this._foregroundSprite) {
+            this._foregroundSprite.x = this._actualBorderBoxRect.x;
+            this._foregroundSprite.y = this._actualBorderBoxRect.y;
+        }
+        if (this._backgroundSprite) {
+            this._backgroundSprite.x = this._actualBorderBoxRect.x;
+            this._backgroundSprite.y = this._actualBorderBoxRect.y;
+        }
+    }
+
+    /** onRefreshVisual() で使える。 */
+    protected prepareForegroundSprite(context: UIContext): Sprite {
+        this.prepareSprites(context);
+        assert(this._foregroundSprite);
+        return this._foregroundSprite;
+    }
+
+    /** onRefreshVisual() で使える。 */
+    protected prepareBackgroundSprite(context: UIContext): Sprite {
+        this.prepareSprites(context);
+        assert(this._backgroundSprite);
+        return this._backgroundSprite;
+    }
+
+    protected onRefreshVisual(context: UIContext): void {
     }
 
     // public actualWidth(): number {

@@ -12,7 +12,7 @@ export class UISelectableLayout extends VUIContainer {
         for (const child of this.children()) {
             child.measure(context, constraint);
         }
-        return this.measureBasicBoxSize();
+        return this.measureBasicBorderBoxSize();
     }
 
     override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
