@@ -26,6 +26,7 @@ CommandWindow({
     // Window の内容に関する設定
     //--------------------------------------------------------------------------
     itemTemplate: CommandItem({
+        background: "#FF000077",
         transitions: [
             Transition({property: "x", duration: 0.5, delay: 0.0, easing: "easeOutQuad"}),
         ],

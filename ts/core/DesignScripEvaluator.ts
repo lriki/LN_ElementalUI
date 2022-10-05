@@ -1,7 +1,7 @@
 
 import { DContentPresenter, DContentPresenterProps } from "ts/design/DContentPresenter";
 import { UIScene } from "ts/ui/UIScene";
-import { DStyle, DStyleScriptValue, StyleProps } from "ts/design/DStyle";
+import { DStyle, DStyleScriptValue, DStyleProps } from "ts/design/DStyle";
 import { DTransition, DTransitionProps } from "ts/design/DTransition";
 import { DCommandWindow, DCommandWindowProps } from "ts/design/DCommandWindow";
 import { SceneDesign, SceneProps } from "ts/design/SceneDesign";
@@ -46,7 +46,7 @@ function ListItem(props: DListItemProps): DListItem {
 //     return new PictureDef(props);
 // }
 
-function Style(props: StyleProps) {
+function Style(props: DStyleProps) {
     return new DStyle(props);
 }
 

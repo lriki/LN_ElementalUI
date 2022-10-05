@@ -11,7 +11,7 @@ export class DStyleScriptValue {
 export type DStyleValue = number | DStyleScriptValue;
 
 
-export interface StyleProps {
+export interface DStyleProps {
     state?: string;
 
     marginLeft?: number;
@@ -36,6 +36,8 @@ export interface StyleProps {
     backOpacity?: number;
     contentsOpacity?: number;
 
+    background?: string;
+
     // Window.origin
     originX?: number;
     originY?: number;
@@ -48,8 +50,8 @@ export interface StyleProps {
 }
 
 export class DStyle {
-    public readonly props: StyleProps;
-    constructor(props: StyleProps) {
+    public readonly props: DStyleProps;
+    constructor(props: DStyleProps) {
         this.props = props;
     }
 }

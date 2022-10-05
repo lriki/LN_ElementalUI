@@ -11,6 +11,11 @@ export class VUIContainer extends VUIElement {
         this._children = [];
     }
 
+    override dispose(): void {
+        super.dispose();
+        this._children.forEach((child) => child.dispose());
+        this._children = [];
+    }
 
     override addLogicalChild(element: VUIElement): VUIElement {
         element.itemIndex = this._children.length;

@@ -42,6 +42,7 @@ export class FlexWindowsManager {
     private _windowDesigns: Map<string, DWindow>;
     private _loadedFileCount;
     private _settingFiles: string[];
+    private _designFilesRevision: number;
     private _isReady: boolean;
     private _windowBuilder: WindowBuilder;
     private _uiElementFactory: UIElementFactory;
@@ -53,6 +54,7 @@ export class FlexWindowsManager {
         this._windowDesigns = new Map<string, DWindow>();
         this._loadedFileCount = 0;
         this._settingFiles = [];
+        this._designFilesRevision = 1;
         this._isReady = false;
         this._windowBuilder = new WindowBuilder();
         this._uiElementFactory = new UIElementFactory();
@@ -65,6 +67,10 @@ export class FlexWindowsManager {
 
     public get isReady(): boolean {
         return this._isReady;
+    }
+
+    public get designFilesRevision(): number {
+        return this._designFilesRevision;
     }
 
     public get sceneDesigns(): ReadonlyMap<string, SceneDesign> {
@@ -111,6 +117,43 @@ export class FlexWindowsManager {
         return newDesign;
     }
 
+
+
+    public reloadSceneDesignIfNeeded(rmmzScene: Scene_Base): void {
+        if (rmmzScene._flexDesignRevision === this.designFilesRevision) return;
+        rmmzScene._flexDesignRevision = this.designFilesRevision;
+
+        let attachedExistingWindows: Window_Base[] = [];
+        if (rmmzScene._flexUIScene) {
+            attachedExistingWindows = [...rmmzScene._flexUIScene.attachedExistingWindows];
+            this.unloadSceneDesignIfNeeded(rmmzScene);
+        }
+        rmmzScene._flexUIScene = undefined;
+
+        const design = this.findSceneDesign(rmmzScene);
+        if (design) {
+            rmmzScene._flexUIScene = this.uiElementFactory.instantiateScene(design);
+            rmmzScene._flexUIScene.attachRmmzScene(rmmzScene);
+            rmmzScene._flexUIScene.context.layoutInitial(Graphics.boxWidth, Graphics.boxHeight);
+
+            // attachedExistingWindows が存在するということは、デザインのリロードが行われたということ。
+            if (attachedExistingWindows.length > 0) {
+                for (const rmmzWindow of attachedExistingWindows) {
+                    rmmzScene._flexUIScene.attachRmmzWindowIfNeeded(rmmzWindow);
+                };
+                rmmzScene._flexUIScene.syncFromAllRmmzWindowContents();
+            }
+        }
+    }
+
+    public unloadSceneDesignIfNeeded(rmmzScene: Scene_Base): void {
+        if (rmmzScene._flexUIScene) {
+            rmmzScene._flexUIScene.detachRmmzScene();
+            rmmzScene._flexUIScene = undefined;
+        }
+    }
+    
+
     /** 既に存在している Window に対して、テンプレートを適用する */
     // public applyDesign(window: Window_Base): void {
     //     const className = window.constructor.name;
@@ -131,7 +174,8 @@ export class FlexWindowsManager {
     // }
 
     public reloadDesigns(): void {
-
+        console.log("reload!");
+        this.beginLoadDesignFiles();
     }
 
     private updateIndexFile(): void {
@@ -158,7 +202,9 @@ export class FlexWindowsManager {
 
                         if (this._loadedFileCount >= this._settingFiles.length) {
                             this.buildDesigns();
+                            console.log("buildDesigns!");
                             this._isReady = true;
+                            this._designFilesRevision++;
                         }
                     });
                 }

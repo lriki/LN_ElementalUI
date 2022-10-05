@@ -1,10 +1,10 @@
 import { assert } from "ts/core/Common";
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
 import { DPartProps } from "./DPart";
-import { DStyle, StyleProps } from "./DStyle";
+import { DStyle, DStyleProps } from "./DStyle";
 import { DTransition } from "./DTransition";
 
-export interface DElementProps extends StyleProps {
+export interface DElementProps extends DStyleProps {
     class?: string;
     children?: DElement[];
     transitions?: DTransition[];

@@ -17,9 +17,20 @@ export class UIWindowBase extends VUIElement {
         this._defaultRect = {x: 0, y: 0, width: 0, height: 0};
     }
 
+    override dispose(): void {
+        if (this._rmmzWindow) {
+            this._rmmzWindow._flexUIWindow = undefined;
+            this._rmmzWindow = undefined;
+        }
+        super.dispose();
+    }
+
     public get rmmzWindow(): Window_Base {
         assert(this._rmmzWindow)
         return this._rmmzWindow;
+    }
+
+    public onSyncFromRmmzWindowContents(): void {
     }
 
     override findPIXIContainer(): PIXI.Container | undefined {

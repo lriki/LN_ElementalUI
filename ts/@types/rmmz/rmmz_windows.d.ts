@@ -34,6 +34,7 @@ declare class Window extends PIXI.Container {
 	public windowskin: Bitmap;
 
 	_clientArea: Sprite;
+	_contentsSprite: Sprite;
 	_contentsBackSprite: Sprite;
 
     constructor();

@@ -30,6 +30,11 @@ export class UIWindow extends UIWindowBase {
         this._itemsChildren = [];
     }
 
+    override dispose(): void {
+        this._itemsChildren.forEach((item) => item.dispose());
+        super.dispose();
+    }
+
     public clearSelectableItems(): void {
         if (this._itemsChildren.length == 0) return;
         throw new Error("Not implemented");

@@ -214,7 +214,7 @@ export class VUIElement {
         this.id = Math.floor( Math.random() * (max + 1 - min) ) + min;
     }
 
-    public destroy(): void {
+    public dispose(): void {
         if (this._foregroundSprite) {
             this._foregroundSprite.destroy();
             this._foregroundSprite = undefined;
@@ -390,10 +390,9 @@ export class VUIElement {
         }
     }
 
-    private setActualStyleValueInternal(propertyName: string, value: number) {
+    private setActualStyleValueInternal(propertyName: string, value: any) {
         const obj = this.actualStyle as any;
         obj[propertyName] = value;
-        console.log("setActualStyleValueInternal", propertyName, value);
         this.setInvalidate(this.actualStyle.getInvalidateFlags(propertyName));
     }
 
@@ -428,6 +427,7 @@ export class VUIElement {
         if (props.opacity) this.setValue(context, "opacity", props.opacity, reset);
         if (props.backOpacity) this.setValue(context, "backOpacity", props.backOpacity, reset);
         if (props.contentsOpacity) this.setValue(context, "contentsOpacity", props.contentsOpacity, reset);
+        if (props.background) this.setActualStyleValueInternal("background", props.background);
 
         if (props.originX) this.setValue(context, "originX", props.originX, reset);
         if (props.originY) this.setValue(context, "originY", props.originY, reset);

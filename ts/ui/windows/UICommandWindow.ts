@@ -20,6 +20,16 @@ export class UICommandWindow extends UIWindow {
         super(design);
     }
 
+    override onSyncFromRmmzWindowContents(): void {
+        const rmmzWindow = this.rmmzWindow as Window_Command;
+        assert(rmmzWindow);
+        this.clearSelectableItems();
+        for (let i = 0; i < rmmzWindow._list.length; i++) {
+            const command = rmmzWindow._list[i];
+            this.addCommandItem(command, i);
+        }
+    }
+
     public addCommandItem(data: RmmzCommandItem, index: number): void {
         const template = this.design.props.itemTemplate;
         assert(template);

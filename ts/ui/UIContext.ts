@@ -36,6 +36,8 @@ export class UIContext {
         return this._window;
     }
 
+
+
     // public get currentContainer(): PIXI.Container {
     //     if (this._window) {
     //         return this._window;

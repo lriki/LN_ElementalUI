@@ -9,6 +9,7 @@ import { UIWindowBase } from "./windows/UIWindowBase";
 
 export class UIScene extends VUIContainer {
     private _owner: Scene_Base | undefined;
+    public readonly attachedExistingWindows: Window_Base[] = [];
     private _context: UIContext;
 
     public constructor(design: SceneDesign) {
@@ -27,6 +28,11 @@ export class UIScene extends VUIContainer {
 
     public attachRmmzScene(owner: Scene_Base): void {
         this._owner = owner;
+    }
+
+    public detachRmmzScene(): void {
+        this.dispose();
+        this._owner = undefined;
     }
 
     override findPIXIContainer(): PIXI.Container | undefined {
@@ -52,6 +58,13 @@ export class UIScene extends VUIContainer {
         const element = this.findLogicalChildByClass(window.constructor.name);
         if (element instanceof UIWindowBase) {
             element.attachRmmzWindow(window);
+            this.attachedExistingWindows.push(window);
+        }
+    }
+
+    public syncFromAllRmmzWindowContents(): void {
+        for (const window of this.attachedExistingWindows) {
+            window._flexUIWindow?.onSyncFromRmmzWindowContents();
         }
     }
 }

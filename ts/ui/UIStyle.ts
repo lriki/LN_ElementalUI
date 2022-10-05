@@ -27,6 +27,8 @@ export class UIStyle {
     backOpacity: number | undefined;
     contentsOpacity: number | undefined;
 
+    background: string | undefined;
+
     // Window.origin
     originX: number | undefined;
     originY: number | undefined;
@@ -111,6 +113,9 @@ export class UIStyle {
         }
         if (props.contentsOpacity !== undefined) {
             this.contentsOpacity = props.contentsOpacity;
+        }
+        if (props.background !== undefined) {
+            this.background = props.background;
         }
 
         if (props.originX !== undefined) {

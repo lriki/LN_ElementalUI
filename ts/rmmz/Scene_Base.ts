@@ -5,6 +5,7 @@ import { UIScene } from "ts/ui/UIScene";
 declare global {
     interface Scene_Base {
         _flexUIScene: UIScene | undefined;
+        _flexDesignRevision: number | undefined;
     }
 }
 
@@ -15,12 +16,8 @@ Scene_Base.prototype.create = function() {
 
     const manager = FlexWindowsManager.instance;
     if (manager) {
-        const design = manager.findSceneDesign(this);
-        if (design) {
-            this._flexUIScene = manager.uiElementFactory.instantiateScene(design);
-            this._flexUIScene.attachRmmzScene(this);
-            this._flexUIScene.context.layoutInitial(Graphics.boxWidth, Graphics.boxHeight);
-        }
+        manager.reloadSceneDesignIfNeeded(this);
+
     }
 }
 
@@ -36,6 +33,10 @@ Scene_Base.prototype.addWindow = function(window) {
 const _Scene_Base_update = Scene_Base.prototype.update;
 Scene_Base.prototype.update = function() {
     _Scene_Base_update.call(this);
+    const manager = FlexWindowsManager.instance;
+    if (manager) {
+        manager.reloadSceneDesignIfNeeded(this);
+    }
     if (this._flexUIScene) {
         this._flexUIScene.context.update(Graphics.boxWidth, Graphics.boxHeight);
     }
