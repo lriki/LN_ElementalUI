@@ -1,7 +1,7 @@
 import { DElement } from "ts/design/DElement";
 import { VUIRect, VUISize } from "./UICommon";
 import { UIContext } from "./UIContext";
-import { VUIElement } from "./UIElement";
+import { UIInvalidateFlags, VUIElement } from "./UIElement";
 
 export class VUIContainer extends VUIElement {
     private _children: VUIElement[];
@@ -65,11 +65,21 @@ export class VUIContainer extends VUIElement {
         }
     }
 
-    override draw(context: UIContext): void {
-        for (const child of this._children) {
-            child.draw(context);
+    override updateVisualContents(context: UIContext) {
+        if (this.isInvalidate(UIInvalidateFlags.ChildVisualContent)) {
+            this.unsetInvalidate(UIInvalidateFlags.ChildVisualContent);
+            for (const child of this._children) {
+                child.updateVisualContents(context);
+            }
         }
+        super.updateVisualContents(context);
     }
+
+    // override draw(context: UIContext): void {
+    //     for (const child of this._children) {
+    //         child.draw(context);
+    //     }
+    // }
 }
 
 

@@ -3,7 +3,7 @@ import { DCommandWindow } from "ts/design/DCommandWindow";
 import { UISelectableItem } from "../elements/UISelectableItem";
 import { VUIRect, VUISize } from "../UICommon";
 import { UIContext } from "../UIContext";
-import { VUIElement } from "../UIElement";
+import { UIInvalidateFlags, VUIElement } from "../UIElement";
 import { UIWindowBase } from "./UIWindowBase";
 
 /**
@@ -99,7 +99,18 @@ export class UIWindow extends UIWindowBase {
         else {
             throw new Error("Not implemented");
         }
+    }
 
+    override updateVisualContents(context: UIContext) {
+        const oldWindow = context.changeWindow(this.rmmzWindow);
+        if (this.isInvalidate(UIInvalidateFlags.ChildVisualContent)) {
+            this.unsetInvalidate(UIInvalidateFlags.ChildVisualContent);
+            for (const child of this._itemsChildren) {
+                child.updateVisualContents(context);
+            }
+        }
+        super.updateVisualContents(context);
+        context.changeWindow(oldWindow);
     }
 }
 

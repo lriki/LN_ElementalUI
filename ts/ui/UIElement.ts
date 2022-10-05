@@ -20,9 +20,17 @@ export enum UIInvalidateFlags {
     Style = 1 << 1,
     Layout = 1 << 2,
     VisualContent = 1 << 3,
+    
+    // 以下内部用
+     
+    // いずれかの子・孫要素が VisualContent を要求している。this は VisualContent を持っていないこともある。
+    ChildVisualContent = 1 << 4,
 
     Opening = 1 << 4,
     All = 0xFFFF,
+    
+    Routing = Style | Layout | ChildVisualContent,
+    NoRouting = VisualContent,
 }
 
 export enum UIElementFlags {
@@ -97,9 +105,11 @@ export class UIActualStyle {
 
     public getInvalidateFlags(propertyName: string): UIInvalidateFlags {
         switch (propertyName) {
+            case "x":
+            case "y":
             case "width":
             case "height":
-                return UIInvalidateFlags.Layout;
+                return UIInvalidateFlags.Layout | UIInvalidateFlags.VisualContent;
             case "background":
             case "foreground":
                 return UIInvalidateFlags.VisualContent;
@@ -227,18 +237,25 @@ export class VUIElement {
 
     // }
 
-    public setInvalidate(context: UIContext, flags: UIInvalidateFlags): void {
-        // Visual の変更は Sprite の再描画。
-        // 他の Sprite へ影響するものでは無いので、必要な箇所だけ変更したい。
+    public setInvalidate(flags: UIInvalidateFlags): void {
+        // VisualContent の変更は ChildVisualContent を伴う
         if ((flags & UIInvalidateFlags.VisualContent) !== 0) {
-            flags &= ~UIInvalidateFlags.VisualContent;
-
+            flags |= UIInvalidateFlags.ChildVisualContent;
         }
+
+        const oldRoutingFlags = this._invalidateFlags & UIInvalidateFlags.Routing;
 
         if (this._invalidateFlags != flags) {
             this._invalidateFlags |= flags;
-            if (this._parent) {
-                this._parent.setInvalidate(context, flags);
+
+            console.log("_invalidateFlags", this._invalidateFlags);
+
+            const newRoutingFlags = this._invalidateFlags & UIInvalidateFlags.Routing;
+            if (oldRoutingFlags != newRoutingFlags) {
+                if (this._parent) {
+                    console.log("_parent", newRoutingFlags);
+                    this._parent.setInvalidate(newRoutingFlags);
+                }
             }
         }
     }
@@ -349,10 +366,9 @@ export class VUIElement {
     // Style
 
     public setValue(context: UIContext, propertyName: string, value: number, reset: boolean): void {
-
         const obj = this.actualStyle as any;
         if (reset) {
-            obj[propertyName] = value;
+            this.setActualStyleValueInternal(propertyName, value);
             return;
         }
 
@@ -360,19 +376,25 @@ export class VUIElement {
             return;
         }
 
+
         const container = this.findPIXIContainer();
         const transition = this.design.transitions.find(x => x.property === propertyName);
         if (container && transition) {
             const start = obj[propertyName] as number;
             VAnimation.startAt(container, `${this.id}.${propertyName}`, start, value, transition.duration, easing.linear, v => {
-                
-                obj[propertyName] = v;
-                this.setInvalidate(context, UIInvalidateFlags.Layout | UIInvalidateFlags.VisualContent);
+                this.setActualStyleValueInternal(propertyName, v);
             }, transition.delay);
         }
         else {
-            obj[propertyName] = value;
+            this.setActualStyleValueInternal(propertyName, value);
         }
+    }
+
+    private setActualStyleValueInternal(propertyName: string, value: number) {
+        const obj = this.actualStyle as any;
+        obj[propertyName] = value;
+        console.log("setActualStyleValueInternal", propertyName, value);
+        this.setInvalidate(this.actualStyle.getInvalidateFlags(propertyName));
     }
 
     
@@ -542,6 +564,7 @@ export class VUIElement {
         this._actualBorderBoxRect = {...rect};
         this._actualBorderBoxRect.x += this.actualStyle.x;
         this._actualBorderBoxRect.y += this.actualStyle.y;
+        this.unsetInvalidate(UIInvalidateFlags.Layout);
     }
 
     public actualRect(): VUIRect{

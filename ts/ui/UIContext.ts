@@ -14,13 +14,13 @@ export class UIContext {
     private _owner: UIScene;
     private _firstUpdate: boolean;
     private _layoutInitialing: boolean = false;
-    private _refreshRequestedVisualContents: VUIElement[];
+    //private _refreshRequestedVisualContents: VUIElement[];
 
     public constructor(owner: UIScene) {
         this._owner = owner;
         //this._root = new UISelectableLayout();  // TODO;
         this._firstUpdate = true;
-        this._refreshRequestedVisualContents = [];
+        //this._refreshRequestedVisualContents = [];
     }
 
     public get layoutInitialing(): boolean {
@@ -43,11 +43,11 @@ export class UIContext {
     //     return this._owner.owner;
     // }
 
-    public requestRefreshVisualContent(element: VUIElement): void {
-        if (!this._refreshRequestedVisualContents.find(x => x == element)) {
-            this._refreshRequestedVisualContents.push(element);
-        }
-    }
+    // public requestRefreshVisualContent(element: VUIElement): void {
+    //     if (!this._refreshRequestedVisualContents.find(x => x == element)) {
+    //         this._refreshRequestedVisualContents.push(element);
+    //     }
+    // }
 
     public addSprite(foreground: Sprite | undefined, background: Sprite | undefined): void {
         if (this._window) {
@@ -75,26 +75,29 @@ export class UIContext {
             //FlexWindowsManager.instance.applyDesign(this._window);
             this._firstUpdate = false;
         }
+        if (this._owner.isInvalidate(UIInvalidateFlags.Style)) {
+            this._owner.updateStyle(this);
+        }
         if (this._owner.isInvalidate(UIInvalidateFlags.Layout)) {
-            this.updateStyle();
             this.layout(width, height);
         }
-        if (this._owner.isInvalidate(UIInvalidateFlags.VisualContent)) {
-            this.draw();
+        // if (this._owner.isInvalidate(UIInvalidateFlags.VisualContent)) {
+        //     this.draw();
+        // }
+
+        if (this._owner.isInvalidate(UIInvalidateFlags.ChildVisualContent)) {
+            console.log("Visual");
+            this._owner.updateVisualContents(this);
         }
 
-        if (this._refreshRequestedVisualContents.length > 0) {
-            for (const element of this._refreshRequestedVisualContents) {
-                element.updateVisualContents(this);
-            }
-            this._refreshRequestedVisualContents = [];
-        }
+        // if (this._refreshRequestedVisualContents.length > 0) {
+        //     for (const element of this._refreshRequestedVisualContents) {
+        //         element.updateVisualContents(this);
+        //     }
+        //     this._refreshRequestedVisualContents = [];
+        // }
     }
 
-    public updateStyle(): void {
-        if (!this._owner) return;
-        this._owner.updateStyle(this);
-    }
 
     /** Windows の初期 Rect を確定するための layout. */
     public layoutInitial(width: number, height: number): void {
