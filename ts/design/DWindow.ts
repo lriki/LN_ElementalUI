@@ -28,7 +28,7 @@ export class DWindow extends DElement {
         this.revision = 1;
     }
 
-    public clone(): DElement {
+    override clone(): DElement {
         return new DWindow({...this.props});
     }
 

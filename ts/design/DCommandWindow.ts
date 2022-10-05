@@ -23,7 +23,7 @@ export class DCommandWindow extends DWindow {
         this.props = props;
     }
 
-    public clone(): DElement {
+    override clone(): DElement {
         return new DCommandWindow({...this.props});
     }
 }

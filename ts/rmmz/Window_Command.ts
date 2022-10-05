@@ -1,9 +1,13 @@
+import { assert } from "ts/core/Common";
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
+import { UICommandWindow } from "ts/ui/windows/UICommandWindow";
 
 
 const _Window_Command_refresh = Window_Command.prototype.refresh;
 Window_Command.prototype.refresh = function() {
     this.clearCommandList();
+
+    assert(this._flexUIWindow instanceof UICommandWindow);
 
     // const manager = FlexWindowsManager.instance;
     // const design = manager.findWindowDesign(this);
@@ -13,6 +17,12 @@ Window_Command.prototype.refresh = function() {
     // else {
         this.makeCommandList();
     // }
+
+    this._flexUIWindow.clearSelectableItems();
+    for (let i = 0; i < this._list.length; i++) {
+        const command = this._list[i];
+        this._flexUIWindow.addCommandItem(command, i);
+    }
 
     Window_Selectable.prototype.refresh.call(this);
 }

@@ -8,10 +8,11 @@ import { UIContext } from "../UIContext";
  */
 export class UISelectableLayout extends VUIContainer {
 
-    override measureOverride(context: UIContext, constraint: VUISize): void {
+    override measureOverride(context: UIContext, constraint: VUISize): VUISize {
         for (const child of this.children()) {
             child.measure(context, constraint);
         }
+        return this.measureBasicBoxSize();
     }
 
     override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {

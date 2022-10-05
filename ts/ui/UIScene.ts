@@ -5,7 +5,7 @@ import { VUIRect } from "./UICommon";
 import { VUIContainer } from "./UIContainer";
 import { UIContext } from "./UIContext";
 import { VUIElement } from "./UIElement";
-import { UIWindow } from "./UIWindow";
+import { UIWindowBase } from "./windows/UIWindowBase";
 
 export class UIScene extends VUIContainer {
     private _owner: Scene_Base | undefined;
@@ -50,7 +50,7 @@ export class UIScene extends VUIContainer {
         if (window._flexUIWindow) return;
 
         const element = this.findLogicalChildByClass(window.constructor.name);
-        if (element instanceof UIWindow) {
+        if (element instanceof UIWindowBase) {
             element.attachRmmzWindow(window);
         }
     }

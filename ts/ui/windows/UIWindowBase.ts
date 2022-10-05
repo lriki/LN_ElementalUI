@@ -1,13 +1,14 @@
 import { assert } from "ts/core/Common";
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
 import { DWindow } from "ts/design/DWindow";
-import { UISelectableLayout } from "./layout/UISelectableLayout";
-import { VUIRect, VUISize } from "./UICommon";
-import { VUIContainer } from "./UIContainer";
-import { UIContext } from "./UIContext";
-import { UIFrameLayout } from "./UIFrameLayout";
+import { UISelectableLayout } from "../layout/UISelectableLayout";
+import { VUIRect, VUISize } from "../UICommon";
+import { VUIContainer } from "../UIContainer";
+import { UIContext } from "../UIContext";
+import { VUIElement } from "../UIElement";
+import { UIFrameLayout } from "../UIFrameLayout";
 
-export class UIWindow extends VUIContainer {
+export class UIWindowBase extends VUIElement {
     private _rmmzWindow: Window_Base | undefined;
     private _defaultRect: VUIRect;
 

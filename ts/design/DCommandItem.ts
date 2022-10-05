@@ -1,7 +1,7 @@
-import { DElement, DElementProps } from "ts/design/DElement";
+import { DElement } from "ts/design/DElement";
+import { DSelectableItem, DSelectableItemProps } from "./DSelectableItem";
 
-
-export interface DCommandItemProps extends DElementProps {
+export interface DCommandItemProps extends DSelectableItemProps {
     /** UIText として追加する text .*/
     text?: string;
 
@@ -14,7 +14,7 @@ export interface DCommandItemProps extends DElementProps {
 
 /**
  */
-export class DCommandItem extends DElement {
+export class DCommandItem extends DSelectableItem {
     public readonly props: DCommandItemProps;
 
     constructor(props: DCommandItemProps) {
@@ -22,7 +22,7 @@ export class DCommandItem extends DElement {
         this.props = props;
     }
 
-    public clone(): DElement {
+    override clone(): DElement {
         return new DCommandItem({...this.props});
     }
 }

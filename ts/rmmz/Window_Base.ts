@@ -1,13 +1,13 @@
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
 import { UIContext } from "ts/ui/UIContext";
-import { UIWindow } from "ts/ui/UIWindow";
+import { UIWindowBase } from "ts/ui/windows/UIWindowBase";
 
 declare global {
     interface Window_Base {
         _flexWindowDesignRevision: number | undefined;
         _flexInfoContents: Bitmap | undefined;
         _flexInfoSprite: Sprite | undefined;
-        _flexUIWindow: UIWindow | undefined;
+        _flexUIWindow: UIWindowBase | undefined;
     }
 }
 

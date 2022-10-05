@@ -5,7 +5,7 @@ import { SceneDesign } from "ts/design/SceneDesign";
 import { UIListItem } from "./elements/UIListItem";
 import { VUIElement } from "./UIElement";
 import { UIScene } from "./UIScene";
-import { UIWindow } from "./UIWindow";
+import { UIWindowBase } from "./windows/UIWindowBase";
 
 export class UIElementFactory {
     public createUIElement(element: DElement): VUIElement {
@@ -13,7 +13,7 @@ export class UIElementFactory {
             return new UIListItem(element);
         }
         else if (element instanceof DWindow) {
-            return new UIWindow(element);
+            return new UIWindowBase(element);
         }
         throw new Error("Not implemented");
     }

@@ -35,10 +35,11 @@ export class UIText extends VUIElement {
         return this;
     }
 
-    override measureOverride(context: UIContext, constraint: VUISize): void {
+    override measureOverride(context: UIContext, constraint: VUISize): VUISize {
         const size = context.currentWindow.textSizeEx(this._text);
         const outer = this.calcContentOuter();
         this.setDesiredSize(size.width + outer.left + outer.right, size.height + outer.top + outer.bottom);
+        return this.measureBasicBoxSize();
     }
 
     override onLayoutFixed(context: UIContext, actualRect: VUIRect): void {

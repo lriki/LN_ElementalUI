@@ -210,6 +210,11 @@ export class VUIElement {
         return element;
     }
 
+    public setParent(parent: VUIElement | undefined): void {
+        assert(!this._parent);
+        this._parent = parent;
+    }
+
     public findLogicalChildByClass(className: string): VUIElement | undefined {
         if(this.design.props.class === className) {
             return this;
@@ -379,11 +384,20 @@ export class VUIElement {
     //--------------------------------------------------------------------------
     // Layout
 
-
+    /** 子要素は考慮せず、この UIElement のスタイルを元にした最小サイズ。 */
+    protected measureBasicBoxSize(): VUISize {
+        const width = this.actualStyle.width + this.actualStyle.paddingLeft + this.actualStyle.paddingRight;
+        const height = this.actualStyle.height + this.actualStyle.paddingTop + this.actualStyle.paddingBottom;
+        return { width, height };
+    }
 
     protected setDesiredSize(width: number, height: number): void {
         this._desiredWidth = width;
         this._desiredHeight = height;
+    }
+
+    public get desiredSize(): VUISize {
+        return { width: this._desiredWidth, height: this._desiredHeight };
     }
 
     public desiredWidth(): number {
@@ -394,16 +408,33 @@ export class VUIElement {
         return this._desiredHeight;
     }
 
-    public measure(context: UIContext, size: VUISize): void {
-        this.measureOverride(context, size);
+    /**
+     * この要素を表示するために必要なサイズを計測します。結果は desiredSize に格納されます。
+     * 
+     * @param context 
+     * @param availableSize 親要素が子要素を割り当てることができる使用可能な領域。
+     *                      通常、レイアウトスロットのサイズを指定します。
+     */
+    public measure(context: UIContext, availableSize: VUISize): void {
+        const marginWidth = this.actualStyle.marginLeft + this.actualStyle.marginRight;
+        const marginHeight = this.actualStyle.marginTop + this.actualStyle.marginBottom;
+
+        const width = Math.max(0.0, availableSize.width - marginWidth);
+        const height = Math.max(0.0, availableSize.height - marginHeight);
+        const size = this.measureOverride(context, {width: width, height: height});
+        
+        this.setDesiredSize(size.width + marginWidth, size.height + marginHeight);
     }
 
     /**
      * この要素を表示するために必要なサイズを計測します。
+     * 
      * @param context 
-     * @param constraint : この要素を配置できる領域の最大サイズ。通常は親要素のサイズが渡されます。
+     * @param constraint 要素を配置できる領域の最大サイズ。通常は親要素のサイズが渡されます。
+     *                   スクロール領域の場合は Inf が渡されることがあるので注意してください。
      */
-    protected measureOverride(context: UIContext, constraint: VUISize): void {
+    protected measureOverride(context: UIContext, constraint: VUISize): VUISize {
+        return this.measureBasicBoxSize();
     }
 
     /**
