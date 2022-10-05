@@ -37,7 +37,8 @@ export class UIWindow extends UIWindowBase {
 
     public addSelectableItem(item: UISelectableItem): void {
         this._itemsChildren.push(item);
-        item.setParent(item);
+        item.setParent(this);
+        item.itemIndex = this._itemsChildren.length - 1;
     }
 
     override measureOverride(context: UIContext, constraint: VUISize): VUISize {
@@ -71,6 +72,8 @@ export class UIWindow extends UIWindowBase {
     }
 
     override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
+        console.log("UIWindow.arrangeOverride", finalArea);
+
         // Arrange content.
         if (this._content) {
             this._content.arrange(context, finalArea);
@@ -83,6 +86,7 @@ export class UIWindow extends UIWindowBase {
             for (const child of this._itemsChildren) {
                 const rect = rmmzWindow.itemRect(child.itemIndex) as any;
                 child.arrange(context, { x: rect.x, y: rect.y, width: rect.width, height: rect.height });
+                console.log("arrange", child, rect);
             }
             this.setActualRect(finalArea);
             return finalArea;

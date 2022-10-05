@@ -43,6 +43,7 @@ export class UIText extends VUIElement {
     }
 
     override onLayoutFixed(context: UIContext, actualRect: VUIRect): void {
+        console.log("onLayoutFixed UIText", this);
         this.destroyResource();
         const rect = context.getRectInCurrentContaier(actualRect);
         this._bitmap = new Bitmap(rect.width, rect.height);
@@ -51,7 +52,7 @@ export class UIText extends VUIElement {
         this._sprite.y = rect.y;
         context.currentContainer.addChild(this._sprite);
 
-        this._bitmap.drawText(this._text, rect.x, rect.y, rect.width, rect.height, "left");
+        this._bitmap.drawText(this._text, 0, 0, rect.width, rect.height, "left");
     }
 
     public draw(context: UIContext): void {

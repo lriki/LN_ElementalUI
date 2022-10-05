@@ -27,6 +27,10 @@ Window_Command.prototype.refresh = function() {
     Window_Selectable.prototype.refresh.call(this);
 }
 
+const _Window_Selectable_drawAllItems = Window_Selectable.prototype.drawAllItems;
+Window_Selectable.prototype.drawAllItems = function() {
+    //_Window_Selectable_drawAllItems.call(this);
+}
 // const _Window_Command_itemWidth = Window_Command.prototype.itemWidth;
 // Window_Selectable.prototype.itemWidth = function() {
 //     return 50;

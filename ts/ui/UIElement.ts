@@ -40,8 +40,8 @@ export class UIActualStyle {
 
     x: number;
     y: number;
-    width: number;
-    height: number;
+    width: number | undefined;  // 全く指定が無ければ、 arrange の finalSize を使う。
+    height: number | undefined;
 
     windowskin: string;
     colorTone: number[];
@@ -70,8 +70,8 @@ export class UIActualStyle {
 
         this.x = 0;
         this.y = 0;
-        this.width = 0;
-        this.height = 0;
+        // this.width = 0;
+        // this.height = 0;
 
         this.windowskin = "";
         this.colorTone = [0, 0, 0, 1];
@@ -213,6 +213,10 @@ export class VUIElement {
     public setParent(parent: VUIElement | undefined): void {
         assert(!this._parent);
         this._parent = parent;
+
+        if (this._parent) {
+            this.setInvalidate(UIInvalidateFlags.All);
+        }
     }
 
     public findLogicalChildByClass(className: string): VUIElement | undefined {
@@ -386,8 +390,8 @@ export class VUIElement {
 
     /** 子要素は考慮せず、この UIElement のスタイルを元にした最小サイズ。 */
     protected measureBasicBoxSize(): VUISize {
-        const width = this.actualStyle.width + this.actualStyle.paddingLeft + this.actualStyle.paddingRight;
-        const height = this.actualStyle.height + this.actualStyle.paddingTop + this.actualStyle.paddingBottom;
+        const width = (this.actualStyle.width ?? 0) + this.actualStyle.paddingLeft + this.actualStyle.paddingRight;
+        const height = (this.actualStyle.height ?? 0) + this.actualStyle.paddingTop + this.actualStyle.paddingBottom;
         return { width, height };
     }
 

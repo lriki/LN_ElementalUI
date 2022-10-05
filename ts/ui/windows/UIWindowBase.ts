@@ -34,14 +34,14 @@ export class UIWindowBase extends VUIElement {
         this._rmmzWindow = rmmzWindow;
         rmmzWindow._flexUIWindow = this;
 
-        this._defaultRect = {
-            x: this._rmmzWindow.x,
-            y: this._rmmzWindow.y,
-            width: this._rmmzWindow.width,
-            height: this._rmmzWindow.height,
-        };
+        // this._defaultRect = {
+        //     x: this._rmmzWindow.x,
+        //     y: this._rmmzWindow.y,
+        //     width: this._rmmzWindow.width,
+        //     height: this._rmmzWindow.height,
+        // };
 
-        this.onSetRmmzRect(this.actualRect());
+        // this.onSetRmmzRect(this.actualRect());
     }
 
     override updateStyle(context: UIContext): void {

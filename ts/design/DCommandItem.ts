@@ -8,8 +8,11 @@ export interface DCommandItemProps extends DSelectableItemProps {
     /** RMMZ の Command Symbol. */
     symbol?: string;
 
+    enabled?: boolean;
+
     /** 選択時に実行するスクリプトコマンド。 */
     script?: string;
+    
 }
 
 /**

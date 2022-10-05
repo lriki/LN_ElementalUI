@@ -24,9 +24,15 @@ Window_Base.prototype.initialize = function(rect: Rectangle): void {
         if (initialRect) {
             actualRect = new Rectangle(initialRect.x, initialRect.y, initialRect.width, initialRect.height);
         }
+
     }
     
     _Window_Base_initialize.call(this, actualRect);
+    
+    // 未初期化のプロパティにアクセスしないように、 Attach は Base.initialize() の後に行う必要がある。
+    if (uiScene) {
+        uiScene.attachRmmzWindowIfNeeded(this);
+    }
 }
 
 const _Window_Base_createContents = Window_Base.prototype.createContents;

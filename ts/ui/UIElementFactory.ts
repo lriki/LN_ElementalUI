@@ -1,3 +1,4 @@
+import { DCommandWindow } from "ts/design/DCommandWindow";
 import { DElement } from "ts/design/DElement";
 import { DListItem } from "ts/design/DListItem";
 import { DWindow } from "ts/design/DWindow";
@@ -5,12 +6,16 @@ import { SceneDesign } from "ts/design/SceneDesign";
 import { UIListItem } from "./elements/UIListItem";
 import { VUIElement } from "./UIElement";
 import { UIScene } from "./UIScene";
+import { UICommandWindow } from "./windows/UICommandWindow";
 import { UIWindowBase } from "./windows/UIWindowBase";
 
 export class UIElementFactory {
     public createUIElement(element: DElement): VUIElement {
         if (element instanceof DListItem) {
             return new UIListItem(element);
+        }
+        else if (element instanceof DCommandWindow) {
+            return new UICommandWindow(element);
         }
         else if (element instanceof DWindow) {
             return new UIWindowBase(element);

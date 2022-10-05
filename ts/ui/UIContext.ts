@@ -83,6 +83,8 @@ export class UIContext {
     private layout(width: number, height: number): void {
         assert(this._owner);
 
+        console.log("========== layout begin ==========", width, height, this);
+
         this._owner.measure(
             this, {
             width: width,
@@ -96,6 +98,8 @@ export class UIContext {
 
         this._owner.updateRmmzRect();
         this._owner.unsetInvalidate(UIInvalidateFlags.Layout);
+
+        console.log("layout end", this);
     }
 
     private draw(): void {
