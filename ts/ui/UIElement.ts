@@ -4,7 +4,7 @@ import { assert } from "ts/core/Common";
 import { DElement } from "ts/design/DElement";
 import { DStyle } from "ts/design/DStyle";
 import { VUIRect, VUISize, VUIThickness } from "./UICommon";
-import { UIContext } from "./UIContext";
+import { UIContext, UISpiteLayer } from "./UIContext";
 import { UIStyle } from "./UIStyle";
 
 export enum UIVisualStates {
@@ -140,6 +140,8 @@ export class VUIElement {
     private _foregroundSprite: Sprite | undefined;
     private _backgroundBitmap: Bitmap | undefined;
     private _backgroundSprite: Sprite | undefined;
+    private _debugBitmap: Bitmap | undefined;
+    private _debugSprite: Sprite | undefined;
 
     private _visualState: UIVisualStates;
     private _invalidateFlags: UIInvalidateFlags;
@@ -605,6 +607,14 @@ export class VUIElement {
                 }
             }
             context.addSprite(this._foregroundSprite, this._backgroundSprite);
+
+            if (1) {
+                this._debugBitmap = new Bitmap(this._actualBorderBoxRect.width, this._actualBorderBoxRect.height);
+                this._debugSprite = new Sprite(this._debugBitmap);
+                this._debugBitmap.fillRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FFFF0022");
+                this._debugBitmap.strokeRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FF0000FF");
+                context.addSprite2(UISpiteLayer.Overlay, this._debugSprite);
+            }
         }
 
         
@@ -615,6 +625,10 @@ export class VUIElement {
         if (this._backgroundSprite) {
             this._backgroundSprite.x = this._actualBorderBoxRect.x;
             this._backgroundSprite.y = this._actualBorderBoxRect.y;
+        }
+        if (this._debugSprite) {
+            this._debugSprite.x = this._actualBorderBoxRect.x;
+            this._debugSprite.y = this._actualBorderBoxRect.y;
         }
     }
 

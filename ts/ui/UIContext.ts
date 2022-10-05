@@ -8,6 +8,12 @@ import { UIInvalidateFlags, VUIElement } from "./UIElement";
 import { UIFrameLayout } from "./UIFrameLayout";
 import { UIScene } from "./UIScene";
 
+export enum UISpiteLayer {
+    Background,
+    Foreground,
+    Overlay,
+}
+
 export class UIContext {
     private _window: Window_Base | undefined;
 
@@ -59,6 +65,15 @@ export class UIContext {
         else {
             if (background) this._owner.owner.addChild(background);
             if (foreground) this._owner.owner.addChild(foreground);
+        }
+    }
+    public addSprite2(layer: UISpiteLayer, sprite: Sprite): void {
+        // TODO: layer
+        if (this._window) {
+            this._window._clientArea.addChild(sprite);
+        }
+        else {
+            this._owner.owner.addChild(sprite);
         }
     }
 
