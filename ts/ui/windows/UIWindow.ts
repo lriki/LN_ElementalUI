@@ -41,6 +41,13 @@ export class UIWindow extends UIWindowBase {
         item.itemIndex = this._itemsChildren.length - 1;
     }
 
+    override updateStyle(context: UIContext): void {
+        for (const child of this._itemsChildren) {
+            child.updateStyle(context);
+        }
+        super.updateStyle(context);
+    }
+
     override measureOverride(context: UIContext, constraint: VUISize): VUISize {
         // Measure content.
         let contentAreaSize: VUISize = { width: 0, height: 0 };
@@ -72,7 +79,6 @@ export class UIWindow extends UIWindowBase {
     }
 
     override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
-        console.log("UIWindow.arrangeOverride", finalArea);
 
         // Arrange content.
         if (this._content) {
@@ -86,7 +92,6 @@ export class UIWindow extends UIWindowBase {
             for (const child of this._itemsChildren) {
                 const rect = rmmzWindow.itemRect(child.itemIndex) as any;
                 child.arrange(context, { x: rect.x, y: rect.y, width: rect.width, height: rect.height });
-                console.log("arrange", child, rect);
             }
             this.setActualRect(finalArea);
             return finalArea;

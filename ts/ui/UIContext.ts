@@ -4,7 +4,7 @@ import { DWindow } from "ts/design/DWindow";
 import { UISelectableLayout } from "./layout/UISelectableLayout";
 import { VUIRect } from "./UICommon";
 import { VUIContainer } from "./UIContainer";
-import { UIInvalidateFlags } from "./UIElement";
+import { UIInvalidateFlags, VUIElement } from "./UIElement";
 import { UIFrameLayout } from "./UIFrameLayout";
 import { UIScene } from "./UIScene";
 
@@ -14,11 +14,13 @@ export class UIContext {
     private _owner: UIScene;
     private _firstUpdate: boolean;
     private _layoutInitialing: boolean = false;
+    private _refreshRequestedVisualContents: VUIElement[];
 
     public constructor(owner: UIScene) {
         this._owner = owner;
         //this._root = new UISelectableLayout();  // TODO;
         this._firstUpdate = true;
+        this._refreshRequestedVisualContents = [];
     }
 
     public get layoutInitialing(): boolean {
@@ -40,6 +42,12 @@ export class UIContext {
     //     }
     //     return this._owner.owner;
     // }
+
+    public requestRefreshVisualContent(element: VUIElement): void {
+        if (!this._refreshRequestedVisualContents.find(x => x == element)) {
+            this._refreshRequestedVisualContents.push(element);
+        }
+    }
 
     public addSprite(foreground: Sprite | undefined, background: Sprite | undefined): void {
         if (this._window) {
@@ -71,8 +79,15 @@ export class UIContext {
             this.updateStyle();
             this.layout(width, height);
         }
-        if (this._owner.isInvalidate(UIInvalidateFlags.Visual)) {
+        if (this._owner.isInvalidate(UIInvalidateFlags.VisualContent)) {
             this.draw();
+        }
+
+        if (this._refreshRequestedVisualContents.length > 0) {
+            for (const element of this._refreshRequestedVisualContents) {
+                element.updateVisualContents(this);
+            }
+            this._refreshRequestedVisualContents = [];
         }
     }
 
@@ -109,15 +124,13 @@ export class UIContext {
 
         this._owner.updateRmmzRect();
         this._owner.unsetInvalidate(UIInvalidateFlags.Layout);
-
-        console.log("layout end", this);
     }
 
     private draw(): void {
         if (this._owner) {
             this._owner.draw(this);
             this._owner.updateRmmzRect();
-            this._owner.unsetInvalidate(UIInvalidateFlags.Visual);
+            this._owner.unsetInvalidate(UIInvalidateFlags.VisualContent);
         }
     }
 }

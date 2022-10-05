@@ -44,20 +44,6 @@ export class UIText extends VUIElement {
         return this.measureBasicBorderBoxSize();
     }
 
-    // override onLayoutFixed(context: UIContext, actualRect: VUIRect): void {
-    //     console.log("onLayoutFixed UIText", this);
-    //     this.destroyResource();
-    //     const rect = context.getRectInCurrentContaier(actualRect);
-    //     this._bitmap = new Bitmap(rect.width, rect.height);
-    //     this._sprite = new Sprite(this._bitmap);
-    //     this._sprite.x = rect.x;
-    //     this._sprite.y = rect.y;
-    //     context.addSprite(this._sprite, undefined);
-
-    //     //this._bitmap.fillRect(0, 0, rect.width, rect.height, "rgba(0, 0, 0, 0.5)");
-    //     //this._bitmap.fillRect(0, 0, rect.width, rect.height, "red");
-    //     this._bitmap.drawText(this._text, 0, 0, rect.width, rect.height, "left");
-    // }
 
     override onRefreshVisual(context: UIContext): void {
         const sprite = this.prepareForegroundSprite(context);

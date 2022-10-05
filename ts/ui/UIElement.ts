@@ -19,7 +19,7 @@ export enum UIInvalidateFlags {
     None = 0,
     Style = 1 << 1,
     Layout = 1 << 2,
-    Visual = 1 << 3,
+    VisualContent = 1 << 3,
 
     Opening = 1 << 4,
     All = 0xFFFF,
@@ -93,6 +93,18 @@ export class UIActualStyle {
         this.originY = 0;
 
         this.frameVisible = true;
+    }
+
+    public getInvalidateFlags(propertyName: string): UIInvalidateFlags {
+        switch (propertyName) {
+            case "width":
+            case "height":
+                return UIInvalidateFlags.Layout;
+            case "background":
+            case "foreground":
+                return UIInvalidateFlags.VisualContent;
+        }
+        return UIInvalidateFlags.None;
     }
 }
 
@@ -215,10 +227,19 @@ export class VUIElement {
 
     // }
 
-    public setInvalidate(flags: UIInvalidateFlags): void {
-        this._invalidateFlags |= flags;
-        if (this._parent) {
-            this._parent.setInvalidate(flags);
+    public setInvalidate(context: UIContext, flags: UIInvalidateFlags): void {
+        // Visual の変更は Sprite の再描画。
+        // 他の Sprite へ影響するものでは無いので、必要な箇所だけ変更したい。
+        if ((flags & UIInvalidateFlags.VisualContent) !== 0) {
+            flags &= ~UIInvalidateFlags.VisualContent;
+
+        }
+
+        if (this._invalidateFlags != flags) {
+            this._invalidateFlags |= flags;
+            if (this._parent) {
+                this._parent.setInvalidate(context, flags);
+            }
         }
     }
 
@@ -260,9 +281,9 @@ export class VUIElement {
         assert(!this._parent);
         this._parent = parent;
 
-        if (this._parent) {
-            this.setInvalidate(UIInvalidateFlags.All);
-        }
+        // if (this._parent) {
+        //     this.setInvalidate(UIInvalidateFlags.All);
+        // }
     }
 
     public findLogicalChildByClass(className: string): VUIElement | undefined {
@@ -327,7 +348,8 @@ export class VUIElement {
     //--------------------------------------------------------------------------
     // Style
 
-    public setValue(propertyName: string, value: number, reset: boolean): void {
+    public setValue(context: UIContext, propertyName: string, value: number, reset: boolean): void {
+
         const obj = this.actualStyle as any;
         if (reset) {
             obj[propertyName] = value;
@@ -343,33 +365,35 @@ export class VUIElement {
         if (container && transition) {
             const start = obj[propertyName] as number;
             VAnimation.startAt(container, `${this.id}.${propertyName}`, start, value, transition.duration, easing.linear, v => {
+                
                 obj[propertyName] = v;
-                this.setInvalidate(UIInvalidateFlags.Layout | UIInvalidateFlags.Visual);
+                this.setInvalidate(context, UIInvalidateFlags.Layout | UIInvalidateFlags.VisualContent);
             }, transition.delay);
         }
         else {
             obj[propertyName] = value;
         }
     }
+
     
     public applyStyle(context: UIContext, style: UIStyle, reset: boolean): void {
         style.evaluate(context, this);
         const props = style;
         //const defaultRect = this.onGetDefaultRect();
-        if (props.marginLeft) this.setValue("marginLeft", props.marginLeft, reset);
-        if (props.marginTop) this.setValue("marginTop", props.marginTop, reset);
-        if (props.marginRight) this.setValue("marginRight", props.marginRight, reset);
-        if (props.marginBottom) this.setValue("marginBottom", props.marginBottom, reset);
+        if (props.marginLeft) this.setValue(context, "marginLeft", props.marginLeft, reset);
+        if (props.marginTop) this.setValue(context, "marginTop", props.marginTop, reset);
+        if (props.marginRight) this.setValue(context, "marginRight", props.marginRight, reset);
+        if (props.marginBottom) this.setValue(context, "marginBottom", props.marginBottom, reset);
 
-        if (props.paddingLeft) this.setValue("paddingLeft", props.paddingLeft, reset);
-        if (props.paddingTop) this.setValue("paddingTop", props.paddingTop, reset);
-        if (props.paddingRight) this.setValue("paddingRight", props.paddingRight, reset);
-        if (props.paddingBottom) this.setValue("paddingBottom", props.paddingBottom, reset);
+        if (props.paddingLeft) this.setValue(context, "paddingLeft", props.paddingLeft, reset);
+        if (props.paddingTop) this.setValue(context, "paddingTop", props.paddingTop, reset);
+        if (props.paddingRight) this.setValue(context, "paddingRight", props.paddingRight, reset);
+        if (props.paddingBottom) this.setValue(context, "paddingBottom", props.paddingBottom, reset);
 
-        if (props.x) this.setValue("x", props.x, reset);
-        if (props.y) this.setValue("y", props.y, reset);
-        if (props.width) this.setValue("width", props.width, reset);
-        if (props.height) this.setValue("height", props.height, reset);
+        if (props.x) this.setValue(context, "x", props.x, reset);
+        if (props.y) this.setValue(context, "y", props.y, reset);
+        if (props.width) this.setValue(context, "width", props.width, reset);
+        if (props.height) this.setValue(context, "height", props.height, reset);
         // this.setValue("x", props.x ?? defaultRect.x, reset);
         // this.setValue("y", props.y ?? defaultRect.y, reset);
         // this.setValue("width", props.width ?? defaultRect.width, reset);
@@ -379,22 +403,22 @@ export class VUIElement {
         //if (props.windowskin) this.setValue("windowskin", props.windowskin);
         //if (props.colorTone) this.setValue("colorTone", props.colorTone);
 
-        if (props.opacity) this.setValue("opacity", props.opacity, reset);
-        if (props.backOpacity) this.setValue("backOpacity", props.backOpacity, reset);
-        if (props.contentsOpacity) this.setValue("contentsOpacity", props.contentsOpacity, reset);
+        if (props.opacity) this.setValue(context, "opacity", props.opacity, reset);
+        if (props.backOpacity) this.setValue(context, "backOpacity", props.backOpacity, reset);
+        if (props.contentsOpacity) this.setValue(context, "contentsOpacity", props.contentsOpacity, reset);
 
-        if (props.originX) this.setValue("originX", props.originX, reset);
-        if (props.originY) this.setValue("originY", props.originY, reset);
+        if (props.originX) this.setValue(context, "originX", props.originX, reset);
+        if (props.originY) this.setValue(context, "originY", props.originY, reset);
 
         //if (props.frameVisible) this.setValue("frameVisible", props.frameVisible);
     }
 
-    public setVisualState(state: UIVisualStates): void {
-        if (this._visualState == state) {
-            this._visualState = state;
-            this.setInvalidate(UIInvalidateFlags.Style);
-        }
-    }
+    // public setVisualState(state: UIVisualStates): void {
+    //     if (this._visualState == state) {
+    //         this._visualState = state;
+    //         this.setInvalidate(UIInvalidateFlags.Style);
+    //     }
+    // }
 
     public updateStyle(context: UIContext): void {
         if (this.isInvalidate(UIInvalidateFlags.Style)) {
@@ -506,26 +530,6 @@ export class VUIElement {
         this.onLayoutFixed(context, this._actualBorderBoxRect);
 
 
-        // update viual
-        {
-            if (this.isInvalidate(UIInvalidateFlags.Visual)) {
-                this.unsetInvalidate(UIInvalidateFlags.Visual);
-
-                if (this.actualStyle.background) {
-                    this.setFlags(UIElementFlags.RequireBackgroundSprite);
-                }
-                this.onRefreshVisual(context); // TODO: temp
-    
-                if (this.actualStyle.background) {
-                    const sprite = this.prepareBackgroundSprite(context);
-                    const bitmap = sprite.bitmap;
-                    assert(bitmap);
-                    bitmap.fillRect(0, 0, bitmap.width, bitmap.height, this.actualStyle.background);
-                }
-            }
-
-        }
-
         return result;
     }
 
@@ -603,6 +607,25 @@ export class VUIElement {
         this.prepareSprites(context);
         assert(this._backgroundSprite);
         return this._backgroundSprite;
+    }
+
+    public updateVisualContents(context: UIContext) {
+        
+        if (this.isInvalidate(UIInvalidateFlags.VisualContent)) {
+            this.unsetInvalidate(UIInvalidateFlags.VisualContent);
+
+            if (this.actualStyle.background) {
+                this.setFlags(UIElementFlags.RequireBackgroundSprite);
+            }
+            this.onRefreshVisual(context);
+
+            if (this.actualStyle.background) {
+                const sprite = this.prepareBackgroundSprite(context);
+                const bitmap = sprite.bitmap;
+                assert(bitmap);
+                bitmap.fillRect(0, 0, bitmap.width, bitmap.height, this.actualStyle.background);
+            }
+        }
     }
 
     protected onRefreshVisual(context: UIContext): void {

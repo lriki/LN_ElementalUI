@@ -18,14 +18,24 @@ CommandWindow({
     styles: [
         Style({
             state: "Opening",
-            x: -10,
+            x: 600,
         })
     ],
 
     //--------------------------------------------------------------------------
     // Window の内容に関する設定
     //--------------------------------------------------------------------------
-    itemTemplate: CommandItem({}),
+    itemTemplate: CommandItem({
+        transitions: [
+            Transition({property: "x", duration: 0.5, delay: 0.0, easing: "easeOutQuad"}),
+        ],
+        styles: [
+            Style({
+                state: "Opening",
+                x: -10,
+            })
+        ],
+    }),
     items: [
         CommandItem({
             text: "\\I[10]おまけ",

@@ -79,7 +79,6 @@ export class UIStyle {
             const rect = this.data.props.rect;
             if (rect instanceof DStyleScriptValue) {
                 const r = this.evalScript(rect.script, context, self) as VUIRect;
-                console.log("rect", r);
                 if (r) {
                     this.x = r.x;
                     this.y = r.y;
