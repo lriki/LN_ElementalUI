@@ -7,6 +7,6 @@ SceneManager.onSceneCreate = function() {
     // RMMZ の Window 構築は Scene の create() で行われる。
     // その内容を UIElement に反映するため、確実に構築が終わったタイミングをフックする。
     if (this._scene && this._scene._flexUIScene) {
-        this._scene._flexUIScene.syncFromAllRmmzWindowContents();
+        this._scene._flexUIScene.onSceneCreate();
     }
 };

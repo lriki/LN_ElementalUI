@@ -9,7 +9,7 @@ import { UIContext } from "../UIContext";
 export class UISelectableLayout extends VUIContainer {
 
     override measureOverride(context: UIContext, constraint: VUISize): VUISize {
-        for (const child of this.children()) {
+        for (const child of this.contentChildren()) {
             child.measure(context, constraint);
         }
         return this.measureBasicBorderBoxSize();
@@ -19,7 +19,7 @@ export class UISelectableLayout extends VUIContainer {
         const window = context.currentWindow as Window_Selectable;
         assert(window);
 
-        for (const child of this.children()) {
+        for (const child of this.contentChildren()) {
             const rect = window.itemRect(child.itemIndex) as any;
             child.arrange(context, {x: rect.x, y: rect.y, width: rect.width, height: rect.height});
         }

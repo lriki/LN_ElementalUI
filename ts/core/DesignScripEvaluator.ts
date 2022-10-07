@@ -10,8 +10,12 @@ import { DPartProps } from "ts/design/DPart";
 import { DElement, DPart } from "ts/design/DElement";
 import { DListItem, DListItemProps } from "ts/design/DListItem";
 import { DCommandItem, DCommandItemProps } from "ts/design/DCommandItem";
+import { DText, DTextProps } from "ts/design/DText";
 
 let designData: any = null;
+
+//------------------------------------------------------------------------------
+// Core
 
 function Design(data: any): void {
     designData = data;
@@ -21,14 +25,23 @@ function Scene(props: SceneProps): SceneDesign {
     return new SceneDesign(props);
 }
 
-
 function Window(props: WindowProps): DWindow {
     return new DWindow(props);
 }
 
 
 
+//------------------------------------------------------------------------------
+// Components
 
+function Text(props: DTextProps): DText {
+    return new DText(props);
+}
+
+
+
+//------------------------------------------------------------------------------
+// 
 function ContentPresenter(props: DContentPresenterProps): DContentPresenter {
     return new DContentPresenter(props);
 }

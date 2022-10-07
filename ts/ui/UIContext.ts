@@ -64,7 +64,7 @@ export class UIContext {
             if (foreground) this._window._clientArea.addChild(foreground);
         }
         else {
-            if (background) this._owner.owner.addChild(background);
+            if (background) this._owner.owner.addChildAt(background, 0);
             if (foreground) this._owner.owner.addChild(foreground);
         }
     }
@@ -104,8 +104,7 @@ export class UIContext {
         // }
 
         if (this._owner.isInvalidate(UIInvalidateFlags.ChildVisualContent)) {
-            console.log("Visual");
-            this._owner.updateVisualContents(this);
+            this._owner.updateVisualContentsHierarchical(this);
         }
 
         // if (this._refreshRequestedVisualContents.length > 0) {

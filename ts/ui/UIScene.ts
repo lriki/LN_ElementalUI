@@ -5,6 +5,7 @@ import { VUIRect } from "./UICommon";
 import { VUIContainer } from "./UIContainer";
 import { UIContext } from "./UIContext";
 import { VUIElement } from "./UIElement";
+import { UIWindow } from "./windows/UIWindow";
 import { UIWindowBase } from "./windows/UIWindowBase";
 
 export class UIScene extends VUIContainer {
@@ -62,9 +63,15 @@ export class UIScene extends VUIContainer {
         }
     }
 
-    public syncFromAllRmmzWindowContents(): void {
+    public onSceneCreate(): void {
         for (const window of this.attachedExistingWindows) {
             window._flexUIWindow?.onSyncFromRmmzWindowContents();
         }
+
+        this.traverseVisualChildren(child => {
+            if (child instanceof UIWindow) {
+                child.createRmmzWindowIfNeeded(this);
+            }
+        });
     }
 }

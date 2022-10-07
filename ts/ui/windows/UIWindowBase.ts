@@ -7,11 +7,13 @@ import { VUIContainer } from "../UIContainer";
 import { UIContext } from "../UIContext";
 import { VUIElement } from "../UIElement";
 import { UIFrameLayout } from "../UIFrameLayout";
+import { UIScene } from "../UIScene";
 import { UIHAlignment, UIVAlignment } from "../utils/UILayoutHelper";
 
-export class UIWindowBase extends VUIElement {
+export class UIWindowBase extends VUIContainer {
     private _rmmzWindow: Window_Base | undefined;
     private _defaultRect: VUIRect;
+
 
     public constructor(design: DWindow) {
         super(design);
@@ -26,6 +28,23 @@ export class UIWindowBase extends VUIElement {
             this._rmmzWindow = undefined;
         }
         super.dispose();
+    }
+
+    //--------------------------------------------------------------------------
+    // Rmmz Window integration.
+
+    public createRmmzWindowIfNeeded(scene: UIScene): void {
+        if (this._rmmzWindow) return;
+        // この rect はダミー。
+        // onLayoutFixed() で正しい値に更新される。
+        const rect = new Rectangle(0, 0, 100, 100);
+        this._rmmzWindow = this.onCreateRmmzWindow(rect);
+        this._rmmzWindow._flexUIWindow = this;
+        scene.owner.addWindow(this._rmmzWindow);
+    }
+
+    protected onCreateRmmzWindow(rect: Rectangle): Window_Base {
+        return new Window_Base(rect);
     }
 
     public get rmmzWindow(): Window_Base {
@@ -47,19 +66,10 @@ export class UIWindowBase extends VUIElement {
         assert(!rmmzWindow._flexUIWindow);
         this._rmmzWindow = rmmzWindow;
         rmmzWindow._flexUIWindow = this;
-
-        // this.actualStyle.width = rmmzWindow.width;
-        // this.actualStyle.height = rmmzWindow.height;
-
-        // this._defaultRect = {
-        //     x: this._rmmzWindow.x,
-        //     y: this._rmmzWindow.y,
-        //     width: this._rmmzWindow.width,
-        //     height: this._rmmzWindow.height,
-        // };
-
-        // this.onSetRmmzRect(this.actualRect());
     }
+
+
+    //--------------------------------------------------------------------------
 
     override _updateStyleHierarchical(context: UIContext): void {
         const oldWindow = context.changeWindow(this._rmmzWindow);
@@ -79,14 +89,19 @@ export class UIWindowBase extends VUIElement {
     }
 
     override measureOverride(context: UIContext, constraint: VUISize): VUISize {
-        this.measureOverride(context, constraint);
+        const baseSize = super.measureOverride(context, constraint);
 
-        // this の desiredSize は、 Design で指定されたサイズがあればそれを使い、そうでなければ RMMZ デフォルトのを使う。
-        const size = {
-            width: this.actualStyle.width ?? this.rmmzWindow.width,
-            height: this.actualStyle.height ?? this.rmmzWindow.height,
-        };
-        return size;
+        if (this._rmmzWindow) {
+            // this の desiredSize は、 Design で指定されたサイズがあればそれを使い、そうでなければ RMMZ デフォルトのを使う。
+            const size = {
+                width: this.actualStyle.width ?? this._rmmzWindow.width,
+                height: this.actualStyle.height ?? this._rmmzWindow.height,
+            };
+            return size;
+        }
+        else {
+            return baseSize;
+        }
     }
 
     override arrange(context: UIContext, finalArea: VUIRect): void {
@@ -154,6 +169,7 @@ export class UIWindowBase extends VUIElement {
 
     override onLayoutFixed(context: UIContext, combinedVisualRect: VUIRect): void {
         if (this._rmmzWindow) {
+            console.log("onLayoutFixed !!", this, this._rmmzWindow.width, this._rmmzWindow.height);
             this._rmmzWindow.move(combinedVisualRect.x, combinedVisualRect.y, combinedVisualRect.width, combinedVisualRect.height);
         }
     }

@@ -417,6 +417,13 @@ export class VUIElement {
         return this._visualParent;
     }
 
+    public traverseVisualChildren(callback: (element: VUIElement) => void): void {
+        for (const child of this._visualChildren) {
+            callback(child);
+            child.traverseVisualChildren(callback);
+        }
+    }
+
     //--------------------------------------------------------------------------
     // Style
 
@@ -746,7 +753,13 @@ export class VUIElement {
             }
             if (this.hasFlags(UIElementFlags.RequireBackgroundSprite)) {
                 if (!this._backgroundBitmap) {
-                    this._backgroundBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
+                    
+                    if (this.actualStyle.background) {
+                        this._backgroundBitmap = ImageManager.loadSystem(this.actualStyle.background);
+                    }
+                    else {
+                        this._backgroundBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
+                    }
                 }
                 if (!this._backgroundSprite) {
                     this._backgroundSprite = new Sprite(this._backgroundBitmap);
@@ -791,7 +804,15 @@ export class VUIElement {
         return this._backgroundSprite;
     }
 
-    public updateVisualContents(context: UIContext) {
+    
+    public updateVisualContentsHierarchical(context: UIContext) {
+        this.updateVisualContents(context);
+        for (const child of this._visualChildren) {
+            child.updateVisualContentsHierarchical(context);
+        }
+    }
+
+    private updateVisualContents(context: UIContext) {
         
         if (this.isInvalidate(UIInvalidateFlags.VisualContent)) {
             this.unsetInvalidate(UIInvalidateFlags.VisualContent);
@@ -805,7 +826,7 @@ export class VUIElement {
                 const sprite = this.prepareBackgroundSprite(context);
                 const bitmap = sprite.bitmap;
                 assert(bitmap);
-                bitmap.fillRect(0, 0, bitmap.width, bitmap.height, this.actualStyle.background);
+                //bitmap.fillRect(0, 0, bitmap.width, bitmap.height, this.actualStyle.background);
             }
         }
     }

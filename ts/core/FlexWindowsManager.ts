@@ -141,7 +141,7 @@ export class FlexWindowsManager {
                 for (const rmmzWindow of attachedExistingWindows) {
                     rmmzScene._flexUIScene.attachRmmzWindowIfNeeded(rmmzWindow);
                 };
-                rmmzScene._flexUIScene.syncFromAllRmmzWindowContents();
+                rmmzScene._flexUIScene.onSceneCreate();
             }
         }
     }

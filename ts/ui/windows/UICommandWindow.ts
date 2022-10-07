@@ -15,9 +15,11 @@ export interface RmmzCommandItem {
 }
 
 export class UICommandWindow extends UIWindow {
+    public readonly design: DCommandWindow;
 
     constructor(design: DCommandWindow) {
         super(design);
+        this.design = design;
     }
 
     override onSyncFromRmmzWindowContents(): void {

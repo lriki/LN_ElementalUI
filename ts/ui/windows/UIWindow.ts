@@ -1,5 +1,6 @@
 import { assert } from "ts/core/Common";
 import { DCommandWindow } from "ts/design/DCommandWindow";
+import { DWindow } from "ts/design/DWindow";
 import { UISelectableItem } from "../elements/UISelectableItem";
 import { VUIRect, VUISize } from "../UICommon";
 import { UIContext } from "../UIContext";
@@ -19,12 +20,12 @@ import { UIWindowBase } from "./UIWindowBase";
  * RMMZ 標準の動きとも異なるので、今はデフォルトに寄せたほうがいいだろう。
  */
 export class UIWindow extends UIWindowBase {
-    public readonly design: DCommandWindow;
+    public readonly design: DWindow;
 
-    private _content: VUIElement | undefined;
+    //private _content: VUIElement | undefined;
     private _itemsChildren: UISelectableItem[];
 
-    constructor(design: DCommandWindow) {
+    constructor(design: DWindow) {
         super(design);
         this.design = design;
         this._itemsChildren = [];
@@ -33,6 +34,10 @@ export class UIWindow extends UIWindowBase {
     override dispose(): void {
         this._itemsChildren.forEach((item) => item.dispose());
         super.dispose();
+    }
+
+    override onCreateRmmzWindow(rect: Rectangle): Window_Base {
+        return new Window_Selectable(rect);
     }
 
     public clearSelectableItems(): void {
@@ -57,10 +62,15 @@ export class UIWindow extends UIWindowBase {
     override measureOverride(context: UIContext, constraint: VUISize): VUISize {
         // Measure content.
         let contentAreaSize: VUISize = { width: 0, height: 0 };
-        if (this._content) {
-            this._content.measure(context, constraint);
-            contentAreaSize = this._content.desiredSize;
+        for (const child of this.contentChildren()) {
+            child.measure(context, constraint);
+            contentAreaSize.width = Math.max(contentAreaSize.width, child.desiredSize.width);
+            contentAreaSize.height = Math.max(contentAreaSize.height, child.desiredSize.height);
         }
+        // if (this._content) {
+        //     this._content.measure(context, constraint);
+        //     contentAreaSize = this._content.desiredSize;
+        // }
 
         // Measure items.
         let itemsAreaSize: VUISize = { width: 0, height: 0 };
@@ -85,12 +95,15 @@ export class UIWindow extends UIWindowBase {
     }
 
     protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
-
         // Arrange content.
-        if (this._content) {
-            const contentBox = { x: 0, y: 0, width: contentSize.width, height: contentSize.height };
-            this._content.arrange(context, contentBox);
+        const contentBox = { x: 0, y: 0, width: contentSize.width, height: contentSize.height };
+        for (const child of this.contentChildren()) {
+            child.arrange(context, contentBox);
         }
+        // if (this._content) {
+        //     const contentBox = { x: 0, y: 0, width: contentSize.width, height: contentSize.height };
+        //     this._content.arrange(context, contentBox);
+        // }
 
         // Arrange items.
         const rmmzWindow = context.currentWindow as Window_Selectable;
@@ -107,15 +120,15 @@ export class UIWindow extends UIWindowBase {
         }
     }
 
-    override updateVisualContents(context: UIContext) {
+    override updateVisualContentsHierarchical(context: UIContext) {
         const oldWindow = context.changeWindow(this.rmmzWindow);
-        if (this.isInvalidate(UIInvalidateFlags.ChildVisualContent)) {
-            this.unsetInvalidate(UIInvalidateFlags.ChildVisualContent);
-            for (const child of this._itemsChildren) {
-                child.updateVisualContents(context);
-            }
-        }
-        super.updateVisualContents(context);
+        // if (this.isInvalidate(UIInvalidateFlags.ChildVisualContent)) {
+        //     this.unsetInvalidate(UIInvalidateFlags.ChildVisualContent);
+        //     for (const child of this._itemsChildren) {
+        //         child.updateVisualContents(context);
+        //     }
+        // }
+        super.updateVisualContentsHierarchical(context);
         context.changeWindow(oldWindow);
     }
 }

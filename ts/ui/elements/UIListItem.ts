@@ -26,7 +26,7 @@ export class UIListItem extends VUIContainer {
         const window = context.currentWindow as Window_Selectable;
         assert(window);
         
-        for (const child of this.children()) {
+        for (const child of this.contentChildren()) {
             const rect = window.itemLineRect(this.itemIndex) as any;
             child.arrange(context, rect);
         }

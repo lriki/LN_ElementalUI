@@ -26,7 +26,7 @@ Window_Base.prototype.initialize = function(rect: Rectangle): void {
         }
 
     }
-    
+
     _Window_Base_initialize.call(this, actualRect);
     
     // 未初期化のプロパティにアクセスしないように、 Attach は Base.initialize() の後に行う必要がある。
