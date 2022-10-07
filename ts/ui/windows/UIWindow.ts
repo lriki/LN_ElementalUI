@@ -83,11 +83,12 @@ export class UIWindow extends UIWindowBase {
             height: Math.max(boxSize.height, contentAreaSize.height, itemsAreaSize.height) };
     }
 
-    override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
+    protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
 
         // Arrange content.
         if (this._content) {
-            this._content.arrange(context, finalArea);
+            const contentBox = { x: 0, y: 0, width: contentSize.width, height: contentSize.height };
+            this._content.arrange(context, contentBox);
         }
 
         // Arrange items.
@@ -98,8 +99,7 @@ export class UIWindow extends UIWindowBase {
                 const rect = rmmzWindow.itemRect(child.itemIndex) as any;
                 child.arrange(context, { x: rect.x, y: rect.y, width: rect.width, height: rect.height });
             }
-            this.setActualRect(finalArea);
-            return finalArea;
+            return contentSize;
         }
         else {
             throw new Error("Not implemented");

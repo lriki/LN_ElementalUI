@@ -56,11 +56,12 @@ export class VUIContainer extends VUIElement {
         return this.measureBasicBorderBoxSize();
     }
 
-    override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
+    protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
+        const contentBox = {x: 0, y: 0, width: contentSize.width, height: contentSize.height};
         for (const child of this._children) {
-            child.arrange(context, finalArea);
+            child.arrange(context, contentBox);
         }
-        return super.arrangeOverride(context, finalArea);
+        return super.arrangeOverride(context, contentBox);
     }
 
     override updateRmmzRect(): void {

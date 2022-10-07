@@ -6,6 +6,7 @@ import { DStyle } from "ts/design/DStyle";
 import { VUIRect, VUISize, VUIThickness } from "./UICommon";
 import { UIContext, UISpiteLayer } from "./UIContext";
 import { UIStyle } from "./UIStyle";
+import { UIHAlignment, UILayoutHelper, UIVAlignment } from "./utils/UILayoutHelper";
 
 export enum UIVisualStates {
     Default = "Default",
@@ -512,6 +513,15 @@ export class VUIElement {
      * @param context 
      * @param availableSize 親要素が子要素を割り当てることができる使用可能な領域。
      *                      通常、レイアウトスロットのサイズを指定します。
+     * 
+     * Box Model
+     * ----------
+     * UIElement の Box-Model は、 CSS の border-box 相当です。
+     * つまり次のようになります。
+     * - width、height プロパティで指定できる領域に padding + border 領域を含める。
+     * - width、height プロパティで指定できる領域には、margin 領域は含めない。
+     * これは、本プラグインの重要なコンセプトのひとつの「コンテンツ領域外のウィンドウの装飾が簡単にできること」を実現するためです。
+     * すなわち、何らかの描画が行われる領域の左上が、コンテンツ(子要素)の原点となります。
      */
     public measure(context: UIContext, availableSize: VUISize): void {
         const marginWidth = this.actualStyle.marginLeft + this.actualStyle.marginRight;
@@ -541,25 +551,50 @@ export class VUIElement {
      * @param finalArea 親要素のローカル座標において、 親要素がこの要素に対して割り当てた領域のサイズ（レイアウトスロットの Rect）
      * @returns 
      */
-    public arrange(context: UIContext, finalArea: VUIRect): VUIRect {
-        const width = this.actualStyle.width ?? finalArea.width;
-        const height = this.actualStyle.height ?? finalArea.height;
+    public arrange(context: UIContext, finalArea: VUIRect): void {
+        // https://developer.mozilla.org/ja/docs/Learn/CSS/Building_blocks/The_box_model#%E3%83%9C%E3%83%83%E3%82%AF%E3%82%B9%E3%81%AE%E6%A7%8B%E6%88%90
+        // const localMarginBox = {
+        //     x: finalArea.x + this.actualStyle.marginLeft,
+        //     y: finalArea.y + this.actualStyle.marginTop,
+        //     width: finalArea.width - this.actualStyle.marginLeft - this.actualStyle.marginRight,
+        //     height: finalArea.height - this.actualStyle.marginTop - this.actualStyle.marginBottom,
+        // };
 
-        const rect: VUIRect = {
-            x: finalArea.x + this._margin.left,
-            y: finalArea.y + this._margin.top,
-            width: width - this._margin.left - this._margin.right,
-            height: height - this._margin.top - this._margin.bottom};
-        const result = this.arrangeOverride(context, rect);
+        assert(!Number.isNaN(this._desiredWidth));
+        assert(!Number.isNaN(this._desiredHeight));
+
+        // width/height が直接指定されていれば、desiredSize は最低でもその分の大きさがなければならない。
+        if (this.actualStyle.width !== undefined) {
+            assert(this._desiredWidth >= this.actualStyle.width);
+        }
+        if (this.actualStyle.height !== undefined) {
+            assert(this._desiredHeight >= this.actualStyle.height);
+        }
+
+        const marginWidth = this.actualStyle.marginRight - this.actualStyle.marginLeft;
+        const marginHeight = this.actualStyle.marginBottom - this.actualStyle.marginTop;
+        
+        // CSS の border-box 相当なので、一番外側 (margin-box) のサイズ計算はこんな感じ。
+        const marginBoxWidthOrUndefined = (this.actualStyle.width === undefined) ? undefined : this._desiredWidth + marginWidth;
+        const marginBoxHeightOrUndefined = (this.actualStyle.height === undefined) ? undefined : this._desiredHeight + marginHeight;
+
+        // TODO:
+        const marginBox: VUIRect = { x: 0, y: 0, width: 0, height: 0 };
+        UILayoutHelper.adjustHorizontalAlignment(finalArea.width, this._desiredWidth, marginBoxWidthOrUndefined, UIHAlignment.Center, marginBox);
+        UILayoutHelper.adjustVerticalAlignment(finalArea.height, this._desiredHeight, marginBoxHeightOrUndefined, UIVAlignment.Center, marginBox);
+
+        const contentArea: VUISize = {
+            width: marginBox.width - marginWidth,
+            height: marginBox.height - marginHeight};
+        const result = this.arrangeOverride(context, contentArea);
+
+        this.setActualRect({ x: 0, y: 0, width: result.width, height: result.height });
         this.onLayoutFixed(context, this._actualBorderBoxRect);
-
-
-        return result;
     }
 
-    protected arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
-        this.setActualRect(finalArea);
-        return finalArea;
+    protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
+        this.setActualRect({x: 0, y: 0, width: contentSize.width, height: contentSize.height});
+        return contentSize;
     }
 
     protected setActualRect(rect: VUIRect): void {
@@ -571,6 +606,16 @@ export class VUIElement {
 
     public actualRect(): VUIRect{
         return this._actualBorderBoxRect;
+    }
+
+    /**
+     * updateCombinedVisualRect
+     * 
+     * visualRect とは、この要素の描画領域を表す矩形。CSS の border-box 相当 では BorderBox.
+     * CombinedVisualRect は、実際に RMMZ の Window や Sprite に適用できる Rect.
+     * つまり、直近の親 PIXI.Container のローカル座標系内の Rect となる。
+     */
+    public updateCombinedVisualRect(parentCombinedVisualRect: VUIRect): void {
     }
 
     public updateRmmzRect(): void {

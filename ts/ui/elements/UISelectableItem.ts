@@ -2,7 +2,7 @@ import { assert } from "ts/core/Common";
 import { DListItem } from "ts/design/DListItem";
 import { DSelectableItem } from "ts/design/DSelectableItem";
 import { DText } from "ts/design/DText";
-import { VUIRect } from "../UICommon";
+import { VUIRect, VUISize } from "../UICommon";
 import { VUIContainer } from "../UIContainer";
 import { UIContext } from "../UIContext";
 import { UIText } from "./UIText";
@@ -23,7 +23,7 @@ export class UISelectableItem extends VUIContainer {
         // }
     }
     
-    override arrangeOverride(context: UIContext, finalArea: VUIRect): VUIRect {
+    protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
         const window = context.currentWindow as Window_Selectable;
         assert(window);
         
@@ -31,8 +31,7 @@ export class UISelectableItem extends VUIContainer {
             const rect = window.itemLineRect(this.itemIndex) as any;
             child.arrange(context, rect);
         }
-        super.setActualRect(finalArea);
-        return finalArea;
+        return contentSize;
     }
     
 }

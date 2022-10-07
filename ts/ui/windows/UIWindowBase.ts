@@ -72,17 +72,15 @@ export class UIWindowBase extends VUIElement {
         }
     }
 
-    override arrange(context: UIContext, finalArea: VUIRect): VUIRect {
+    override arrange(context: UIContext, finalArea: VUIRect): void {
         if (context.layoutInitialing) {
             // 子要素の arrange 不要
             this.setActualRect(finalArea);
-            return finalArea;
         }
         else {
             const oldWindow = context.changeWindow(this._rmmzWindow);
             const result = super.arrange(context, finalArea);
             context.changeWindow(oldWindow);
-            return result;
         }
     }
     
