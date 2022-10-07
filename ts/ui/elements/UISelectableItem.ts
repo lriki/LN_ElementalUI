@@ -23,15 +23,15 @@ export class UISelectableItem extends VUIContainer {
         // }
     }
     
-    protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
-        const window = context.currentWindow as Window_Selectable;
-        assert(window);
+    // protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
+    //     const window = context.currentWindow as Window_Selectable;
+    //     assert(window);
         
-        for (const child of this.children()) {
-            const rect = window.itemLineRect(this.itemIndex) as any;
-            child.arrange(context, rect);
-        }
-        return contentSize;
-    }
+    //     for (const child of this.children()) {
+    //         const rect = window.itemLineRect(this.itemIndex) as any;
+    //         child.arrange(context, rect);
+    //     }
+    //     return contentSize;
+    // }
     
 }

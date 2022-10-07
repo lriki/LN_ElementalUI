@@ -49,6 +49,11 @@ export class UIActualStyle {
     marginRight: number;
     marginBottom: number;
 
+    borderLeft: number;
+    borderTop: number;
+    borderRight: number;
+    borderBottom: number;
+
     paddingLeft: number;
     paddingTop: number;
     paddingRight: number;
@@ -75,11 +80,19 @@ export class UIActualStyle {
     // Window.frameVisible
     frameVisible: boolean;
 
+    defaultHorizontalAlignment: UIHAlignment = UIHAlignment.Stretch;
+    defaultVerticalAlignment: UIVAlignment = UIVAlignment.Stretch;
+
     public constructor() {
         this.marginLeft = 0;
         this.marginTop = 0;
         this.marginRight = 0;
         this.marginBottom = 0;
+
+        this.borderLeft = 0;
+        this.borderTop = 0;
+        this.borderRight = 0;
+        this.borderBottom = 0;
 
         this.paddingLeft = 0;
         this.paddingTop = 0;
@@ -104,6 +117,16 @@ export class UIActualStyle {
         this.frameVisible = true;
     }
 
+    public get marginWidth(): number { return this.marginLeft + this.marginRight; }
+    public get marginHeight(): number { return this.marginTop + this.marginBottom; }
+    public get borderWidth(): number { return this.borderLeft + this.borderRight; }
+    public get borderHeight(): number { return this.borderTop + this.borderBottom; }
+    public get paddingWidth(): number { return this.paddingLeft + this.paddingRight; }
+    public get paddingHeight(): number { return this.paddingTop + this.paddingBottom; }
+    
+    public getHorizontalAlignment(): UIHAlignment { return this.defaultHorizontalAlignment; }
+    public getVerticalAlignment(): UIVAlignment { return this.defaultVerticalAlignment; }
+
     public getInvalidateFlags(propertyName: string): UIInvalidateFlags {
         switch (propertyName) {
             case "x":
@@ -119,7 +142,22 @@ export class UIActualStyle {
     }
 }
 
-
+/**
+ * 
+ * Box Model
+ * ----------
+ * UIElement の Box-Model は、 CSS の border-box 相当です。
+ * つまり次のようになります。
+ * - width、height プロパティで指定できる領域に padding + border 領域を含める。
+ * - width、height プロパティで指定できる領域には、margin 領域は含めない。
+ * これは、本プラグインの重要なコンセプトのひとつの「コンテンツ領域外のウィンドウの装飾が簡単にできること」を実現するためです。
+ * すなわち、何らかの描画が行われる領域の左上が、コンテンツ(子要素)の原点となります。
+ * 
+ * desiredSize
+ * ----------
+ * desiredSize は、子要素のサイズを考慮した、この要素の理想的なレイアウトサイズです。
+ * 設定に関わらず、常に MerginBox と等しくなります。
+ */
 export class VUIElement {
     public readonly design: DElement;
     public readonly id: number;
@@ -128,7 +166,8 @@ export class VUIElement {
     private _padding: VUIThickness;
     private _desiredWidth: number;
     private _desiredHeight: number;
-    private _actualBorderBoxRect: VUIRect;   // margin は含まない
+    private _actualMarginBoxRect: VUIRect;   // 親の ClientArea 内での MarinBox. レイアウトスロット内ではない点に注意。
+    private _combinedVisualRect: VUIRect;
     public itemIndex: number;
     // private _actualWidth: number;
     // private _actualHeight: number;
@@ -144,6 +183,8 @@ export class VUIElement {
     private _debugBitmap: Bitmap | undefined;
     private _debugSprite: Sprite | undefined;
 
+    private _visualChildren: VUIElement[];
+    private _visualParent: VUIElement | undefined;
     private _visualState: UIVisualStates;
     private _invalidateFlags: UIInvalidateFlags;
     private _flags: UIElementFlags;
@@ -176,12 +217,8 @@ export class VUIElement {
         };
         this._desiredWidth = 0;
         this._desiredHeight = 0;
-        this._actualBorderBoxRect = {
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0,
-        };
+        this._actualMarginBoxRect = { x: 0, y: 0, width: 0, height: 0 };
+        this._combinedVisualRect = { x: 0, y: 0, width: 0, height: 0 };
         // this._actualWidth = 0;
         // this._actualHeight = 0;t
         this.itemIndex = 0;
@@ -203,6 +240,7 @@ export class VUIElement {
         this._invalidateFlags = UIInvalidateFlags.All;
         this._flags = UIElementFlags.None;
 
+        this._visualChildren = [];
         this._visualState = UIVisualStates.Default;
         // 最初は opening で設定し、次の update 時に default が適用されるようにする
         // if (this.applyStyleByName("Opening", true)) {
@@ -251,12 +289,9 @@ export class VUIElement {
         if (this._invalidateFlags != flags) {
             this._invalidateFlags |= flags;
 
-            console.log("_invalidateFlags", this._invalidateFlags);
-
             const newRoutingFlags = this._invalidateFlags & UIInvalidateFlags.Routing;
             if (oldRoutingFlags != newRoutingFlags) {
                 if (this._parent) {
-                    console.log("_parent", newRoutingFlags);
                     this._parent.setInvalidate(newRoutingFlags);
                 }
             }
@@ -366,6 +401,23 @@ export class VUIElement {
     // }
 
     //--------------------------------------------------------------------------
+    // Visual tree
+
+    public addVisualChild(element: VUIElement): void {
+        assert(!element._visualParent);
+        this._visualChildren.push(element);
+        element._visualParent = this;
+    }
+
+    public get visualChildren(): readonly VUIElement[] {
+        return this._visualChildren;
+    }
+
+    public get visualParent(): VUIElement | undefined {
+        return this._visualParent;
+    }
+
+    //--------------------------------------------------------------------------
     // Style
 
     public setValue(context: UIContext, propertyName: string, value: number, reset: boolean): void {
@@ -445,7 +497,14 @@ export class VUIElement {
     //     }
     // }
 
-    public updateStyle(context: UIContext): void {
+    public _updateStyleHierarchical(context: UIContext): void {
+        this.updateStyle(context);
+        for (const child of this._visualChildren) {
+            child._updateStyleHierarchical(context);
+        }
+    }
+
+    private updateStyle(context: UIContext): void {
         if (this.isInvalidate(UIInvalidateFlags.Style)) {
             this.unsetInvalidate(UIInvalidateFlags.Style);
             this.applyStyleByName(context, this._visualState, false);
@@ -514,24 +573,22 @@ export class VUIElement {
      * @param availableSize 親要素が子要素を割り当てることができる使用可能な領域。
      *                      通常、レイアウトスロットのサイズを指定します。
      * 
-     * Box Model
-     * ----------
-     * UIElement の Box-Model は、 CSS の border-box 相当です。
-     * つまり次のようになります。
-     * - width、height プロパティで指定できる領域に padding + border 領域を含める。
-     * - width、height プロパティで指定できる領域には、margin 領域は含めない。
-     * これは、本プラグインの重要なコンセプトのひとつの「コンテンツ領域外のウィンドウの装飾が簡単にできること」を実現するためです。
-     * すなわち、何らかの描画が行われる領域の左上が、コンテンツ(子要素)の原点となります。
      */
     public measure(context: UIContext, availableSize: VUISize): void {
-        const marginWidth = this.actualStyle.marginLeft + this.actualStyle.marginRight;
-        const marginHeight = this.actualStyle.marginTop + this.actualStyle.marginBottom;
+        const marginWidth = this.actualStyle.marginWidth;
+        const marginHeight = this.actualStyle.marginHeight;
+        const borderWidth = this.actualStyle.borderWidth;
+        const borderHeight = this.actualStyle.borderHeight;
+        const paddingWidth = this.actualStyle.paddingWidth;
+        const paddingHeight = this.actualStyle.paddingHeight;
 
         const width = Math.max(0.0, availableSize.width - marginWidth);
         const height = Math.max(0.0, availableSize.height - marginHeight);
-        const size = this.measureOverride(context, {width: width, height: height});
+        const contentSize = this.measureOverride(context, {width: width, height: height});
         
-        this.setDesiredSize(size.width + marginWidth, size.height + marginHeight);
+        this.setDesiredSize(
+            contentSize.width + marginWidth + borderWidth + paddingWidth,
+            contentSize.height + marginHeight + borderHeight + paddingHeight);
     }
 
     /**
@@ -540,6 +597,7 @@ export class VUIElement {
      * @param context 
      * @param constraint 要素を配置できる領域の最大サイズ。通常は親要素のサイズが渡されます。
      *                   スクロール領域の場合は Inf が渡されることがあるので注意してください。
+     * @returns ContentBox のサイズ。
      */
     protected measureOverride(context: UIContext, constraint: VUISize): VUISize {
         return this.measureBasicBorderBoxSize();
@@ -580,32 +638,40 @@ export class VUIElement {
 
         // TODO:
         const marginBox: VUIRect = { x: 0, y: 0, width: 0, height: 0 };
-        UILayoutHelper.adjustHorizontalAlignment(finalArea.width, this._desiredWidth, marginBoxWidthOrUndefined, UIHAlignment.Center, marginBox);
-        UILayoutHelper.adjustVerticalAlignment(finalArea.height, this._desiredHeight, marginBoxHeightOrUndefined, UIVAlignment.Center, marginBox);
+        UILayoutHelper.adjustHorizontalAlignment(
+            finalArea.width,
+            this._desiredWidth,
+            marginBoxWidthOrUndefined,
+            this.actualStyle.getHorizontalAlignment(),
+            marginBox);
+        UILayoutHelper.adjustVerticalAlignment(
+            finalArea.height,
+            this._desiredHeight,
+            marginBoxHeightOrUndefined,
+            this.actualStyle.getVerticalAlignment(),
+            marginBox);
 
         const contentArea: VUISize = {
             width: marginBox.width - marginWidth,
             height: marginBox.height - marginHeight};
         const result = this.arrangeOverride(context, contentArea);
 
-        this.setActualRect({ x: 0, y: 0, width: result.width, height: result.height });
-        this.onLayoutFixed(context, this._actualBorderBoxRect);
+        this.setActualRect({ x: finalArea.x + marginBox.x, y: finalArea .y + marginBox.y, width: result.width, height: result.height });
     }
 
     protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
-        this.setActualRect({x: 0, y: 0, width: contentSize.width, height: contentSize.height});
+        //this.setActualRect({x: 0, y: 0, width: contentSize.width, height: contentSize.height});
         return contentSize;
     }
 
     protected setActualRect(rect: VUIRect): void {
-        this._actualBorderBoxRect = {...rect};
-        this._actualBorderBoxRect.x += this.actualStyle.x;
-        this._actualBorderBoxRect.y += this.actualStyle.y;
-        this.unsetInvalidate(UIInvalidateFlags.Layout);
+        this._actualMarginBoxRect = {...rect};
+        this._actualMarginBoxRect.x += this.actualStyle.x;
+        this._actualMarginBoxRect.y += this.actualStyle.y;
     }
 
     public actualRect(): VUIRect{
-        return this._actualBorderBoxRect;
+        return this._actualMarginBoxRect;
     }
 
     /**
@@ -615,17 +681,52 @@ export class VUIElement {
      * CombinedVisualRect は、実際に RMMZ の Window や Sprite に適用できる Rect.
      * つまり、直近の親 PIXI.Container のローカル座標系内の Rect となる。
      */
-    public updateCombinedVisualRect(parentCombinedVisualRect: VUIRect): void {
+    public updateCombinedVisualRectHierarchical(context: UIContext, parentCombinedVisualRect: VUIRect): void {
+        //this._combinedVisualRect = this.updateCombinedVisualRectOverride(context, parentCombinedVisualRect);
+        this.updateCombinedVisualRect(context, parentCombinedVisualRect);
+        for (const child of this._visualChildren) {
+            child.updateCombinedVisualRectHierarchical(context, this._combinedVisualRect);
+        }
+    }
+    
+    protected updateCombinedVisualRect(context: UIContext, parentCombinedVisualRect: VUIRect): void {
+        this._combinedVisualRect.x = parentCombinedVisualRect.x + this._actualMarginBoxRect.x;
+        this._combinedVisualRect.y = parentCombinedVisualRect.y + this._actualMarginBoxRect.y;
+        this._combinedVisualRect.width = this._actualMarginBoxRect.width;
+        this._combinedVisualRect.height = this._actualMarginBoxRect.height;
+
+        this.unsetInvalidate(UIInvalidateFlags.Layout);
+        this.onLayoutFixed(context, this._combinedVisualRect);
     }
 
-    public updateRmmzRect(): void {
-        this.onSetRmmzRect(this._actualBorderBoxRect);
+    protected getCombinedVisualRect(): VUIRect {
+        return this._combinedVisualRect;
     }
 
-    protected onSetRmmzRect(actualRect: VUIRect): void {
+    protected setCombinedVisualRect(rect: VUIRect): void {
+        this._combinedVisualRect = rect;
     }
 
-    protected onLayoutFixed(context: UIContext,actualRect: VUIRect): void {
+    // protected updateCombinedVisualRectOverride(context: UIContext, parentCombinedVisualRect: VUIRect): VUIRect {
+    //     return {
+    //         x: parentCombinedVisualRect.x + this._actualBorderBoxRect.x,
+    //         y: parentCombinedVisualRect.y + this._actualBorderBoxRect.y,
+    //         width: this._actualBorderBoxRect.width,
+    //         height: this._actualBorderBoxRect.height,
+    //     };
+    //     // this._combinedVisualRect.x = parentCombinedVisualRect.x + this._actualBorderBoxRect.x;
+    //     // this._combinedVisualRect.y = parentCombinedVisualRect.y + this._actualBorderBoxRect.y;
+    //     // this._combinedVisualRect.width = this._actualBorderBoxRect.width;
+    //     // this._combinedVisualRect.height = this._actualBorderBoxRect.height;
+    // }
+    // public updateRmmzRect(): void {
+    //     this.onSetRmmzRect(this._actualBorderBoxRect);
+    // }
+
+    // protected onSetRmmzRect(actualRect: VUIRect): void {
+    // }
+
+    protected onLayoutFixed(context: UIContext, combinedVisualRect: VUIRect): void {
 
     }
 
@@ -637,7 +738,7 @@ export class VUIElement {
             this.setFlags(UIElementFlags.ReadySprites);
             if (this.hasFlags(UIElementFlags.RequireForegroundSprite)) {
                 if (!this._foregroundBitmap) {
-                    this._foregroundBitmap = new Bitmap(this._actualBorderBoxRect.width, this._actualBorderBoxRect.height);
+                    this._foregroundBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
                 }
                 if (!this._foregroundSprite) {
                     this._foregroundSprite = new Sprite(this._foregroundBitmap);
@@ -645,7 +746,7 @@ export class VUIElement {
             }
             if (this.hasFlags(UIElementFlags.RequireBackgroundSprite)) {
                 if (!this._backgroundBitmap) {
-                    this._backgroundBitmap = new Bitmap(this._actualBorderBoxRect.width, this._actualBorderBoxRect.height);
+                    this._backgroundBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
                 }
                 if (!this._backgroundSprite) {
                     this._backgroundSprite = new Sprite(this._backgroundBitmap);
@@ -654,26 +755,25 @@ export class VUIElement {
             context.addSprite(this._foregroundSprite, this._backgroundSprite);
 
             if (1) {
-                this._debugBitmap = new Bitmap(this._actualBorderBoxRect.width, this._actualBorderBoxRect.height);
+                this._debugBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
                 this._debugSprite = new Sprite(this._debugBitmap);
                 this._debugBitmap.fillRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FFFF0022");
                 this._debugBitmap.strokeRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FF0000FF");
                 context.addSprite2(UISpiteLayer.Overlay, this._debugSprite);
             }
         }
-
         
         if (this._foregroundSprite) {
-            this._foregroundSprite.x = this._actualBorderBoxRect.x;
-            this._foregroundSprite.y = this._actualBorderBoxRect.y;
+            this._foregroundSprite.x = this._combinedVisualRect.x;
+            this._foregroundSprite.y = this._combinedVisualRect.y;
         }
         if (this._backgroundSprite) {
-            this._backgroundSprite.x = this._actualBorderBoxRect.x;
-            this._backgroundSprite.y = this._actualBorderBoxRect.y;
+            this._backgroundSprite.x = this._combinedVisualRect.x;
+            this._backgroundSprite.y = this._combinedVisualRect.y;
         }
         if (this._debugSprite) {
-            this._debugSprite.x = this._actualBorderBoxRect.x;
-            this._debugSprite.y = this._actualBorderBoxRect.y;
+            this._debugSprite.x = this._combinedVisualRect.x;
+            this._debugSprite.y = this._combinedVisualRect.y;
         }
     }
 

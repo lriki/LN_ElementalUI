@@ -3,6 +3,7 @@ import { DText } from "ts/design/DText";
 import { VUIRect, VUISize } from "../UICommon";
 import { UIContext } from "../UIContext";
 import { UIElementFlags, VUIElement } from "../UIElement";
+import { UIHAlignment, UIVAlignment } from "../utils/UILayoutHelper";
 
 export class UIText extends VUIElement {
     private _text: string;
@@ -12,6 +13,8 @@ export class UIText extends VUIElement {
     
     public constructor(design: DText) {
         super(design);
+        this.actualStyle.defaultHorizontalAlignment = UIHAlignment.Center;
+        this.actualStyle.defaultVerticalAlignment = UIVAlignment.Center;
         this._text = design.text;
         this.setFlags(UIElementFlags.RequireForegroundSprite);
     }
@@ -38,10 +41,25 @@ export class UIText extends VUIElement {
     }
 
     override measureOverride(context: UIContext, constraint: VUISize): VUISize {
-        const size = context.currentWindow.textSizeEx(this._text);
+        //const size = context.currentWindow.textSizeEx(this._text);
+
+        context.currentWindow.resetFontSettings();
+
+        const wi = context.currentWindow.textWidth(this._text);
+        const metrics = context.currentWindow.contents.context.measureText(this._text);
+
+        const size: VUISize = {
+            width: context.currentWindow.textWidth(this._text),
+            //width: metrics.width,
+            height: context.currentWindow.lineHeight() };
+        // height は metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent でも取得できるが、
+        // フォントによっては見切れてしまうことがある。
+        // やむをえず、やや大きめにはなるが確実な lineHeight を使う。
+
+        console.log("UIText.measureOverride", this._text, size, wi);
         const outer = this.calcContentOuter();
-        this.setDesiredSize(size.width + outer.left + outer.right, size.height + outer.top + outer.bottom);
-        return this.measureBasicBorderBoxSize();
+        //this.setDesiredSize(size.width + outer.left + outer.right, size.height + outer.top + outer.bottom);
+        return size;
     }
 
 
@@ -50,7 +68,16 @@ export class UIText extends VUIElement {
         const bitmap = sprite.bitmap;
         assert(bitmap);
         bitmap.clear();
-        bitmap.drawText(this._text, 0, 0, bitmap.width, bitmap.height, "left");
+
+        const oldContents = context.currentWindow.contents;
+        context.currentWindow.contents = bitmap;
+
+        
+        context.currentWindow.resetFontSettings();
+        //bitmap.drawText(this._text, 0, 0, bitmap.width, bitmap.height, "center");
+        context.currentWindow.drawTextEx(this._text, 0, 0, bitmap.width);
+
+        context.currentWindow.contents = oldContents;
     }
 
     public draw(context: UIContext): void {

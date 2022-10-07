@@ -21,6 +21,7 @@ export class VUIContainer extends VUIElement {
         element.itemIndex = this._children.length;
         this._children.push(element);
         element._parent = this;
+        this.addVisualChild(element);
         return element;
     }
 
@@ -42,12 +43,12 @@ export class VUIContainer extends VUIElement {
         return undefined;
     }
 
-    override updateStyle(context: UIContext): void {
-        for (const child of this._children) {
-            child.updateStyle(context);
-        }
-        super.updateStyle(context);
-    }
+    // override updateStyle(context: UIContext): void {
+    //     for (const child of this._children) {
+    //         child.updateStyle(context);
+    //     }
+    //     super.updateStyle(context);
+    // }
 
     override measureOverride(context: UIContext, constraint: VUISize): VUISize {
         for (const child of this._children) {
@@ -64,12 +65,12 @@ export class VUIContainer extends VUIElement {
         return super.arrangeOverride(context, contentBox);
     }
 
-    override updateRmmzRect(): void {
-        super.updateRmmzRect();
-        for (const child of this._children) {
-            child.updateRmmzRect();
-        }
-    }
+    // override updateRmmzRect(): void {
+    //     super.updateRmmzRect();
+    //     for (const child of this._children) {
+    //         child.updateRmmzRect();
+    //     }
+    // }
 
     override updateVisualContents(context: UIContext) {
         if (this.isInvalidate(UIInvalidateFlags.ChildVisualContent)) {

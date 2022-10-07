@@ -44,14 +44,15 @@ export class UIWindow extends UIWindowBase {
         this._itemsChildren.push(item);
         item.setParent(this);
         item.itemIndex = this._itemsChildren.length - 1;
+        this.addVisualChild(item);
     }
 
-    override updateStyle(context: UIContext): void {
-        for (const child of this._itemsChildren) {
-            child.updateStyle(context);
-        }
-        super.updateStyle(context);
-    }
+    // override updateStyle(context: UIContext): void {
+    //     for (const child of this._itemsChildren) {
+    //         child.updateStyle(context);
+    //     }
+    //     super.updateStyle(context);
+    // }
 
     override measureOverride(context: UIContext, constraint: VUISize): VUISize {
         // Measure content.

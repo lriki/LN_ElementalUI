@@ -42,7 +42,8 @@ export class UIContext {
         return this._window;
     }
 
-
+    // public get rmmzSpriteOffset(): Window_Base | undefined {
+    // }
 
     // public get currentContainer(): PIXI.Container {
     //     if (this._window) {
@@ -93,7 +94,7 @@ export class UIContext {
             this._firstUpdate = false;
         }
         if (this._owner.isInvalidate(UIInvalidateFlags.Style)) {
-            this._owner.updateStyle(this);
+            this._owner._updateStyleHierarchical(this);
         }
         if (this._owner.isInvalidate(UIInvalidateFlags.Layout)) {
             this.layout(width, height);
@@ -142,14 +143,15 @@ export class UIContext {
             width: width,
             height: height });
 
-        this._owner.updateRmmzRect();
+        this._owner.updateCombinedVisualRectHierarchical(this, { x: 0, y: 0, width: width, height: height });
+        //this._owner.updateRmmzRect();
         this._owner.unsetInvalidate(UIInvalidateFlags.Layout);
     }
 
     private draw(): void {
         if (this._owner) {
             this._owner.draw(this);
-            this._owner.updateRmmzRect();
+            //this._owner.updateRmmzRect();
             this._owner.unsetInvalidate(UIInvalidateFlags.VisualContent);
         }
     }
