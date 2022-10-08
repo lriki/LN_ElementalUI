@@ -1,6 +1,5 @@
 
 import { DContentPresenter, DContentPresenterProps } from "ts/design/DContentPresenter";
-import { UIScene } from "ts/ui/UIScene";
 import { DStyle, DStyleScriptValue, DStyleProps } from "ts/design/DStyle";
 import { DTransition, DTransitionProps } from "ts/design/DTransition";
 import { DCommandWindow, DCommandWindowProps } from "ts/design/DCommandWindow";
@@ -11,6 +10,7 @@ import { DElement, DPart } from "ts/design/DElement";
 import { DListItem, DListItemProps } from "ts/design/DListItem";
 import { DCommandItem, DCommandItemProps } from "ts/design/DCommandItem";
 import { DText, DTextProps } from "ts/design/DText";
+import { DImage, DImageProps } from "ts/design/DImage";
 
 let designData: any = null;
 
@@ -38,6 +38,9 @@ function Text(props: DTextProps): DText {
     return new DText(props);
 }
 
+function Image(props: DImageProps): DImage {
+    return new DImage(props);
+}
 
 
 //------------------------------------------------------------------------------

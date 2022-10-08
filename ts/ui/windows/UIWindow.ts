@@ -1,7 +1,7 @@
 import { assert } from "ts/core/Common";
 import { DCommandWindow } from "ts/design/DCommandWindow";
 import { DWindow } from "ts/design/DWindow";
-import { UISelectableItem } from "../elements/UISelectableItem";
+import { UISelectableItem } from "../components/UISelectableItem";
 import { VUIRect, VUISize } from "../UICommon";
 import { UIContext } from "../UIContext";
 import { UIInvalidateFlags, VUIElement } from "../UIElement";

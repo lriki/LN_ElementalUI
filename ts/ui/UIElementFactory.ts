@@ -1,11 +1,13 @@
 import { DCommandWindow } from "ts/design/DCommandWindow";
 import { DElement } from "ts/design/DElement";
+import { DImage } from "ts/design/DImage";
 import { DListItem } from "ts/design/DListItem";
 import { DText } from "ts/design/DText";
 import { DWindow } from "ts/design/DWindow";
 import { SceneDesign } from "ts/design/SceneDesign";
-import { UIListItem } from "./elements/UIListItem";
-import { UIText } from "./elements/UIText";
+import { UIImage } from "./components/UIImage";
+import { UIListItem } from "./components/UIListItem";
+import { UIText } from "./components/UIText";
 import { VUIElement } from "./UIElement";
 import { UIScene } from "./UIScene";
 import { UICommandWindow } from "./windows/UICommandWindow";
@@ -16,6 +18,9 @@ export class UIElementFactory {
     public createUIElement(design: DElement): VUIElement {
         if (design instanceof DText) {
             return new UIText(design);
+        }
+        else if (design instanceof DImage) {
+            return new UIImage(design);
         }
         else if (design instanceof DListItem) {
             return new UIListItem(design);

@@ -853,9 +853,21 @@ export class VUIElement {
     }
 
     /** onRefreshVisual() で使える。 */
-    protected prepareForegroundSprite(context: UIContext): Sprite {
-        this.prepareSprites(context);
-        assert(this._foregroundSprite);
+    protected prepareForegroundSprite(context: UIContext, bitmap: Bitmap | undefined): Sprite {
+        if (!this._foregroundSprite) {
+            this._foregroundBitmap = bitmap;
+            if (!this._foregroundBitmap) {
+                this._foregroundBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
+            }
+            if (!this._foregroundSprite) {
+                this._foregroundSprite = new Sprite(this._foregroundBitmap);
+            }
+    
+            context.addSprite2(UISpiteLayer.Foreground, this._foregroundSprite);
+        }
+        
+        this._foregroundSprite.x = this._combinedVisualRect.x;
+        this._foregroundSprite.y = this._combinedVisualRect.y;
         return this._foregroundSprite;
     }
 

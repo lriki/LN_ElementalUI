@@ -1,6 +1,6 @@
 import { DElement } from "ts/design/DElement";
 import { DListItem } from "ts/design/DListItem";
-import { UIListItem } from "ts/ui/elements/UIListItem";
+import { UIListItem } from "ts/ui/components/UIListItem";
 import { UIElementFactory } from "ts/ui/UIElementFactory";
 import { assert } from "./Common";
 import { FlexWindowsManager } from "./FlexWindowsManager";

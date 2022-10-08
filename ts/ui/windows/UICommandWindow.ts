@@ -2,9 +2,9 @@ import { assert } from "ts/core/Common";
 import { DCommandItem } from "ts/design/DCommandItem";
 import { DCommandWindow } from "ts/design/DCommandWindow";
 import { DText } from "ts/design/DText";
-import { UICommandItem } from "../elements/UICommandItem";
-import { UISelectableItem } from "../elements/UISelectableItem";
-import { UIText } from "../elements/UIText";
+import { UICommandItem } from "../components/UICommandItem";
+import { UISelectableItem } from "../components/UISelectableItem";
+import { UIText } from "../components/UIText";
 import { UIWindow } from "./UIWindow";
 
 export interface RmmzCommandItem {

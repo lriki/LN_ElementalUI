@@ -56,7 +56,6 @@ export class UIText extends VUIElement {
         // フォントによっては見切れてしまうことがある。
         // やむをえず、やや大きめにはなるが確実な lineHeight を使う。
 
-        console.log("UIText.measureOverride", this._text, size, wi);
         const outer = this.calcContentOuter();
         //this.setDesiredSize(size.width + outer.left + outer.right, size.height + outer.top + outer.bottom);
         return size;
@@ -64,7 +63,7 @@ export class UIText extends VUIElement {
 
 
     override onRefreshVisual(context: UIContext): void {
-        const sprite = this.prepareForegroundSprite(context);
+        const sprite = this.prepareForegroundSprite(context, undefined);
         const bitmap = sprite.bitmap;
         assert(bitmap);
         bitmap.clear();
