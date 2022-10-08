@@ -57,8 +57,8 @@ export class VUIContainer extends VUIElement {
         return this.measureBasicBorderBoxSize();
     }
 
-    protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
-        const contentBox = {x: 0, y: 0, width: contentSize.width, height: contentSize.height};
+    protected arrangeOverride(context: UIContext, borderBoxSize: VUISize): VUISize {
+        const contentBox = {x: 0, y: 0, width: borderBoxSize.width, height: borderBoxSize.height};
         for (const child of this._contentChildren) {
             child.arrange(context, contentBox);
         }

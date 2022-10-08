@@ -29,6 +29,7 @@ export class UIWindow extends UIWindowBase {
         super(design);
         this.design = design;
         this._itemsChildren = [];
+        this.actualStyle.padding = $gameSystem.windowPadding();
     }
 
     override dispose(): void {
@@ -94,11 +95,13 @@ export class UIWindow extends UIWindowBase {
             height: Math.max(boxSize.height, contentAreaSize.height, itemsAreaSize.height) };
     }
 
-    protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
+    override arrangeOverride(context: UIContext, borderBoxSize: VUISize): VUISize {
+        const clientBox = this.getLocalClientBox(borderBoxSize);
+
         // Arrange content.
-        const contentBox = { x: 0, y: 0, width: contentSize.width, height: contentSize.height };
         for (const child of this.contentChildren()) {
-            child.arrange(context, contentBox);
+            console.log("arrangeOverride child", child, clientBox);
+            child.arrange(context, clientBox);
         }
         // if (this._content) {
         //     const contentBox = { x: 0, y: 0, width: contentSize.width, height: contentSize.height };
@@ -111,23 +114,24 @@ export class UIWindow extends UIWindowBase {
 
             for (const child of this._itemsChildren) {
                 const rect = rmmzWindow.itemRect(child.itemIndex) as any;
-                child.arrange(context, { x: rect.x, y: rect.y, width: rect.width, height: rect.height });
+                child.arrange(context, { x: clientBox.x + rect.x, y: clientBox.y + rect.y, width: rect.width, height: rect.height });
             }
-            return contentSize;
+            return borderBoxSize;
         }
         else {
             throw new Error("Not implemented");
         }
     }
 
+    // override updateCombinedVisualRect(context: UIContext, parentCombinedVisualRect: VUIRect): void {
+    //     this._combinedVisualRect.x = parentCombinedVisualRect.x + this._actualMarginBoxRect.x;
+    //     this._combinedVisualRect.y = parentCombinedVisualRect.y + this._actualMarginBoxRect.y;
+    //     this._combinedVisualRect.width = this._actualMarginBoxRect.width;
+    //     this._combinedVisualRect.height = this._actualMarginBoxRect.height;
+    // }
+
     override updateVisualContentsHierarchical(context: UIContext) {
         const oldWindow = context.changeWindow(this.rmmzWindow);
-        // if (this.isInvalidate(UIInvalidateFlags.ChildVisualContent)) {
-        //     this.unsetInvalidate(UIInvalidateFlags.ChildVisualContent);
-        //     for (const child of this._itemsChildren) {
-        //         child.updateVisualContents(context);
-        //     }
-        // }
         super.updateVisualContentsHierarchical(context);
         context.changeWindow(oldWindow);
     }

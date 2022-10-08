@@ -16,6 +16,11 @@ export enum UIVisualStates {
     Disabled = "Disabled",
 }
 
+export enum UIBoxSizing {
+    ContentBox = "content-box",
+    BorderBox = "border-box",
+}
+
 export enum UIInvalidateFlags {
     None = 0,
     Style = 1 << 1,
@@ -123,6 +128,13 @@ export class UIActualStyle {
     public get borderHeight(): number { return this.borderTop + this.borderBottom; }
     public get paddingWidth(): number { return this.paddingLeft + this.paddingRight; }
     public get paddingHeight(): number { return this.paddingTop + this.paddingBottom; }
+
+    public set padding(value: number) {
+        this.paddingLeft = value;
+        this.paddingTop = value;
+        this.paddingRight = value;
+        this.paddingBottom = value;
+    }
     
     public getHorizontalAlignment(): UIHAlignment { return this.defaultHorizontalAlignment; }
     public getVerticalAlignment(): UIVAlignment { return this.defaultVerticalAlignment; }
@@ -166,8 +178,8 @@ export class VUIElement {
     private _padding: VUIThickness;
     private _desiredWidth: number;
     private _desiredHeight: number;
-    private _actualMarginBoxRect: VUIRect;   // 親の ClientArea 内での MarinBox. レイアウトスロット内ではない点に注意。
-    private _combinedVisualRect: VUIRect;
+    _actualMarginBoxRect: VUIRect;   // 親の ClientArea 内での MarinBox. レイアウトスロット内ではない点に注意。
+    _combinedVisualRect: VUIRect;
     public itemIndex: number;
     // private _actualWidth: number;
     // private _actualHeight: number;
@@ -175,6 +187,7 @@ export class VUIElement {
 
     private _styles: UIStyle[];
     public readonly actualStyle: UIActualStyle;
+    _boxSizing: UIBoxSizing;
     
     private _foregroundBitmap: Bitmap | undefined;
     private _foregroundSprite: Sprite | undefined;
@@ -237,6 +250,7 @@ export class VUIElement {
 
 
         this.actualStyle = new UIActualStyle();
+        this._boxSizing = UIBoxSizing.BorderBox;
         this._invalidateFlags = UIInvalidateFlags.All;
         this._flags = UIElementFlags.None;
 
@@ -551,9 +565,16 @@ export class VUIElement {
 
     /** 子要素は考慮せず、この UIElement のスタイルを元にした最小サイズ。 */
     protected measureBasicBorderBoxSize(): VUISize {
-        const width = (this.actualStyle.width ?? 0) + this.actualStyle.paddingLeft + this.actualStyle.paddingRight;
-        const height = (this.actualStyle.height ?? 0) + this.actualStyle.paddingTop + this.actualStyle.paddingBottom;
-        return { width, height };
+        switch (this._boxSizing) {
+            case UIBoxSizing.ContentBox:
+                const width = (this.actualStyle.width ?? 0) + (this.actualStyle.borderLeft + this.actualStyle.borderRight) + (this.actualStyle.paddingLeft + this.actualStyle.paddingRight);
+                const height = (this.actualStyle.height ?? 0) + (this.actualStyle.borderTop + this.actualStyle.borderBottom)  + (this.actualStyle.paddingTop + this.actualStyle.paddingBottom);
+                return { width, height };
+            case UIBoxSizing.BorderBox:
+                return { width: this.actualStyle.width ?? 0, height: this.actualStyle.height ?? 0 };
+            default:
+                throw new Error("Unknown box-sizing: " + this._boxSizing);
+        }
     }
 
     protected setDesiredSize(width: number, height: number): void {
@@ -591,11 +612,14 @@ export class VUIElement {
 
         const width = Math.max(0.0, availableSize.width - marginWidth);
         const height = Math.max(0.0, availableSize.height - marginHeight);
+
         const contentSize = this.measureOverride(context, {width: width, height: height});
+        assert(Number.isFinite(contentSize.width));
+        assert(Number.isFinite(contentSize.height));
         
         this.setDesiredSize(
-            contentSize.width + marginWidth + borderWidth + paddingWidth,
-            contentSize.height + marginHeight + borderHeight + paddingHeight);
+            contentSize.width + marginWidth,// + borderWidth + paddingWidth,
+            contentSize.height + marginHeight);// + borderHeight + paddingHeight);
     }
 
     /**
@@ -604,10 +628,17 @@ export class VUIElement {
      * @param context 
      * @param constraint 要素を配置できる領域の最大サイズ。通常は親要素のサイズが渡されます。
      *                   スクロール領域の場合は Inf が渡されることがあるので注意してください。
-     * @returns ContentBox のサイズ。
+     * @returns BorderBox の希望サイズ。
      */
     protected measureOverride(context: UIContext, constraint: VUISize): VUISize {
         return this.measureBasicBorderBoxSize();
+        // 基本は、親レイアウトスロット一杯に広がると考えてよい。
+        // スクロールエリアの場合はちゃんとオーバーライドして計算する必要があるが、
+        // base としては inf を返さないようにしておく。
+        // return {
+        //     width: ((Number.isFinite(constraint.width)) ? constraint.width : 0),
+        //     height: ((Number.isFinite(constraint.height)) ? constraint.height : 0),
+        // };
     }
 
     /**
@@ -658,17 +689,48 @@ export class VUIElement {
             this.actualStyle.getVerticalAlignment(),
             marginBox);
 
-        const contentArea: VUISize = {
+        const borderBoxSize: VUISize = {
             width: marginBox.width - marginWidth,
             height: marginBox.height - marginHeight};
-        const result = this.arrangeOverride(context, contentArea);
+        const result = this.arrangeOverride(context, borderBoxSize);
 
         this.setActualRect({ x: finalArea.x + marginBox.x, y: finalArea .y + marginBox.y, width: result.width, height: result.height });
     }
 
-    protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
+    /**
+     * 
+     * @param context 
+     * @param borderBoxSize 
+     * @returns 
+     * 
+     * なぜ BorderBoxSize なのか？
+     * ----------
+     * Decoration をレイアウトできるようにするため。
+     * これは box-sizing に関わらず、何かしらの可視 Box と同じ範囲にレイアウトしたい。 （BorderBox の左上を (0, 0) にしたい）
+     * 論理的な子要素を配置するべき Box は、 getLocalClientBox() を使うこと。
+     */
+    protected arrangeOverride(context: UIContext, borderBoxSize: VUISize): VUISize {
         //this.setActualRect({x: 0, y: 0, width: contentSize.width, height: contentSize.height});
-        return contentSize;
+        return borderBoxSize;
+    }
+
+    protected getLocalClientBox(borderBoxSize: VUISize): VUIRect {
+        // switch (this._boxSizing) {
+        //     case UIBoxSizing.ContentBox:
+                return {
+                    x: this.actualStyle.borderLeft + this.actualStyle.paddingLeft,
+                    y: this.actualStyle.borderTop + this.actualStyle.paddingTop,
+                    width: borderBoxSize.width - (this.actualStyle.borderLeft + this.actualStyle.borderRight) - (this.actualStyle.paddingLeft + this.actualStyle.paddingRight),
+                    height: borderBoxSize.height - (this.actualStyle.borderTop + this.actualStyle.borderBottom) - (this.actualStyle.paddingTop + this.actualStyle.paddingBottom) };
+        //     case UIBoxSizing.BorderBox:
+        //         return {
+        //             x: 0,
+        //             y: 0,
+        //             width: borderBoxSize.width,
+        //             height: borderBoxSize.height };
+        //     default:
+        //         throw new Error("Unknown box-sizing");
+        // }
     }
 
     protected setActualRect(rect: VUIRect): void {
@@ -691,6 +753,7 @@ export class VUIElement {
     public updateCombinedVisualRectHierarchical(context: UIContext, parentCombinedVisualRect: VUIRect): void {
         //this._combinedVisualRect = this.updateCombinedVisualRectOverride(context, parentCombinedVisualRect);
         this.updateCombinedVisualRect(context, parentCombinedVisualRect);
+
         for (const child of this._visualChildren) {
             child.updateCombinedVisualRectHierarchical(context, this._combinedVisualRect);
         }
@@ -701,7 +764,6 @@ export class VUIElement {
         this._combinedVisualRect.y = parentCombinedVisualRect.y + this._actualMarginBoxRect.y;
         this._combinedVisualRect.width = this._actualMarginBoxRect.width;
         this._combinedVisualRect.height = this._actualMarginBoxRect.height;
-
         this.unsetInvalidate(UIInvalidateFlags.Layout);
         this.onLayoutFixed(context, this._combinedVisualRect);
     }

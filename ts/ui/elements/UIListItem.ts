@@ -22,7 +22,7 @@ export class UIListItem extends VUIContainer {
         }
     }
     
-    protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
+    protected arrangeOverride(context: UIContext, borderBoxSize: VUISize): VUISize {
         const window = context.currentWindow as Window_Selectable;
         assert(window);
         
@@ -30,7 +30,7 @@ export class UIListItem extends VUIContainer {
             const rect = window.itemLineRect(this.itemIndex) as any;
             child.arrange(context, rect);
         }
-        return contentSize;
+        return borderBoxSize;
     }
     
 }

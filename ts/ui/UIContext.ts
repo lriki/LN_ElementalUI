@@ -60,8 +60,8 @@ export class UIContext {
 
     public addSprite(foreground: Sprite | undefined, background: Sprite | undefined): void {
         if (this._window) {
-            if (background) this._window._contentsBackSprite.addChild(background);
-            if (foreground) this._window._clientArea.addChild(foreground);
+            if (background) this._window.addChildAt(background, 0);
+            if (foreground) this._window.addChild(foreground);
         }
         else {
             if (background) this._owner.owner.addChildAt(background, 0);
@@ -71,7 +71,7 @@ export class UIContext {
     public addSprite2(layer: UISpiteLayer, sprite: Sprite): void {
         // TODO: layer
         if (this._window) {
-            this._window._clientArea.addChild(sprite);
+            this._window.addChild(sprite);
         }
         else {
             this._owner.owner.addChild(sprite);

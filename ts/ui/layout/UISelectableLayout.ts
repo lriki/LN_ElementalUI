@@ -15,7 +15,7 @@ export class UISelectableLayout extends VUIContainer {
         return this.measureBasicBorderBoxSize();
     }
 
-    protected arrangeOverride(context: UIContext, contentSize: VUISize): VUISize {
+    protected arrangeOverride(context: UIContext, borderBoxSize: VUISize): VUISize {
         const window = context.currentWindow as Window_Selectable;
         assert(window);
 
@@ -23,7 +23,7 @@ export class UISelectableLayout extends VUIContainer {
             const rect = window.itemRect(child.itemIndex) as any;
             child.arrange(context, {x: rect.x, y: rect.y, width: rect.width, height: rect.height});
         }
-        return contentSize;
+        return borderBoxSize;
     }
 }
 
