@@ -29,7 +29,6 @@ export interface DStyleProps {
     width?: number;
     height?: number;
 
-    windowskin?: string;
     colorTone?: number[];
 
     opacity?: number;           // 全体

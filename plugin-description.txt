@@ -1,58 +1,42 @@
 //=============================================================================
-// LN_FilmicFilter.js
+// LN_ElementalUI.js
 // ----------------------------------------------------------------------------
-// Copyright (c) 2021 lriki
+// Copyright (c) 2022 lriki
 // This software is released under the MIT License.
 // http://opensource.org/licenses/mit-license.php
 // ----------------------------------------------------------------------------
-// [GitHub] : https://github.com/lriki/LN_FilmicFilter
+// [GitHub] : https://github.com/lriki/LN_ElementalUI
 // [Twitter]: https://twitter.com/lriki8
 //=============================================================================
 
 /*:ja
  * @target MZ
- * @plugindesc LN_FilmicFilter v1.0.2 (MIT License)
+ * @plugindesc LN_ElementalUI v1.0.2 (MIT License)
  * @author LRIKI
  *
- * @help グラフィックスをより豊かに見せるための撮影効果を付加します。
+ * @help ユーザーインターフェイスをフルカスタマイズするためのプラグインです。
  *
  * 使い方は次のページを参照してください。
- * https://github.com/lriki/LN_FilmicFilter/blob/main/README.md
+ * https://github.com/lriki/LN_ElementalUI/blob/main/README.md
  *
  * 変更履歴は次のページを参照してください。
- * https://github.com/lriki/LN_FilmicFilter/releases
+ * https://github.com/lriki/LN_ElementalUI/releases
  *
  * 既知の不具合や要望は次のページを参照してください。
- * https://github.com/lriki/LN_FilmicFilter/issues
+ * https://github.com/lriki/LN_ElementalUI/issues
  *
- * @param EditorKey
- * @text エディタの表示キー
- * @desc デフォルトのF11キーでエディタが表示できない場合に、キーを変更できます。例えば A キーで表示する場合 a と入力してください。
- * @default F11
+ * @param ThemeName
+ * @text テーマ
+ * @desc 使用するテーマです。data/ui に入っているフォルダ名を指定してください。
+ * @default Default
  * @type string
  *
- * @command SetFilmicFilter
- * @text SetFilmicFilter
- * @desc フィルタを適用します。
+ * @param ReloadKey
+ * @text デザインのリロードキー
+ * @desc テストプレイ中にデザインをリロードするためのキーです。小文字で指定してください。
+ * @default r
+ * @type string
  *
- * @arg filterId
- * @type number
- * @min -1
- * @default 0
- * @text フィルタID
- * @desc 適用するフィルタファイルの番号です。 (例: 2-夕焼け.json の場合は 2 を指定する)
- *
- * @arg duration
- * @type number
- * @default 30
- * @text 時間
- * @desc 変化にかける時間です。フレーム単位で指定します。
- *
- * @arg wait
- * @type boolean
- * @default true
- * @text 完了までウェイト
- * @desc 変化が完了するまでイベントを待機します。
  */
  
  

@@ -68,10 +68,6 @@ export class UIWindow extends UIWindowBase {
             contentAreaSize.width = Math.max(contentAreaSize.width, child.desiredSize.width);
             contentAreaSize.height = Math.max(contentAreaSize.height, child.desiredSize.height);
         }
-        // if (this._content) {
-        //     this._content.measure(context, constraint);
-        //     contentAreaSize = this._content.desiredSize;
-        // }
 
         // Measure items.
         let itemsAreaSize: VUISize = { width: 0, height: 0 };
@@ -88,11 +84,23 @@ export class UIWindow extends UIWindowBase {
             throw new Error("Not implemented");
         }
 
+        // Measure self.
+        const selfSize = {
+            width: this.actualStyle.width ?? 0,
+            height: this.actualStyle.height ?? 0,
+        }
+
         // Choose max.
-        const boxSize = super.measureBasicBorderBoxSize();
-        return {
-            width: Math.max(boxSize.width, contentAreaSize.width, itemsAreaSize.width),
-            height: Math.max(boxSize.height, contentAreaSize.height, itemsAreaSize.height) };
+        const clientSize = {
+            width: Math.max(selfSize.width, contentAreaSize.width, itemsAreaSize.width),
+            height: Math.max(selfSize.height, contentAreaSize.height, itemsAreaSize.height) };
+
+        assert(this.rmmzWindow);
+        console.log("measureOverride", this, this.actualStyle.width, this.actualStyle.height, this.rmmzWindow.width, this.rmmzWindow.height);
+        
+        const result = this.makeBorderBoxSize(clientSize);
+        console.log("  result", result);
+        return result;
     }
 
     override arrangeOverride(context: UIContext, borderBoxSize: VUISize): VUISize {

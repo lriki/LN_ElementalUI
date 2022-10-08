@@ -66,6 +66,16 @@ export class UIWindowBase extends VUIContainer {
         assert(!rmmzWindow._flexUIWindow);
         this._rmmzWindow = rmmzWindow;
         rmmzWindow._flexUIWindow = this;
+
+        // 必要であれば、rmmzWindow の配置情報を Style の初期値として取り出しておく。
+        if (!this.actualStyle.marginLeft) this.actualStyle.marginLeft = rmmzWindow.x;
+        if (!this.actualStyle.marginTop) this.actualStyle.marginTop = rmmzWindow.y;
+        if (!this.actualStyle.width) this.actualStyle.width = rmmzWindow.width;
+        if (!this.actualStyle.height) this.actualStyle.height = rmmzWindow.height;
+
+        if (this.design.props.windowskin) {
+            rmmzWindow.windowskin = ImageManager.loadBitmap(FlexWindowsManager.instance.designDirectory, this.design.props.windowskin);
+        }
     }
 
 
@@ -92,6 +102,7 @@ export class UIWindowBase extends VUIContainer {
         const baseSize = super.measureOverride(context, constraint);
 
         if (this._rmmzWindow) {
+
             // this の desiredSize は、 Design で指定されたサイズがあればそれを使い、そうでなければ RMMZ デフォルトのを使う。
             const size = {
                 width: this.actualStyle.width ?? this._rmmzWindow.width,
@@ -120,15 +131,6 @@ export class UIWindowBase extends VUIContainer {
         const oldWindow = context.changeWindow(this._rmmzWindow);
         super.draw(context);
         context.changeWindow(oldWindow);
-    }
-
-    protected onGetDefaultRect(): VUIRect {
-        if (this._rmmzWindow) {
-            return this._defaultRect;
-        }
-        else {
-            return super.onGetDefaultRect();
-        }
     }
 
     public updateCombinedVisualRectHierarchical(context: UIContext, parentCombinedVisualRect: VUIRect): void {
@@ -169,7 +171,18 @@ export class UIWindowBase extends VUIContainer {
 
     override onLayoutFixed(context: UIContext, combinedVisualRect: VUIRect): void {
         if (this._rmmzWindow) {
-            this._rmmzWindow.move(combinedVisualRect.x, combinedVisualRect.y, combinedVisualRect.width, combinedVisualRect.height);
+
+            console.log("onLayoutFixed: ", this,
+                this.actualStyle.marginLeft + combinedVisualRect.x,
+                this.actualStyle.marginTop + combinedVisualRect.y,
+                combinedVisualRect.width,
+                combinedVisualRect.height
+            );
+            this._rmmzWindow.move(
+                this.actualStyle.marginLeft + combinedVisualRect.x,
+                this.actualStyle.marginTop + combinedVisualRect.y,
+                combinedVisualRect.width,
+                combinedVisualRect.height);
         }
     }
 }

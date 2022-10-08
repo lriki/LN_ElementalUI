@@ -14,7 +14,7 @@ Window_Command.prototype.refresh = function() {
 
 const _Window_Selectable_drawAllItems = Window_Selectable.prototype.drawAllItems;
 Window_Selectable.prototype.drawAllItems = function() {
-    //_Window_Selectable_drawAllItems.call(this);
+    _Window_Selectable_drawAllItems.call(this);
     //this._contentsSprite.visible = false;
     //this._contentsBackSprite.visible = false;
 }

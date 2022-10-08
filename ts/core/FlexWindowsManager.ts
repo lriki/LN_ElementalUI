@@ -8,6 +8,7 @@ import { DPartProps } from "ts/design/DPart";
 import { assert } from "./Common";
 import { DElement, DPart } from "ts/design/DElement";
 import { evalDesignScript } from "./DesignScripEvaluator";
+import { paramThemeName } from "ts/PluginParameters";
 //import { JSDOM } from 'jsdom';
 
 
@@ -87,6 +88,10 @@ export class FlexWindowsManager {
 
     public get uiElementFactory(): UIElementFactory {
         return this._uiElementFactory;
+    }
+    
+    public get designDirectory(): string {
+        return `data/ui/${paramThemeName}/`;
     }
 
     public registerElementComponent(): void {
@@ -174,35 +179,33 @@ export class FlexWindowsManager {
     // }
 
     public reloadDesigns(): void {
-        console.log("reload!");
         this.beginLoadDesignFiles();
     }
 
     private updateIndexFile(): void {
         if (this.isNode()) {
-            const allFiles = fs.readdirSync("data/windows");
+            const allFiles = fs.readdirSync(this.designDirectory);
             const settingFiles = allFiles.filter((file) => file.endsWith(".js"));
             const indexData = settingFiles;
-            fs.writeFileSync("data/windows/index.json", JSON.stringify(indexData));
+            fs.writeFileSync(this.designDirectory + "/index.json", JSON.stringify(indexData));
         }
         else {
         }
     }
 
     private beginLoadDesignFiles(): void {
-        this.loadDataFile("windows/index.json", (obj) => {
+        this.loadDataFile(this.designDirectory + "/index.json", (obj) => {
             this._settingFiles = (obj as string[]);
             this._loadedFileCount = 0;
             for (let i = 0; i < this._settingFiles.length; i++) {
                 const file = this._settingFiles[i];
                 if (file) {
-                    this.loadTextFile("windows/" + file, (str) => {
+                    this.loadTextFile(this.designDirectory + "/" + file, (str) => {
                         this.evalSetting(str)
                         this._loadedFileCount++;
 
                         if (this._loadedFileCount >= this._settingFiles.length) {
                             this.buildDesigns();
-                            console.log("buildDesigns!");
                             this._isReady = true;
                             this._designFilesRevision++;
                         }
@@ -235,13 +238,12 @@ export class FlexWindowsManager {
 
     private loadDataFile(src: string, onLoad: (obj: any) => void) {
         if (this.isNode()) {
-            const dataDir = "data/";
-            const data = JSON.parse(fs.readFileSync(dataDir + src).toString());
+            const data = JSON.parse(fs.readFileSync(src).toString());
             onLoad(data);
         }
         else {
             const xhr = new XMLHttpRequest();
-            const url = "data/" + src;
+            const url = src;
             xhr.open("GET", url);
             xhr.overrideMimeType("application/json");
             xhr.onload = () => this.onXhrLoad(xhr, src, url, (obj) => { onLoad(obj); });
@@ -252,8 +254,7 @@ export class FlexWindowsManager {
 
     private loadTextFile(src: string, onLoad: (obj: string) => void) {
         if (this.isNode()) {
-            const dataDir = "data/";
-            onLoad(fs.readFileSync(dataDir + src).toString());
+            onLoad(fs.readFileSync(src).toString());
         }
         else {
             throw new Error("Not implemented.");

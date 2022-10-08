@@ -56,7 +56,8 @@ export enum DAlignment {
 
 export interface DElementProps extends DStyleProps {
     class?: string;
-    alignment?: DAlignment
+    alignment?: DAlignment;
+    windowskin?: string;
     children?: DElement[];
     transitions?: DTransition[];
     styles?: DStyle[];
@@ -140,6 +141,11 @@ export class DElement {
         for(const child of this.children) {
             child.link(manager);
         }
+
+
+        // if (this.props.windowskin) {
+        //     this.props.windowskin = manager.designDirectory + "/" + this.props.windowskin;
+        // }
     }
 }
 

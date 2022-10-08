@@ -69,7 +69,6 @@ export class UIActualStyle {
     width: number | undefined;  // 全く指定が無ければ、 arrange の finalSize を使う。
     height: number | undefined;
 
-    windowskin: string;
     colorTone: number[];
 
     opacity: number;           // 全体
@@ -111,7 +110,6 @@ export class UIActualStyle {
         // this.width = 0;
         // this.height = 0;
 
-        this.windowskin = "";
         this.colorTone = [0, 0, 0, 1];
 
         this.opacity = 255;           // 全体
@@ -252,7 +250,7 @@ export class VUIElement {
 
 
         this.actualStyle = new UIActualStyle();
-        this._boxSizing = UIBoxSizing.BorderBox;
+        this._boxSizing = UIBoxSizing.ContentBox;
         this._invalidateFlags = UIInvalidateFlags.All;
         this._flags = UIElementFlags.None;
 
@@ -629,15 +627,10 @@ export class VUIElement {
         }
     }
 
-    protected onGetDefaultRect(): VUIRect {
-        // 設定忘れで見えなくなってしまうことを防ぐためにデフォルト値を設定しておく
-        return { x: 0, y: 0, width: 64, height: 64 };
-    }
-
-
 
     //--------------------------------------------------------------------------
     // Layout
+
 
     /** 子要素は考慮せず、この UIElement のスタイルを元にした最小サイズ。 */
     protected measureBasicBorderBoxSize(): VUISize {
@@ -743,15 +736,20 @@ export class VUIElement {
             assert(this._desiredHeight >= this.actualStyle.height);
         }
 
-        const marginWidth = this.actualStyle.marginRight - this.actualStyle.marginLeft;
-        const marginHeight = this.actualStyle.marginBottom - this.actualStyle.marginTop;
+        const marginWidth = this.actualStyle.marginWidth;
+        const marginHeight = this.actualStyle.marginHeight;
         
         // CSS の border-box 相当なので、一番外側 (margin-box) のサイズ計算はこんな感じ。
         const marginBoxWidthOrUndefined = (this.actualStyle.width === undefined) ? undefined : this._desiredWidth + marginWidth;
         const marginBoxHeightOrUndefined = (this.actualStyle.height === undefined) ? undefined : this._desiredHeight + marginHeight;
 
-        // TODO:
+        console.log("arrnge", this, this.actualStyle.getHorizontalAlignment(),this.actualStyle.getVerticalAlignment(), this._desiredWidth, this._desiredHeight);
+
         const marginBox: VUIRect = { x: 0, y: 0, width: 0, height: 0 };
+        console.log("  finalArea.width", finalArea.width);
+        console.log("  this._desiredWidth", this._desiredWidth);
+        console.log("  marginBoxWidthOrUndefined", marginBoxWidthOrUndefined);
+        console.log("  this.actualStyle.getHorizontalAlignment()", this.actualStyle.getHorizontalAlignment());
         UILayoutHelper.adjustHorizontalAlignment(
             finalArea.width,
             this._desiredWidth,
@@ -768,7 +766,13 @@ export class VUIElement {
         const borderBoxSize: VUISize = {
             width: marginBox.width - marginWidth,
             height: marginBox.height - marginHeight};
+        console.log("  marginBox", marginBox);
+        console.log("  marginWidth", marginWidth);
+        console.log("  marginHeight", marginHeight);
+        console.log("  borderBoxSize", borderBoxSize);
         const result = this.arrangeOverride(context, borderBoxSize);
+
+        //console.log("  arrnge", this, finalArea, marginBox, borderBoxSize);
 
         this.setActualRect({ x: finalArea.x + marginBox.x, y: finalArea .y + marginBox.y, width: result.width, height: result.height });
     }
@@ -789,6 +793,38 @@ export class VUIElement {
         //this.setActualRect({x: 0, y: 0, width: contentSize.width, height: contentSize.height});
         return borderBoxSize;
     }
+
+    protected makeBorderBoxSize(clientSize: VUISize): VUISize {
+        switch (this._boxSizing) {
+            case UIBoxSizing.BorderBox:
+                return clientSize;
+            case UIBoxSizing.ContentBox:
+                return {
+                    width: clientSize.width + this.actualStyle.borderWidth + this.actualStyle.paddingWidth,
+                    height: clientSize.height + this.actualStyle.borderHeight + this.actualStyle.paddingHeight,
+                };
+            default:
+                throw new Error("Unknown box-sizing");
+        }
+    }
+
+    // protected getClientBoxSize(): VUISize {
+    //     switch (this._boxSizing) {
+    //         case UIBoxSizing.BorderBox:
+    //             return {
+    //                 width: this.actualStyle.width ?? 0,
+    //                 height: this.actualStyle.height ?? 0,
+    //             };
+    //         case UIBoxSizing.ContentBox:
+    //             return {
+
+    //                 width: this._actualBorderBoxRect.width - this.actualStyle.borderLeft - this.actualStyle.borderRight,
+    //                 height: this._actualBorderBoxRect.height - this.actualStyle.borderTop - this.actualStyle.borderBottom,
+    //             };
+    //         default:
+    //             throw new Error("Unknown box-sizing");
+    //     }
+    // }
 
     protected getLocalClientBox(borderBoxSize: VUISize): VUIRect {
         // switch (this._boxSizing) {

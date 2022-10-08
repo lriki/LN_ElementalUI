@@ -1,4 +1,6 @@
 
+
+import "./PluginParameters"
 import "./core/FlexWindowsManager"
 import "./animation/PIXI_Container"
 import "./rmmz/SceneManager"

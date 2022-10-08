@@ -1,14 +1,15 @@
 Design(
 Scene({
     class: "Scene_Title",
-    background: "EW-Carnation/Background1",
+    //background: "EW-Carnation/Background1",
     children: [
         Part({class: "Window_TitleCommand", rect: Script("scene.commandWindowRect()")  /*, x: 100, y: 200, width: 200, height: 200*/ }),
         Window({
             width: 500,
             height: 200,
             children: [
-                Text({ text: "🎃ゲームバージョン: 1.0.1" }),
+                Text({ text: "Ver: 0.1.0" }),
+                Image({ alignment: "top-right" }),
             ]
         })
     ],
