@@ -11,7 +11,7 @@
 
 /*:ja
  * @target MZ
- * @plugindesc LN_ElementalUI v1.0.2 (MIT License)
+ * @plugindesc LN_ElementalUI v0.1.0 (MIT License)
  * @author LRIKI
  *
  * @help ユーザーインターフェイスをフルカスタマイズするためのプラグインです。

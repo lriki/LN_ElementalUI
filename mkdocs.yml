@@ -41,8 +41,8 @@ nav:
   - チュートリアル: 
     - tutorial/index.md
     - 入門チュートリアル:
-      - 1. はじめに: tutorial/1-first/1-introduction.md
-      - 2. データの設定方法: tutorial/1-first/2-project.md
+      - 1. はじめに: 2-tutorial/1-first/1-introduction.md
+      - 2. デザインファイルとテーマ: 2-tutorial/1-first/2-design.md
       - 3. 基本概念: tutorial/1-first/3-basic.md
       - 4. 標準ゲームシステムとの関係: tutorial/1-first/4-system.md
       - 5. ダンジョン攻略の流れ: tutorial/1-first/5-land.md

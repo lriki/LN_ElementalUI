@@ -44,6 +44,13 @@ export interface DStyleProps {
     // Window.frameVisible
     frameVisible?: boolean;
 
+
+    // ailias
+    left?: number;
+    top?: number;
+    right?: number;
+    bottom?: number;
+
     // unils
     rect?: DStyleValue;
 }
@@ -52,5 +59,10 @@ export class DStyle {
     public readonly props: DStyleProps;
     constructor(props: DStyleProps) {
         this.props = props;
+
+        if (this.props.left !== undefined) this.props.marginLeft = this.props.left;
+        if (this.props.top !== undefined) this.props.marginTop = this.props.top;
+        if (this.props.right !== undefined) this.props.marginRight = this.props.right;
+        if (this.props.bottom !== undefined) this.props.marginBottom = this.props.bottom;
     }
 }

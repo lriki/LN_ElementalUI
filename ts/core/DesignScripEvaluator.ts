@@ -11,6 +11,7 @@ import { DListItem, DListItemProps } from "ts/design/DListItem";
 import { DCommandItem, DCommandItemProps } from "ts/design/DCommandItem";
 import { DText, DTextProps } from "ts/design/DText";
 import { DImage, DImageProps } from "ts/design/DImage";
+import { DIcon, DIconProps } from "ts/design/DIcon";
 
 let designData: any = null;
 
@@ -42,6 +43,10 @@ function Image(props: DImageProps): DImage {
     return new DImage(props);
 }
 
+
+function UIIcon(props: DIconProps): DIcon {
+    return new DIcon(props);
+}
 
 //------------------------------------------------------------------------------
 // 

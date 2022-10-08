@@ -1,11 +1,13 @@
 import { DCommandWindow } from "ts/design/DCommandWindow";
 import { DElement } from "ts/design/DElement";
+import { DIcon } from "ts/design/DIcon";
 import { DImage } from "ts/design/DImage";
 import { DListItem } from "ts/design/DListItem";
 import { DText } from "ts/design/DText";
 import { DWindow } from "ts/design/DWindow";
 import { SceneDesign } from "ts/design/SceneDesign";
 import { UIImage } from "./components/UIImage";
+import { UIICon } from "./components/UIIon";
 import { UIListItem } from "./components/UIListItem";
 import { UIText } from "./components/UIText";
 import { VUIElement } from "./UIElement";
@@ -22,6 +24,9 @@ export class UIElementFactory {
         else if (design instanceof DImage) {
             return new UIImage(design);
         }
+        else if (design instanceof DIcon) {
+            return new UIICon(design);
+        }
         else if (design instanceof DListItem) {
             return new UIListItem(design);
         }
@@ -35,18 +40,24 @@ export class UIElementFactory {
     }
 
     
-    public instantiateScene(design: SceneDesign): UIScene {
-        const scene = new UIScene(design);
-        for (const child of design.children) {
-            scene.addLogicalChild(this.instantiateElement(child));
+    public instantiateScene(design: SceneDesign | undefined): UIScene {
+        if (design) {
+            const scene = new UIScene(design);
+            for (const child of design.contents) {
+                scene.addLogicalChild(this.instantiateElement(child));
+            }
+            return scene;
         }
-
-        return scene;
+        else {
+            const design = new SceneDesign({});
+            const scene = new UIScene(design);
+            return scene;
+        }
     }
 
     public instantiateElement(design: DElement): VUIElement {
         const element = this.createUIElement(design);
-        for (const child of design.children) {
+        for (const child of design.contents) {
             element.addLogicalChild(this.instantiateElement(child));
         }
         return element;

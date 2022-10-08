@@ -35,7 +35,7 @@ export class WindowBuilder {
         assert(window);
         
         let index = 0;
-        const children = design.props.children || [];
+        const contents = design.props.contents || [];
         // for (; index < children.length; index++) {
         //     const element = children[index];
         //     if (element instanceof DListItem) {
@@ -62,8 +62,8 @@ export class WindowBuilder {
         }
 
         // ItemPresenter の後
-        for (; index < children.length; index++) {
-            const element = children[index];
+        for (; index < contents.length; index++) {
+            const element = contents[index];
             if (element instanceof DListItem) {
                 const uielement = new UIListItem(element);
                 uielement.rmmzCommandIndex = rmmzWindow._list.length;

@@ -36,6 +36,7 @@ declare class Window extends PIXI.Container {
 	_clientArea: Sprite;
 	_contentsSprite: Sprite;
 	_contentsBackSprite: Sprite;
+	_container: PIXI.Container;
 
     constructor();
 

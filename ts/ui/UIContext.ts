@@ -60,8 +60,9 @@ export class UIContext {
 
     public addSprite(foreground: Sprite | undefined, background: Sprite | undefined): void {
         if (this._window) {
-            if (background) this._window.addChildAt(background, 0);
-            if (foreground) this._window.addChild(foreground);
+            // _container に追加しないと、openness のエフェクトが効かない。
+            if (background) this._window._container.addChildAt(background, 0);
+            if (foreground) this._window._container.addChild(foreground);
         }
         else {
             if (background) this._owner.owner.addChildAt(background, 0);
@@ -71,7 +72,7 @@ export class UIContext {
     public addSprite2(layer: UISpiteLayer, sprite: Sprite): void {
         // TODO: layer
         if (this._window) {
-            this._window.addChild(sprite);
+            this._window._container.addChild(sprite);
         }
         else {
             this._owner.owner.addChild(sprite);

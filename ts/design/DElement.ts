@@ -58,7 +58,7 @@ export interface DElementProps extends DStyleProps {
     class?: string;
     alignment?: DAlignment;
     windowskin?: string;
-    children?: DElement[];
+    contents?: DElement[];
     transitions?: DTransition[];
     styles?: DStyle[];
 }
@@ -90,8 +90,8 @@ export class DElement {
     //     return this.alignment ?? DAlignment.Center;
     // }
 
-    public get children(): readonly DElement[] {
-        return this.props.children ?? [];
+    public get contents(): readonly DElement[] {
+        return this.props.contents ?? [];
     }
 
     public get transitions(): readonly DTransition[] {
@@ -102,7 +102,7 @@ export class DElement {
         if(this.props.class === className) {
             return this;
         }
-        for(const child of this.children) {
+        for(const child of this.contents) {
             const result = child.findElementByClass(className);
             if(result) {
                 return result;
@@ -125,20 +125,20 @@ export class DElement {
     
     public link(manager: FlexWindowsManager) {
 
-        const children = this.props.children;
-        if (children) {
-            for (let i = 0; i < this.children.length; i++) {
-                let child = children[i];
+        const contents = this.props.contents;
+        if (contents) {
+            for (let i = 0; i < this.contents.length; i++) {
+                let child = contents[i];
                 if (child instanceof DPart) {
                     child = manager.clonePartElement(child.props);
-                    children[i] = child;
+                    contents[i] = child;
                 }
     
                 child.link(manager);
             }
         }
 
-        for(const child of this.children) {
+        for(const child of this.contents) {
             child.link(manager);
         }
 

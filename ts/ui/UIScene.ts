@@ -1,4 +1,5 @@
 import { assert } from "ts/core/Common";
+import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
 import { DWindow } from "ts/design/DWindow";
 import { SceneDesign } from "ts/design/SceneDesign";
 import { VUIRect } from "./UICommon";
@@ -60,6 +61,16 @@ export class UIScene extends VUIContainer {
         if (element instanceof UIWindowBase) {
             element.attachRmmzWindow(window);
             this.attachedExistingWindows.push(window);
+            return;
+        }
+
+        const design = FlexWindowsManager.instance.findWindowDesign(window);
+        if (design) {
+            const element = FlexWindowsManager.instance.uiElementFactory.instantiateElement(design) as UIWindowBase;
+            element.attachRmmzWindow(window);
+            this.addLogicalChild(element);
+            this.attachedExistingWindows.push(window);
+            return;
         }
     }
 

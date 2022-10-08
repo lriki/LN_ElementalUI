@@ -1,7 +1,7 @@
 import { DElement, DElementProps } from "./DElement";
 
 export interface SceneProps extends DElementProps {
-    class: string;
+    class?: string;
 }
 
 /**
@@ -18,5 +18,8 @@ export class SceneDesign extends DElement {
         //this.revision = 1;
     }
 
+    public get class(): string {
+        return this.props.class || "";
+    }
     
 }

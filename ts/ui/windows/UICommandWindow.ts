@@ -41,7 +41,7 @@ export class UICommandWindow extends UIWindow {
         design.props.enabled = data.enabled;
         const uiItem = new UICommandItem(design);
         
-        if (design.children.length > 0) {
+        if (design.contents.length > 0) {
             throw new Error("not implemented");
         }
         else {

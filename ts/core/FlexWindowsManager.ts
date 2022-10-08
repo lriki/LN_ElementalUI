@@ -136,7 +136,7 @@ export class FlexWindowsManager {
         rmmzScene._flexUIScene = undefined;
 
         const design = this.findSceneDesign(rmmzScene);
-        if (design) {
+        //if (design) {
             rmmzScene._flexUIScene = this.uiElementFactory.instantiateScene(design);
             rmmzScene._flexUIScene.attachRmmzScene(rmmzScene);
             rmmzScene._flexUIScene.context.layoutInitial(Graphics.boxWidth, Graphics.boxHeight);
@@ -148,7 +148,7 @@ export class FlexWindowsManager {
                 };
                 rmmzScene._flexUIScene.onSceneCreate();
             }
-        }
+        //}
     }
 
     public unloadSceneDesignIfNeeded(rmmzScene: Scene_Base): void {
@@ -218,7 +218,7 @@ export class FlexWindowsManager {
     public evalSetting(str: string): void {
         const data = evalDesignScript(str);
         if (data instanceof SceneDesign) {
-            this._sceneDesigns.set(data.props.class, data);
+            this._sceneDesigns.set(data.class, data);
         }
         else if (data instanceof DWindow) {
             this._windowDesigns.set(data.props.class, data);

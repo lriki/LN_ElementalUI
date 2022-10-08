@@ -14,7 +14,7 @@ module.exports = {
     target: 'node',
     output: {
         path: __dirname,
-        filename: './js/plugins/LN_FlexWindows.js'
+        filename: './js/plugins/LN_ElementalUI.js'
     },
     resolve: {
         extensions: ['.ts', '.js', ".tsx"],
