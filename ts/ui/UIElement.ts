@@ -1,7 +1,7 @@
 import { VAnimation } from "ts/animation/AnimationManager";
 import { easing } from "ts/animation/Easing";
 import { assert } from "ts/core/Common";
-import { DElement } from "ts/design/DElement";
+import { DAlignment, DElement } from "ts/design/DElement";
 import { DStyle } from "ts/design/DStyle";
 import { VUIRect, VUISize, VUIThickness } from "./UICommon";
 import { UIContext, UISpiteLayer } from "./UIContext";
@@ -85,6 +85,8 @@ export class UIActualStyle {
     // Window.frameVisible
     frameVisible: boolean;
 
+    horizontalAlignment: UIHAlignment | undefined;
+    verticalAlignment: UIVAlignment | undefined;
     defaultHorizontalAlignment: UIHAlignment = UIHAlignment.Stretch;
     defaultVerticalAlignment: UIVAlignment = UIVAlignment.Stretch;
 
@@ -136,8 +138,8 @@ export class UIActualStyle {
         this.paddingBottom = value;
     }
     
-    public getHorizontalAlignment(): UIHAlignment { return this.defaultHorizontalAlignment; }
-    public getVerticalAlignment(): UIVAlignment { return this.defaultVerticalAlignment; }
+    public getHorizontalAlignment(): UIHAlignment { return this.horizontalAlignment ?? this.defaultHorizontalAlignment; }
+    public getVerticalAlignment(): UIVAlignment { return this.verticalAlignment ?? this.defaultVerticalAlignment; }
 
     public getInvalidateFlags(propertyName: string): UIInvalidateFlags {
         switch (propertyName) {
@@ -267,6 +269,79 @@ export class VUIElement {
         var min = 1;
         var max = 1000000000;
         this.id = Math.floor( Math.random() * (max + 1 - min) ) + min;
+
+        {
+            switch (this.design.props.alignment) {
+                case undefined:
+                    break;
+                case DAlignment.Center:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Center;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Center;
+                    break;
+                case DAlignment.Left:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Left;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Center;
+                    break;
+                case DAlignment.Right:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Right;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Center;
+                    break;
+                case DAlignment.Top:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Center;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Top;
+                    break;
+                case DAlignment.Bottom:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Center;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Bottom;
+                    break;
+                case DAlignment.TopLeft:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Left;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Top;
+                    break;
+                case DAlignment.TopRight:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Right;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Top;
+                    break;
+                case DAlignment.BottomLeft:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Left;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Bottom;
+                    break;
+                case DAlignment.BottomRight:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Right;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Bottom;
+                    break;
+                case DAlignment.LeftStretch:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Left;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Stretch;
+                    break;
+                case DAlignment.TopStretch:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Stretch;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Top;
+                    break;
+                case DAlignment.RightStretch:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Right;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Stretch;
+                    break;
+                case DAlignment.BottomStretch:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Stretch;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Bottom;
+                    break;
+                case DAlignment.HorizontalStretch:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Stretch;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Center;
+                    break;
+                case DAlignment.VerticalStretch:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Center;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Stretch;
+                    break;
+                case DAlignment.Stretch:
+                    this.actualStyle.horizontalAlignment = UIHAlignment.Stretch;
+                    this.actualStyle.verticalAlignment = UIVAlignment.Stretch;
+                    break;
+                default:
+                    throw new Error("unknown alignment: " + this.design.props.alignment);
+            }
+        }
     }
 
     public dispose(): void {
@@ -476,7 +551,7 @@ export class VUIElement {
     public applyStyle(context: UIContext, style: UIStyle, reset: boolean): void {
         style.evaluate(context, this);
         const props = style;
-        //const defaultRect = this.onGetDefaultRect();
+        
         if (props.marginLeft) this.setValue(context, "marginLeft", props.marginLeft, reset);
         if (props.marginTop) this.setValue(context, "marginTop", props.marginTop, reset);
         if (props.marginRight) this.setValue(context, "marginRight", props.marginRight, reset);
@@ -507,6 +582,7 @@ export class VUIElement {
 
         if (props.originX) this.setValue(context, "originX", props.originX, reset);
         if (props.originY) this.setValue(context, "originY", props.originY, reset);
+
 
         //if (props.frameVisible) this.setValue("frameVisible", props.frameVisible);
     }

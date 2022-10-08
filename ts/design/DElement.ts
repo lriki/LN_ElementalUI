@@ -4,8 +4,59 @@ import { DPartProps } from "./DPart";
 import { DStyle, DStyleProps } from "./DStyle";
 import { DTransition } from "./DTransition";
 
+export enum DAlignment {
+    /** 子要素を、親のレイアウト スロットの中央に揃えて配置します。*/
+    Center = "center",
+
+    /** 子要素を、親のレイアウト スロットの左側に揃えて配置します。*/
+    Left = "left",
+
+    /** 子要素を、親のレイアウト スロットの上端に揃えて配置します。*/
+    Top = "top",
+
+    /** 子要素を、親のレイアウト スロットの右側に揃えて配置します。*/
+    Right = "right",
+
+    /** 子要素を、親のレイアウト スロットの下端に揃えて配置します。*/
+    Bottom = "bottom",
+    
+    /** 子要素を、親のレイアウト スロットの左上に揃えて配置します。*/
+    TopLeft = "top-left",
+
+    /** 子要素を、親のレイアウト スロットの右上に揃えて配置します。*/
+    TopRight = "top-right",
+
+    /** 子要素を、親のレイアウト スロットの左下に揃えて配置します。*/
+    BottomLeft = "bottom-left",
+
+    /** 子要素を、親のレイアウト スロットの右下に揃えて配置します。*/
+    BottomRight = "bottom-right",
+
+    /** 子要素を、親のレイアウト スロットの左側に揃え、上下を引き延ばして配置します。*/
+    LeftStretch = "left-stretch",
+
+    /** 子要素を、親のレイアウト スロットの上側に揃え、左右を引き延ばして配置します。*/
+    TopStretch = "top-stretch",
+
+    /** 子要素を、親のレイアウト スロットの右側に揃え、上下を引き延ばして配置します。*/
+    RightStretch = "right-stretch",
+
+    /** 子要素を、親のレイアウト スロットの下側に揃え、左右を引き延ばして配置します。*/
+    BottomStretch = "bottom-stretch",
+
+    /** 子要素を、親のレイアウト スロットの中央に揃え、左右を引き延ばして配置します。*/
+    HorizontalStretch = "horizontal-stretch",
+
+    /** 子要素を、親のレイアウト スロットの中央に揃え、上下を引き延ばして配置します。*/
+    VerticalStretch = "vertical-stretch",
+
+    /** 子要素を、親のレイアウト スロット全体に引き伸ばします。*/
+    Stretch = "stretch",
+}
+
 export interface DElementProps extends DStyleProps {
     class?: string;
+    alignment?: DAlignment
     children?: DElement[];
     transitions?: DTransition[];
     styles?: DStyle[];
@@ -33,6 +84,10 @@ export class DElement {
         this.props = result;
         this._defaultStyle = new DStyle(this.props);
     }
+
+    // public get alignment(): DAlignment {
+    //     return this.alignment ?? DAlignment.Center;
+    // }
 
     public get children(): readonly DElement[] {
         return this.props.children ?? [];

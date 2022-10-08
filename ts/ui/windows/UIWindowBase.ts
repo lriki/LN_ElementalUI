@@ -169,7 +169,6 @@ export class UIWindowBase extends VUIContainer {
 
     override onLayoutFixed(context: UIContext, combinedVisualRect: VUIRect): void {
         if (this._rmmzWindow) {
-            console.log("onLayoutFixed !!", this, combinedVisualRect);
             this._rmmzWindow.move(combinedVisualRect.x, combinedVisualRect.y, combinedVisualRect.width, combinedVisualRect.height);
         }
     }

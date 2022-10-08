@@ -3,10 +3,14 @@ import { VUIRect } from "./UICommon";
 import { UIContext } from "./UIContext";
 import { VUIElement } from "./UIElement";
 import { UIScene } from "./UIScene";
+import { UIHAlignment } from "./utils/UILayoutHelper";
 
 export class UIStyle {
     public readonly data: DStyle;
     public dirty: boolean;
+
+    horzonAlignment: UIHAlignment | undefined;
+    verticalAlignment: UIHAlignment | undefined;
 
     marginLeft: number | undefined;
     marginTop: number | undefined;
@@ -29,6 +33,7 @@ export class UIStyle {
 
     background: string | undefined;
 
+
     // Window.origin
     originX: number | undefined;
     originY: number | undefined;
@@ -50,6 +55,7 @@ export class UIStyle {
         this.dirty = false;
 
         const props = this.data.props;
+
         if (props.marginLeft !== undefined) {
             this.marginLeft = props.marginLeft;
         }
