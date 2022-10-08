@@ -250,7 +250,7 @@ export class VUIElement {
 
 
         this.actualStyle = new UIActualStyle();
-        this._boxSizing = UIBoxSizing.ContentBox;
+        this._boxSizing = UIBoxSizing.BorderBox;
         this._invalidateFlags = UIInvalidateFlags.All;
         this._flags = UIElementFlags.None;
 
@@ -795,17 +795,17 @@ export class VUIElement {
     }
 
     protected makeBorderBoxSize(clientSize: VUISize): VUISize {
-        switch (this._boxSizing) {
-            case UIBoxSizing.BorderBox:
-                return clientSize;
-            case UIBoxSizing.ContentBox:
+        // switch (this._boxSizing) {
+        //     case UIBoxSizing.BorderBox:
+        //         return clientSize;
+        //     case UIBoxSizing.ContentBox:
                 return {
                     width: clientSize.width + this.actualStyle.borderWidth + this.actualStyle.paddingWidth,
                     height: clientSize.height + this.actualStyle.borderHeight + this.actualStyle.paddingHeight,
                 };
-            default:
-                throw new Error("Unknown box-sizing");
-        }
+        //     default:
+        //         throw new Error("Unknown box-sizing");
+        // }
     }
 
     // protected getClientBoxSize(): VUISize {

@@ -84,6 +84,12 @@ export class UIWindow extends UIWindowBase {
             throw new Error("Not implemented");
         }
 
+        // Make border size.
+        const contentsSize = {
+            width: Math.max(contentAreaSize.width, itemsAreaSize.width),
+            height: Math.max(contentAreaSize.height, itemsAreaSize.height) };
+        const contentsBorderSize = this.makeBorderBoxSize(contentsSize);
+
         // Measure self.
         const selfSize = {
             width: this.actualStyle.width ?? 0,
@@ -91,16 +97,19 @@ export class UIWindow extends UIWindowBase {
         }
 
         // Choose max.
+        //   RMMZWindow は box-sizing: border-box なので、makeBorderBoxSize() したコンテンツ領域と比較する必要がある。
         const clientSize = {
-            width: Math.max(selfSize.width, contentAreaSize.width, itemsAreaSize.width),
-            height: Math.max(selfSize.height, contentAreaSize.height, itemsAreaSize.height) };
+            width: Math.max(selfSize.width, contentsBorderSize.width),
+            height: Math.max(selfSize.height, contentsBorderSize.height) };
 
-        assert(this.rmmzWindow);
-        console.log("measureOverride", this, this.actualStyle.width, this.actualStyle.height, this.rmmzWindow.width, this.rmmzWindow.height);
+        return clientSize;
+
+        // assert(this.rmmzWindow);
+        // console.log("measureOverride", this, this.actualStyle.width, this.actualStyle.height, this.rmmzWindow.width, this.rmmzWindow.height);
         
-        const result = this.makeBorderBoxSize(clientSize);
-        console.log("  result", result);
-        return result;
+        // const result = this.makeBorderBoxSize(clientSize);
+        // console.log("  result", result);
+        // return result;
     }
 
     override arrangeOverride(context: UIContext, borderBoxSize: VUISize): VUISize {
