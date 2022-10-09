@@ -1,5 +1,6 @@
 import { assert } from "ts/core/Common";
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
+import { DStyle, DStyleScriptValue, DStyleValue } from "ts/design/DStyle";
 import { DWindow } from "ts/design/DWindow";
 import { UISelectableLayout } from "./layout/UISelectableLayout";
 import { VUIRect } from "./UICommon";
@@ -146,6 +147,20 @@ export class UIContext {
         this._owner.updateCombinedVisualRectHierarchical(this, { x: 0, y: 0, width: width, height: height });
         //this._owner.updateRmmzRect();
         this._owner.unsetInvalidate(UIInvalidateFlags.Layout);
+    }
+
+    public evaluateStyleValueAsString(element: VUIElement, value: DStyleValue | undefined): string {
+        if (value instanceof DStyleScriptValue) {
+            const scene = this._owner;
+            const window = this._window;
+            const self = element;
+            value = eval(value.script);
+        }
+        if (value === undefined) return "";
+        if (typeof value === "string") return value;
+        if (typeof value === "number") return value.toString();
+        if (typeof value === "boolean") return value.toString();
+        return "";
     }
 
     private draw(): void {

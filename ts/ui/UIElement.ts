@@ -547,6 +547,7 @@ export class VUIElement {
 
     
     public applyStyle(context: UIContext, style: UIStyle, reset: boolean): void {
+        console.log("applyStyle",  this, style);
         style.evaluate(context, this);
         const props = style;
         
@@ -583,6 +584,8 @@ export class VUIElement {
 
 
         //if (props.frameVisible) this.setValue("frameVisible", props.frameVisible);
+
+        this.onStyleUpdated(context);
     }
 
     // public setVisualState(state: UIVisualStates): void {
@@ -627,6 +630,8 @@ export class VUIElement {
         }
     }
 
+    public onStyleUpdated(context: UIContext): void {
+    }
 
     //--------------------------------------------------------------------------
     // Layout
@@ -743,13 +748,7 @@ export class VUIElement {
         const marginBoxWidthOrUndefined = (this.actualStyle.width === undefined) ? undefined : this._desiredWidth + marginWidth;
         const marginBoxHeightOrUndefined = (this.actualStyle.height === undefined) ? undefined : this._desiredHeight + marginHeight;
 
-        console.log("arrnge", this, this.actualStyle.getHorizontalAlignment(),this.actualStyle.getVerticalAlignment(), this._desiredWidth, this._desiredHeight);
-
         const marginBox: VUIRect = { x: 0, y: 0, width: 0, height: 0 };
-        console.log("  finalArea.width", finalArea.width);
-        console.log("  this._desiredWidth", this._desiredWidth);
-        console.log("  marginBoxWidthOrUndefined", marginBoxWidthOrUndefined);
-        console.log("  this.actualStyle.getHorizontalAlignment()", this.actualStyle.getHorizontalAlignment());
         UILayoutHelper.adjustHorizontalAlignment(
             finalArea.width,
             this._desiredWidth,
@@ -766,13 +765,7 @@ export class VUIElement {
         const borderBoxSize: VUISize = {
             width: marginBox.width - marginWidth,
             height: marginBox.height - marginHeight};
-        console.log("  marginBox", marginBox);
-        console.log("  marginWidth", marginWidth);
-        console.log("  marginHeight", marginHeight);
-        console.log("  borderBoxSize", borderBoxSize);
         const result = this.arrangeOverride(context, borderBoxSize);
-
-        //console.log("  arrnge", this, finalArea, marginBox, borderBoxSize);
 
         this.setActualRect({ x: finalArea.x + marginBox.x, y: finalArea .y + marginBox.y, width: result.width, height: result.height });
     }
@@ -957,6 +950,7 @@ export class VUIElement {
         if (this._backgroundSprite) {
             this._backgroundSprite.x = this._combinedVisualRect.x;
             this._backgroundSprite.y = this._combinedVisualRect.y;
+            this._backgroundSprite.opacity = this.actualStyle.opacity;
         }
         if (this._debugSprite) {
             this._debugSprite.x = this._combinedVisualRect.x;
@@ -967,19 +961,26 @@ export class VUIElement {
     /** onRefreshVisual() で使える。 */
     protected prepareForegroundSprite(context: UIContext, bitmap: Bitmap | undefined): Sprite {
         if (!this._foregroundSprite) {
-            this._foregroundBitmap = bitmap;
-            if (!this._foregroundBitmap) {
-                this._foregroundBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
-            }
-            if (!this._foregroundSprite) {
-                this._foregroundSprite = new Sprite(this._foregroundBitmap);
-            }
-    
+            this._foregroundSprite = new Sprite(undefined);
             context.addSprite2(UISpiteLayer.Foreground, this._foregroundSprite);
+        }
+
+        if (bitmap) {
+            this._foregroundSprite.bitmap = bitmap;
+        }
+        else {
+            if (!this._foregroundBitmap || (this._foregroundBitmap.width != this._combinedVisualRect.width || this._foregroundBitmap.height != this._combinedVisualRect.height)) {
+                if (this._foregroundBitmap) {
+                    this._foregroundBitmap.destroy();
+                }
+                this._foregroundBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
+                this._foregroundSprite.bitmap = this._foregroundBitmap;
+            }
         }
         
         this._foregroundSprite.x = this._combinedVisualRect.x;
         this._foregroundSprite.y = this._combinedVisualRect.y;
+        this._foregroundSprite.opacity = this.actualStyle.opacity;
         return this._foregroundSprite;
     }
 

@@ -31,7 +31,6 @@ Window_Base.prototype.initialize = function(rect: Rectangle): void {
     
     // 未初期化のプロパティにアクセスしないように、 Attach は Base.initialize() の後に行う必要がある。
     if (uiScene) {
-        console.log("Window_Base.initialize: " + this.constructor.name);
         uiScene.attachRmmzWindowIfNeeded(this);
     }
 }

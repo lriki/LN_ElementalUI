@@ -2,12 +2,12 @@ Design(
 Scene({
     class: "Scene_Title",
     //background: "EW-Carnation/Background1",
-    children: [
+    contents: [
         Part({class: "Window_TitleCommand", rect: Script("scene.commandWindowRect()")  /*, x: 100, y: 200, width: 200, height: 200*/ }),
         Window({
             width: 500,
             height: 200,
-            children: [
+            contents: [
                 Text({ text: "Ver: 0.1.0" }),
                 Image({ alignment: "top-right" }),
             ]
@@ -19,7 +19,7 @@ Scene({
 data = Scene({
     class: "Scene_Title",
     rect: [0, 0, 640, 480],
-    children: [
+    contents: [
         //----------------------------------------
         Picture({
             rect: [0, 0, 640, 480],

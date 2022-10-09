@@ -60,7 +60,7 @@ data = Window({
             x: -10,
         })
     ],
-    children: [
+    contents: [
         //ContentPresenter({}),
         ListItem({
             text: "\\I[10]おまけ",

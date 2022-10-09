@@ -6,6 +6,7 @@ import { UIElementFlags, VUIElement } from "../UIElement";
 import { UIHAlignment, UIVAlignment } from "../utils/UILayoutHelper";
 
 export class UIText extends VUIElement {
+    public readonly design;
     private _text: string;
     private _color: string | undefined;
     // private _bitmap: Bitmap | undefined;
@@ -13,9 +14,10 @@ export class UIText extends VUIElement {
     
     public constructor(design: DText) {
         super(design);
+        this.design = design;
+        this._text = "";
         this.actualStyle.defaultHorizontalAlignment = UIHAlignment.Center;
         this.actualStyle.defaultVerticalAlignment = UIVAlignment.Center;
-        this._text = design.text;
         this.setFlags(UIElementFlags.RequireForegroundSprite);
     }
 
@@ -77,6 +79,10 @@ export class UIText extends VUIElement {
                 y: 0 };
             return offset;
         }
+    }
+
+    public onStyleUpdated(context: UIContext): void {
+        this._text = context.evaluateStyleValueAsString(this, this.design.props.text);
     }
 
     override measureOverride(context: UIContext, constraint: VUISize): VUISize {

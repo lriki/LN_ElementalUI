@@ -5,13 +5,13 @@ Design(
 //==============================================================================
 Scene({
     class: "Scene_Title",
-    children: [
+    contents: [
         Window({
             class: "Window_TitleCommand",
             rect: Script("scene.commandWindowRect()"), }),
         Window({
             alignment: "bottom-left",
-            children: [
+            contents: [
                 Text({ text: "Ver: 0.1.0" }),
             ]
         })

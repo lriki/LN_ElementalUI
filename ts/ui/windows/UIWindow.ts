@@ -117,7 +117,6 @@ export class UIWindow extends UIWindowBase {
 
         // Arrange content.
         for (const child of this.contentChildren()) {
-            console.log("arrangeOverride child", child, clientBox);
             child.arrange(context, clientBox);
         }
         // if (this._content) {

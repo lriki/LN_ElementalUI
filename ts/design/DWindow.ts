@@ -5,6 +5,7 @@ export interface WindowProps extends DElementProps {
     class: string;
     //rect?: number[];
     //itemTemplate: DElement;
+    visibleCoreContents?: boolean;
 }
 
 /**

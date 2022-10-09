@@ -5,18 +5,21 @@ import { UISelectableLayout } from "../layout/UISelectableLayout";
 import { VUIRect, VUISize } from "../UICommon";
 import { VUIContainer } from "../UIContainer";
 import { UIContext } from "../UIContext";
-import { VUIElement } from "../UIElement";
+import { UIInvalidateFlags, VUIElement } from "../UIElement";
 import { UIFrameLayout } from "../UIFrameLayout";
 import { UIScene } from "../UIScene";
 import { UIHAlignment, UIVAlignment } from "../utils/UILayoutHelper";
 
 export class UIWindowBase extends VUIContainer {
+    public readonly design: DWindow;
     private _rmmzWindow: Window_Base | undefined;
     private _defaultRect: VUIRect;
+    private _refreshFunc: (() => void) | undefined;
 
 
     public constructor(design: DWindow) {
         super(design);
+        this.design = design;
         this.actualStyle.defaultHorizontalAlignment = UIHAlignment.Left;
         this.actualStyle.defaultVerticalAlignment = UIVAlignment.Top;
         this._defaultRect = {x: 0, y: 0, width: 0, height: 0};
@@ -66,8 +69,23 @@ export class UIWindowBase extends VUIContainer {
         assert(!rmmzWindow._flexUIWindow);
         this._rmmzWindow = rmmzWindow;
         rmmzWindow._flexUIWindow = this;
+        
+        {
+            const rmmzWindowAny = rmmzWindow as any;
+            if (rmmzWindowAny.refresh) {
+                this._refreshFunc = rmmzWindowAny.refresh;
+                rmmzWindowAny.refresh = function() {
+                    if (this._flexUIWindow._refreshFunc) this._flexUIWindow._refreshFunc.call(this);
+                    this._flexUIWindow.onRefreshRmmzWindow();
+                };
+            }
+        }
 
         // 必要であれば、rmmzWindow の配置情報を Style の初期値として取り出しておく。
+        // if (this.actualStyle.marginLeft !== undefined) this.actualStyle.marginLeft = rmmzWindow.x;
+        // if (this.actualStyle.marginTop !== undefined) this.actualStyle.marginTop = rmmzWindow.y;
+        // if (this.actualStyle.width !== undefined) this.actualStyle.width = rmmzWindow.width;
+        // if (this.actualStyle.height !== undefined) this.actualStyle.height = rmmzWindow.height;
         if (!this.actualStyle.marginLeft) this.actualStyle.marginLeft = rmmzWindow.x;
         if (!this.actualStyle.marginTop) this.actualStyle.marginTop = rmmzWindow.y;
         if (!this.actualStyle.width) this.actualStyle.width = rmmzWindow.width;
@@ -76,8 +94,18 @@ export class UIWindowBase extends VUIContainer {
         if (this.design.props.windowskin) {
             rmmzWindow.windowskin = ImageManager.loadBitmap(FlexWindowsManager.instance.designDirectory, this.design.props.windowskin);
         }
+        if (this.design.props.visibleCoreContents !== undefined) {
+            rmmzWindow._contentsSprite.visible = this.design.props.visibleCoreContents;
+            rmmzWindow._contentsBackSprite.visible = this.design.props.visibleCoreContents;
+        }
     }
 
+    private onRefreshRmmzWindow(): void {
+        this.setInvalidate(UIInvalidateFlags.All);
+        this.traverseVisualChildren((child) => {
+            child.setInvalidate(UIInvalidateFlags.All);
+        });
+    }
 
     //--------------------------------------------------------------------------
 
@@ -171,13 +199,6 @@ export class UIWindowBase extends VUIContainer {
 
     override onLayoutFixed(context: UIContext, combinedVisualRect: VUIRect): void {
         if (this._rmmzWindow) {
-
-            console.log("onLayoutFixed: ", this,
-                this.actualStyle.marginLeft + combinedVisualRect.x,
-                this.actualStyle.marginTop + combinedVisualRect.y,
-                combinedVisualRect.width,
-                combinedVisualRect.height
-            );
             this._rmmzWindow.move(
                 this.actualStyle.marginLeft + combinedVisualRect.x,
                 this.actualStyle.marginTop + combinedVisualRect.y,

@@ -1,7 +1,8 @@
 import { DElement, DElementProps } from "./DElement";
+import { DStyleValue } from "./DStyle";
 
 export interface DTextProps extends DElementProps {
-    text?: string;
+    text?: DStyleValue;
 }
 
 export class DText extends DElement {
@@ -10,9 +11,5 @@ export class DText extends DElement {
     constructor(props: DTextProps) {
         super(props);
         this.props = props;
-    }
-
-    public get text(): string {
-        return this.props.text ?? "";
     }
 }
