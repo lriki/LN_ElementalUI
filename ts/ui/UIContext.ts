@@ -1,5 +1,6 @@
 import { assert } from "ts/core/Common";
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
+import { DElement } from "ts/design/DElement";
 import { DStyle, DStyleScriptValue, DStyleValue } from "ts/design/DStyle";
 import { DWindow } from "ts/design/DWindow";
 import { UISelectableLayout } from "./layout/UISelectableLayout";
@@ -161,6 +162,10 @@ export class UIContext {
         if (typeof value === "number") return value.toString();
         if (typeof value === "boolean") return value.toString();
         return "";
+    }
+
+    public testLayoutEnabled(element: VUIElement): boolean {
+        return true;
     }
 
     private draw(): void {

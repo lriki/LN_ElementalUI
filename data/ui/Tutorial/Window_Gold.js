@@ -15,12 +15,15 @@ Window({
     // Window の外観に関する設定
     //--------------------------------------------------------------------------
     contents: [
-        //Text({ text: "🎃" }),
-        
-        UIIcon({ 
-            iconIndex: 208,
-            alignment: "left",
-
+        UIStackLayout({
+            contents: [
+                UIIcon({ 
+                    iconIndex: 208,
+                    alignment: "left",
+                }),
+                Text({ text: Script("window.value()") }),
+                
+            ],
         }),
     ]
 })

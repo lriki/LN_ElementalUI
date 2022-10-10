@@ -45,10 +45,10 @@ nav:
       - 2. デザインファイルとテーマ: 2-tutorial/1-first/2-design.md
       - 3. UIElement: 2-tutorial/1-first/3-uielement.md
       - 4. レイアウト: 2-tutorial/1-first/4-layout.md
-      - 5. ダンジョン攻略の流れ: tutorial/1-first/5-land.md
-      - 6. データベースの編集: tutorial/1-first/6-database.md
-      - 7. 詳細データの編集: tutorial/1-first/7-edit-details.md
-      - 8. デバッグ機能: tutorial/1-first/8-debug-command.md
+      - 5. ウィンドウ情報の表示: 2-tutorial/1-first/5-window-info.md
+      - 6. スクリプトとデータコンテキスト: 2-tutorial/1-first/6-script.md
+      - 7. レイアウトパネル: 2-tutorial/1-first/7-layout-panel.md
+      - 8. コアウィンドウ: 2-tutorial/1-first/8-core-window-design.md
   - リファレンス:
     - 3-reference/index.md
     - UIElement: 3-reference/UIElement.md
