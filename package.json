@@ -3,9 +3,9 @@
     "main": "index.html",
     "chromium-args": "--force-color-profile=srgb",
     "window": {
-        "title": "FilmicFilter",
-        "width": 1280,
-        "height": 960,
+        "title": "LN_ElementalUI",
+        "width": 816,
+        "height": 624,
         "position": "center",
         "icon": "icon/icon.png"
     }
