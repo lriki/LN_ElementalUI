@@ -18,7 +18,7 @@ UIScene({
             contents: [
                 UIText({ text: "Ver: 0.1.0, Theme: Tutorial" }),
             ]
-        })
+        }),
     ],
 })
 );

@@ -15,20 +15,22 @@ UIWindow({
     // Window の外観に関する設定
     //--------------------------------------------------------------------------
     contents: [
-        UIStackLayout({
+        UIAccordionLayout({
+        //UIStackLayout({
             contents: [
-                UIAccordionLayout({
-                    contents: [
 
-                        UIIcon({ 
-                            iconIndex: 208,
-                            alignment: "left",
-                        }),
-                        UIText({ text: Script("window.value()") }),
-                        UIText({ text: Script("window.value()") }),
-                    ]
+                UIIcon({ 
+                    iconIndex: 208,
+                    alignment: "left",
                 }),
-            ],
+                UIText({
+                    text: Script("window.value()"),
+                    alignment: "right",
+                }),
+                UIText({
+                    text: "X"
+                }),
+            ]
         }),
     ]
 })

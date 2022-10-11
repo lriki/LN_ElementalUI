@@ -5,7 +5,7 @@ import { SceneDesign } from "ts/design/SceneDesign";
 import { VUIRect } from "./UICommon";
 import { VUIContainer } from "./UIContainer";
 import { UIContext } from "./UIContext";
-import { VUIElement } from "./UIElement";
+import { UIElementFlags, VUIElement } from "./UIElement";
 import { UIWindow } from "./windows/UIWindow";
 import { UIWindowBase } from "./windows/UIWindowBase";
 
@@ -16,6 +16,7 @@ export class UIScene extends VUIContainer {
 
     public constructor(design: SceneDesign) {
         super(design);
+        this.setFlags(UIElementFlags.IsScene);
         this._context = new UIContext(this);
     }
 

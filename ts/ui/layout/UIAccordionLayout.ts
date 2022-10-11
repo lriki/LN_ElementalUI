@@ -3,6 +3,7 @@ import { DOrientation } from "ts/design/layout/DStackLayout";
 import { VUIPoint, VUIRect, VUISize } from "../UICommon";
 import { UIContext } from "../UIContext";
 import { VUIElement } from "../UIElement";
+import { UIHAlignment, UIVAlignment } from "../utils/UILayoutHelper";
 
 export class UIAccordionLayout extends VUIElement {
     public readonly design: DAccordionLayout;
@@ -10,11 +11,19 @@ export class UIAccordionLayout extends VUIElement {
     public constructor(design: DAccordionLayout) {
         super(design);
         this.design = design;
+        this.actualStyle.defaultHorizontalAlignment = UIHAlignment.Stretch;
+        this.actualStyle.defaultVerticalAlignment = UIVAlignment.Stretch;
+    }
+
+    override addLogicalChild(element: VUIElement): VUIElement {
+        this.addVisualChild(element);
+        return element;
     }
 
     override measureOverride(context: UIContext, constraint: VUISize): VUISize {
         const visualChildren = this.visualChildren;
         const desiredSize = { width: 0, height: 0 };
+
         for (let i = 0; i < visualChildren.length; i++) {
             const child = visualChildren[i];
             if (context.testLayoutEnabled(child)) {
@@ -33,6 +42,11 @@ export class UIAccordionLayout extends VUIElement {
                 }
             }
         }
+
+        // 基本的には親サイズ一杯に広げたい。
+        // desiredSize.width = Number.isFinite(constraint.width) ? constraint.width : desiredSize.width;
+        // desiredSize.height = Number.isFinite(constraint.height) ? constraint.height : desiredSize.height;
+
         return desiredSize;
     }
 
@@ -45,6 +59,7 @@ export class UIAccordionLayout extends VUIElement {
         // まずは first と last のサイズを求める
         const firstChild = (visualChildren.length >= 1) ? visualChildren[0] : undefined;
         const lastChild = (visualChildren.length >= 2) ? visualChildren[visualChildren.length - 1] : undefined;
+        const middleCount = Math.max(visualChildren.length - 2, 0);
         let firstChildSize: VUISize = { width: 0, height: 0 };
         let lastChildSize: VUISize = { width: 0, height: 0 };
         if (firstChild) {
@@ -61,14 +76,14 @@ export class UIAccordionLayout extends VUIElement {
         }
 
         // first と last 以外のサイズを求める
-        const middleSize = {
-            width: Math.max(0, finalSlotRect.width - firstChildSize.width - lastChildSize.width),
-            height: Math.max(0, finalSlotRect.height - firstChildSize.height - lastChildSize.height)
+        const middleSingleSize = {
+            width: Math.max(0, finalSlotRect.width - firstChildSize.width - lastChildSize.width) / middleCount,
+            height: Math.max(0, finalSlotRect.height - firstChildSize.height - lastChildSize.height) / middleCount,
         };
 
-        
-        let x = -scrollOffset.x;
-        let y = -scrollOffset.y;
+        const isHorizontal = (this.design.orientation == DOrientation.Horizontal || this.design.orientation == DOrientation.ReverseHorizontal);
+        let x = finalSlotRect.x -scrollOffset.x;
+        let y = finalSlotRect.y -scrollOffset.y;
         const advanceCurrentPos = (rect: VUIRect) => {
             if (this.design.orientation == DOrientation.Horizontal) {
                 x += rect.width;
@@ -87,8 +102,8 @@ export class UIAccordionLayout extends VUIElement {
                 const rect: VUIRect = {
                     x: x,
                     y: y,
-                    width: firstChildSize.width,
-                    height: lastChildSize.height,
+                    width: (isHorizontal) ? firstChildSize.width : finalSlotRect.width,
+                    height: (isHorizontal) ? finalSlotRect.height : firstChildSize.height,
                 };
                 firstChild.arrange(context, rect);
                 advanceCurrentPos(rect);
@@ -102,8 +117,8 @@ export class UIAccordionLayout extends VUIElement {
                 const rect: VUIRect = {
                     x: x,
                     y: y,
-                    width: middleSize.width,
-                    height: middleSize.height,
+                    width: (isHorizontal) ? middleSingleSize.width : finalSlotRect.width,
+                    height: (isHorizontal) ? finalSlotRect.height : middleSingleSize.height,
                 };
                 child.arrange(context, rect);
                 advanceCurrentPos(rect);
@@ -116,13 +131,19 @@ export class UIAccordionLayout extends VUIElement {
                 const rect: VUIRect = {
                     x: x,
                     y: y,
-                    width: lastChildSize.width,
-                    height: lastChildSize.height,
+                    width: (isHorizontal) ? lastChildSize.width : finalSlotRect.width,
+                    height: (isHorizontal) ? finalSlotRect.height : lastChildSize.height,
                 };
+                if (this.design.orientation == DOrientation.Horizontal || this.design.orientation == DOrientation.ReverseHorizontal) {
+                    rect.x = finalSlotRect.width - lastChildSize.width;
+                }
+                else {
+                    rect.y = finalSlotRect.height - lastChildSize.height;
+                }
                 lastChild.arrange(context, rect);
             }
         }
 
-        return { ...finalSlotRect };
+        return { ...borderBoxSize };
     }
 }

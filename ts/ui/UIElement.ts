@@ -44,6 +44,7 @@ export enum UIElementFlags {
     RequireForegroundSprite = 1 << 1,
     RequireBackgroundSprite = 1 << 2,
     ReadySprites = 1 << 3,
+    IsScene = 1 << 4,
     All = 0xFFFF,
 }
 
@@ -730,6 +731,9 @@ export class VUIElement {
         //     height: finalArea.height - this.actualStyle.marginTop - this.actualStyle.marginBottom,
         // };
 
+        
+        console.log("arrange", this, finalArea);
+
         assert(!Number.isNaN(this._desiredWidth));
         assert(!Number.isNaN(this._desiredHeight));
 
@@ -944,13 +948,6 @@ export class VUIElement {
             }
             context.addSprite(this._foregroundSprite, this._backgroundSprite);
 
-            if (1) {
-                this._debugBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
-                this._debugSprite = new Sprite(this._debugBitmap);
-                this._debugBitmap.fillRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FFFF0022");
-                this._debugBitmap.strokeRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FF0000FF");
-                context.addSprite2(UISpiteLayer.Overlay, this._debugSprite);
-            }
         }
         
         if (this._foregroundSprite) {
@@ -1001,6 +998,24 @@ export class VUIElement {
         return this._backgroundSprite;
     }
 
+    protected prepareDebugSprite(context: UIContext): Sprite | undefined {
+        // UIScene の場合は全体に表示するとかえって見辛いので、表示しない。
+        if (this.hasFlags(UIElementFlags.IsScene)) return undefined;
+
+        if (!this._debugBitmap) {
+            this._debugBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
+        }
+        if (!this._debugSprite) {
+            this._debugSprite = new Sprite(this._debugBitmap);
+            this._debugBitmap.fillRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FFFF0022");
+            this._debugBitmap.strokeRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FF0000FF");
+            context.addSprite2(UISpiteLayer.Overlay, this._debugSprite);
+        }
+        
+        this._debugSprite.x = this._combinedVisualRect.x;
+        this._debugSprite.y = this._combinedVisualRect.y;
+        return this._debugSprite;
+    }
     
     public updateVisualContentsHierarchical(context: UIContext) {
         this.updateVisualContents(context);
@@ -1025,6 +1040,8 @@ export class VUIElement {
                 assert(bitmap);
                 //bitmap.fillRect(0, 0, bitmap.width, bitmap.height, this.actualStyle.background);
             }
+
+            this.prepareDebugSprite(context);
         }
     }
 
