@@ -65,7 +65,7 @@ UIScene({
         UIWindow({
             alignment: "bottom-left",
             contents: [
-                Text({ text: "Ver: 0.1.0, Theme: Tutorial" }),
+                UIText({ text: "Ver: 0.1.0, Theme: Tutorial" }),
             ]
         })
     ],

@@ -801,6 +801,16 @@ export class VUIElement {
         // }
     }
 
+    /** arrangeOverride() の中で使う。BorderBox を基準とした ローカルの ContentBox を求める。 */
+    protected makeContentBoxSize(borderBoxSize: VUISize): VUIRect {
+        return {
+            x: this.actualStyle.paddingLeft,
+            y: this.actualStyle.paddingTop,
+            width: borderBoxSize.width - this.actualStyle.paddingWidth,
+            height: borderBoxSize.height - this.actualStyle.paddingHeight,
+        };
+    }
+
     // protected getClientBoxSize(): VUISize {
     //     switch (this._boxSizing) {
     //         case UIBoxSizing.BorderBox:

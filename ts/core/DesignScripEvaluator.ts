@@ -14,7 +14,7 @@ import { DImage, DImageProps } from "ts/design/DImage";
 import { DIcon, DIconProps } from "ts/design/DIcon";
 import { DStackLayout, DStackLayoutProps } from "ts/design/layout/DStackLayout";
 import { DGridLayout, DGridLayoutProps } from "ts/design/layout/DGridLayout";
-import { DContentBoxLayout, DContentBoxLayoutProps } from "ts/design/layout/DContentBoxLayout";
+import { DAccordionLayout as DAccordionLayout, DAccordionLayoutProps as DAccordionLayoutProps } from "ts/design/layout/DAccordionLayout";
 
 let designData: any = null;
 
@@ -25,11 +25,11 @@ function Design(data: any): void {
     designData = data;
 }
 
-function Scene(props: SceneProps): SceneDesign {
+function UIScene(props: SceneProps): SceneDesign {
     return new SceneDesign(props);
 }
 
-function Window(props: WindowProps): DWindow {
+function UIWindow(props: WindowProps): DWindow {
     return new DWindow(props);
 }
 
@@ -38,11 +38,11 @@ function Window(props: WindowProps): DWindow {
 //------------------------------------------------------------------------------
 // Components
 
-function Text(props: DTextProps): DText {
+function UIText(props: DTextProps): DText {
     return new DText(props);
 }
 
-function Image(props: DImageProps): DImage {
+function UIImage(props: DImageProps): DImage {
     return new DImage(props);
 }
 
@@ -57,8 +57,8 @@ function UIStackLayout(props: DStackLayoutProps): DStackLayout {
     return new DStackLayout(props);
 }
 
-function UIContentBoxLayout(props: DContentBoxLayoutProps): DContentBoxLayout {
-    return new DContentBoxLayout(props);
+function UIAccordionLayout(props: DAccordionLayoutProps): DAccordionLayout {
+    return new DAccordionLayout(props);
 }
 
 function UOGridLayout(props: DGridLayoutProps): DGridLayout {

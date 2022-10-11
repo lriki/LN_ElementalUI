@@ -48,7 +48,7 @@ CommandWindow({
 );
 
 /*
-data = Window({
+data = UIWindow({
     class: "Window_TitleCommand",
     itemTemplate: ListItem({}),
     transitions: [

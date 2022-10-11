@@ -5,7 +5,7 @@ import { DImage } from "ts/design/DImage";
 import { DListItem } from "ts/design/DListItem";
 import { DText } from "ts/design/DText";
 import { DWindow } from "ts/design/DWindow";
-import { DContentBoxLayout } from "ts/design/layout/DContentBoxLayout";
+import { DAccordionLayout } from "ts/design/layout/DAccordionLayout";
 import { DGridLayout } from "ts/design/layout/DGridLayout";
 import { DStackLayout } from "ts/design/layout/DStackLayout";
 import { SceneDesign } from "ts/design/SceneDesign";
@@ -13,7 +13,7 @@ import { UIImage } from "./components/UIImage";
 import { UIICon } from "./components/UIIon";
 import { UIListItem } from "./components/UIListItem";
 import { UIText } from "./components/UIText";
-import { UIContentBoxLayout } from "./layout/UIContentBoxLayout";
+import { UIAccordionLayout } from "./layout/UIAccordionLayout";
 import { UIGridLayout } from "./layout/UIGridLayout";
 import { UIStackLayout } from "./layout/UIStackLayout";
 import { VUIElement } from "./UIElement";
@@ -42,8 +42,8 @@ export class UIElementFactory {
         else if (design instanceof DGridLayout) {
             return new UIGridLayout(design);
         }
-        else if (design instanceof DContentBoxLayout) {
-            return new UIContentBoxLayout(design);
+        else if (design instanceof DAccordionLayout) {
+            return new UIAccordionLayout(design);
         }
         else if (design instanceof DCommandWindow) {
             return new UICommandWindow(design);

@@ -3,16 +3,16 @@ Design(
 // 
 //------------------------------------------------------------------------------
 //==============================================================================
-Scene({
+UIScene({
     class: "Scene_Title",
     contents: [
-        Window({
+        UIWindow({
             class: "Window_TitleCommand",
             rect: Script("scene.commandWindowRect()"), }),
-        Window({
+        UIWindow({
             alignment: "bottom-left",
             contents: [
-                Text({ text: "Ver: 0.1.0" }),
+                UIText({ text: "Ver: 0.1.0" }),
             ]
         })
     ],

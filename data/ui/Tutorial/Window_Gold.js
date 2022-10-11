@@ -3,7 +3,7 @@ Design(
 // 
 //------------------------------------------------------------------------------
 //==============================================================================
-Window({
+UIWindow({
     //--------------------------------------------------------------------------
     // 必須設定
     //--------------------------------------------------------------------------
@@ -17,12 +17,17 @@ Window({
     contents: [
         UIStackLayout({
             contents: [
-                UIIcon({ 
-                    iconIndex: 208,
-                    alignment: "left",
+                UIAccordionLayout({
+                    contents: [
+
+                        UIIcon({ 
+                            iconIndex: 208,
+                            alignment: "left",
+                        }),
+                        UIText({ text: Script("window.value()") }),
+                        UIText({ text: Script("window.value()") }),
+                    ]
                 }),
-                Text({ text: Script("window.value()") }),
-                
             ],
         }),
     ]
