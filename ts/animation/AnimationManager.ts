@@ -1,5 +1,5 @@
 import { assert } from "ts/core/Common";
-import { VAnimationCurve, VEasingAnimationCurve } from "./AnimationCurve";
+import { DAnimationCurve, DEasingAnimationCurve } from "./AnimationCurve";
 import { VAnimationInstance } from "./AnimationInstance";
 import { TEasing } from "./Easing";
 
@@ -7,7 +7,7 @@ export class VAnimation {
     //private static _animations: VAnimationInstance[] = [];
     private static _containers: PIXI.Container[] = []; 
 
-    public static start(container: PIXI.Container, key: string, curve: VAnimationCurve, setter: (v: number) => void, timeOffset: number = 0.0): VAnimationInstance {
+    public static start(container: PIXI.Container, key: string, curve: DAnimationCurve, setter: (v: number) => void, timeOffset: number = 0.0): VAnimationInstance {
         const instance = new VAnimationInstance(/*container,*/ key, curve, setter);
         //instance.timeOffset = timeOffset;
         instance.time += timeOffset;
@@ -19,7 +19,7 @@ export class VAnimation {
      * start に対してこちらは現在値を始点とした相対的なアニメーションを表現するのに使用する。
      */
     public static startAt(container: PIXI.Container, key: string, start: number, target: number, duration: number, curve: TEasing, setter: (v: number) => void, timeOffset: number = 0.0): VAnimationInstance {
-        const instance = new VAnimationInstance(/*container,*/ key, new VEasingAnimationCurve(start, target, duration, curve), setter);
+        const instance = new VAnimationInstance(/*container,*/ key, new DEasingAnimationCurve(start, target, duration, curve), setter);
         //instance.timeOffset = timeOffset;
         instance.time += timeOffset;
         this.add(container, key, instance);

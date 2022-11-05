@@ -33,10 +33,15 @@
  *
  * @param ReloadKey
  * @text デザインのリロードキー
- * @desc テストプレイ中にデザインをリロードするためのキーです。小文字で指定してください。
- * @default r
+ * @desc テストプレイ中にデザインをリロードするためのキーです。
+ * @default R
  * @type string
  *
+ * @param InfoKey
+ * @text ウィンドウ情報の表示キー
+ * @desc テストプレイ中にウィンドウ名などの情報を表示するためのキーです。
+ * @default T
+ * @type string
  */
  
  

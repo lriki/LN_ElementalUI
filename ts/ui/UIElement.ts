@@ -1002,19 +1002,22 @@ export class VUIElement {
         // UIScene の場合は全体に表示するとかえって見辛いので、表示しない。
         if (this.hasFlags(UIElementFlags.IsScene)) return undefined;
 
-        if (!this._debugBitmap) {
-            this._debugBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
+        if (true) {
+
+            if (!this._debugBitmap) {
+                this._debugBitmap = new Bitmap(this._combinedVisualRect.width, this._combinedVisualRect.height);
+            }
+            if (!this._debugSprite) {
+                this._debugSprite = new Sprite(this._debugBitmap);
+                this._debugBitmap.fillRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FFFF0022");
+                this._debugBitmap.strokeRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FF0000FF");
+                context.addSprite2(UISpiteLayer.Overlay, this._debugSprite);
+            }
+            
+            this._debugSprite.x = this._combinedVisualRect.x;
+            this._debugSprite.y = this._combinedVisualRect.y;
+            return this._debugSprite;
         }
-        if (!this._debugSprite) {
-            this._debugSprite = new Sprite(this._debugBitmap);
-            this._debugBitmap.fillRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FFFF0022");
-            this._debugBitmap.strokeRect(0, 0, this._debugBitmap.width, this._debugBitmap.height, "#FF0000FF");
-            context.addSprite2(UISpiteLayer.Overlay, this._debugSprite);
-        }
-        
-        this._debugSprite.x = this._combinedVisualRect.x;
-        this._debugSprite.y = this._combinedVisualRect.y;
-        return this._debugSprite;
     }
     
     public updateVisualContentsHierarchical(context: UIContext) {

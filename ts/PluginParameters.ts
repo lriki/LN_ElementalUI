@@ -23,7 +23,6 @@ function getString(key: string, defaultValue: string): string {
 }
 
 export const paramThemeName = getString("ThemeName", "Default");
-export const paramReloadKey = getString("ReloadKey", "r");
-
-console.log("paramThemeName", paramThemeName);
+export const paramReloadKey = getString("ReloadKey", "r").toLowerCase();
+export const paramInfoKey = getString("InfoKey", "t").toLowerCase();
 

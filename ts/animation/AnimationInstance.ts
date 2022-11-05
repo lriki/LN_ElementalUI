@@ -1,17 +1,17 @@
-import { VAnimationCurve, VAnimationWrapMode } from "./AnimationCurve";
+import { DAnimationCurve, DAnimationWrapMode } from "./AnimationCurve";
 
 
 
 export class VAnimationInstance {
     //container: PIXI.Container;
     key: string;
-    curve: VAnimationCurve;
+    curve: DAnimationCurve;
     setter: (v: number) => void;
     time: number;
     //timeOffset: number;
     _then: (() => void) | undefined;
 
-    constructor(/*container: PIXI.Container,*/ key: string, curve: VAnimationCurve, setter: (v: number) => void) {
+    constructor(/*container: PIXI.Container,*/ key: string, curve: DAnimationCurve, setter: (v: number) => void) {
         //this.container = container;
         this.key = key;
         this.curve = curve;
@@ -35,7 +35,7 @@ export class VAnimationInstance {
     }
 
     public isFinished(): boolean {
-        if (this.curve.wrapMode() == VAnimationWrapMode.Once) {
+        if (this.curve.wrapMode() == DAnimationWrapMode.Once) {
             return this.time >= this.curve.lastFrameTime();
         }
         else {

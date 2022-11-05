@@ -2,7 +2,7 @@ import { assert } from "ts/core/Common";
 import { TEasing } from "./Easing";
 
 /** アニメーションの繰り返し方法 */
-export enum VAnimationWrapMode {
+export enum DAnimationWrapMode {
     /** 繰り返しを行わず、1度だけ再生します。 */
     Once,
 
@@ -13,11 +13,11 @@ export enum VAnimationWrapMode {
     Alternate,
 }
 
-export class VAnimationCurve {
-    private _wrapMode: VAnimationWrapMode;
+export class DAnimationCurve {
+    private _wrapMode: DAnimationWrapMode;
 
     public constructor() {
-        this._wrapMode = VAnimationWrapMode.Once;
+        this._wrapMode = DAnimationWrapMode.Once;
     }
 
 	/** 指定した時間における値を評価します。*/
@@ -31,12 +31,12 @@ export class VAnimationCurve {
     }
 
 	/** アニメーションの繰り返しの動作を取得します。 */
-	public wrapMode(): VAnimationWrapMode {
+	public wrapMode(): DAnimationWrapMode {
         return this._wrapMode;
     }
 
 	/** アニメーションの繰り返しの動作を設定します。(default: Once) */
-	public setWrapMode(mode: VAnimationWrapMode) {
+	public setWrapMode(mode: DAnimationWrapMode) {
         this._wrapMode = mode;
     }
     
@@ -48,16 +48,16 @@ export class VAnimationCurve {
         return 0;
     }
      
-	private calculateLocalTime(time: number, duration: number, wrapMode: VAnimationWrapMode): number {
+	private calculateLocalTime(time: number, duration: number, wrapMode: DAnimationWrapMode): number {
         let localTime = 0.0;
         switch (wrapMode) {
-        case VAnimationWrapMode.Once:
+        case DAnimationWrapMode.Once:
             localTime = Math.min(time, duration);
             break;
-        case VAnimationWrapMode.Loop:
+        case DAnimationWrapMode.Loop:
             localTime = time % duration;
             break;
-        case VAnimationWrapMode.Alternate:
+        case DAnimationWrapMode.Alternate:
         {
             const freq = duration * 2;
             const t = (time % freq);
@@ -77,7 +77,7 @@ export class VAnimationCurve {
     }
 }
 
-export class VEasingAnimationCurve extends VAnimationCurve {
+export class DEasingAnimationCurve extends DAnimationCurve {
 	_startValue: number;
 	_targetValue: number;
 	_duration: number;
@@ -101,7 +101,7 @@ export class VEasingAnimationCurve extends VAnimationCurve {
     }
 }
 
-export enum VKeyFrameTangentMode {
+export enum DKeyFrameTangentMode {
 	/** 線形補間 */
 	Linear,
 
@@ -115,7 +115,7 @@ export enum VKeyFrameTangentMode {
 	Constant,
 }
 
-export interface VKeyFrame {
+export interface DKeyFrame {
 	/** 時間 */
 	time: number;
 
@@ -123,20 +123,20 @@ export interface VKeyFrame {
 	value: number;
 
 	/** 前のキーフレームとの補間方法 */
-	leftTangentMode: VKeyFrameTangentMode;
+	leftTangentMode: DKeyFrameTangentMode;
 
 	/** 前のキーフレームからこのキーフレームに近づくときの接線 */
 	leftTangent: number;
 
 	/** 次のキーフレームとの補間方法 */
-	rightTangentMode: VKeyFrameTangentMode;
+	rightTangentMode: DKeyFrameTangentMode;
 
 	/** このキーフレームから次のキーフレームに向かうときの接線 */
 	rightTangent: number;
 }
 
-export class VKeyFrameAnimationCurve extends VAnimationCurve {
-    private _keyFrames: VKeyFrame[];
+export class DKeyFrameAnimationCurve extends DAnimationCurve {
+    private _keyFrames: DKeyFrame[];
     private _defaultValue: number;
 
     public constructor() {
@@ -145,7 +145,7 @@ export class VKeyFrameAnimationCurve extends VAnimationCurve {
         this._defaultValue = 0.0;
     }
 
-	public addKeyFrame(keyFrame: VKeyFrame): void {
+	public addKeyFrame(keyFrame: DKeyFrame): void {
         // そのまま追加できる
         if (this._keyFrames.length == 0 || this._keyFrames[this._keyFrames.length - 1].time <= keyFrame.time) {
             this._keyFrames.push(keyFrame);
@@ -156,12 +156,12 @@ export class VKeyFrameAnimationCurve extends VAnimationCurve {
         }
     }
 
-    public addFrame(time: number, value: number, rightTangentMode = VKeyFrameTangentMode.Linear, tangent: number = 0.0): this {
+    public addFrame(time: number, value: number, rightTangentMode = DKeyFrameTangentMode.Linear, tangent: number = 0.0): this {
 
-        const k: VKeyFrame  = {
+        const k: DKeyFrame  = {
             time: time,
             value: value,
-            leftTangentMode: VKeyFrameTangentMode.Constant,
+            leftTangentMode: DKeyFrameTangentMode.Constant,
             leftTangent: 0.0,
             rightTangentMode: rightTangentMode,
             rightTangent: tangent,
@@ -175,7 +175,7 @@ export class VKeyFrameAnimationCurve extends VAnimationCurve {
             k.leftTangent = -key0.rightTangent;
         }
         else {
-            k.leftTangentMode = VKeyFrameTangentMode.Constant;
+            k.leftTangentMode = DKeyFrameTangentMode.Constant;
             k.leftTangent = 0.0;
         }
     
@@ -221,19 +221,19 @@ export class VKeyFrameAnimationCurve extends VAnimationCurve {
                 switch (modes[i])
                 {
                 // 補間無し
-                case VKeyFrameTangentMode.Constant:
+                case DKeyFrameTangentMode.Constant:
                 {
                     values[i] = p0;
                     break;
                 }
                 // 線形
-                case VKeyFrameTangentMode.Linear:
+                case DKeyFrameTangentMode.Linear:
                 {
                     values[i] = p0 + (p1 - p0) * t;
                     break;
                 }
                 // 三次補間
-                case VKeyFrameTangentMode.Tangent:
+                case DKeyFrameTangentMode.Tangent:
                 {
                     values[i] = this.hermite(
                         p0, key0.rightTangent,
@@ -242,7 +242,7 @@ export class VKeyFrameAnimationCurve extends VAnimationCurve {
                     break;
                 }
                 // Catmull-Rom
-                case VKeyFrameTangentMode.Auto:
+                case DKeyFrameTangentMode.Auto:
                 {
                     // ループ再生で time が終端を超えている場合、
                     // この時点でkey の値は ループ開始位置のひとつ前のキーを指している

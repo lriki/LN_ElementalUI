@@ -1,4 +1,5 @@
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
+import { paramInfoKey, paramReloadKey } from "ts/PluginParameters";
 
 const _Input_onKeyDown = Input._onKeyDown;
 Input._onKeyDown = function(event: any) {
@@ -8,12 +9,10 @@ Input._onKeyDown = function(event: any) {
         return _Input_onKeyDown.call(this, event);
     }
 
-    //console.log("Input._onKeyDown", event);
-
-    if (event.key == "r") {
+    if (event.key == paramReloadKey) {
         FlexWindowsManager.instance.reloadDesigns();
     }
-    else if (event.key == "e") {
+    else if (event.key == paramInfoKey) {
         FlexWindowsManager.instance.displayWindowInfo = !FlexWindowsManager.instance.displayWindowInfo;
     }
     else {
