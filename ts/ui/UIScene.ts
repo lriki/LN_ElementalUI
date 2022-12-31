@@ -56,7 +56,7 @@ export class UIScene extends VUIContainer {
     
     /** RMMZ コアスクリプト側で new された Window を論理的な子要素として管理下に入れる */
     public attachRmmzWindowIfNeeded(window: Window_Base): void {
-        if (window._flexUIWindow) return;
+        if (window._flexUIWindow) return;   // Attach 済み
 
         const element = this.findLogicalChildByClass(window.constructor.name);
         if (element instanceof UIWindowBase) {
@@ -75,6 +75,7 @@ export class UIScene extends VUIContainer {
         }
     }
 
+    // see: FlexWindowsManager Scene初期化の流れ
     public onSceneCreate(): void {
         for (const window of this.attachedExistingWindows) {
             window._flexUIWindow?.onSyncFromRmmzWindowContents();

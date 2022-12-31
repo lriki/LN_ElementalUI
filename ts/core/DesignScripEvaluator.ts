@@ -4,7 +4,7 @@ import { DStyle, DStyleScriptValue, DStyleProps } from "ts/design/DStyle";
 import { DTransition, DTransitionProps } from "ts/design/DTransition";
 import { DCommandWindow, DCommandWindowProps } from "ts/design/DCommandWindow";
 import { SceneDesign, SceneProps } from "ts/design/SceneDesign";
-import { DWindow, WindowProps } from "ts/design/DWindow";
+import { DWindow, DWindowProps } from "ts/design/DWindow";
 import { DPartProps } from "ts/design/DPart";
 import { DElement, DPart } from "ts/design/DElement";
 import { DListItem, DListItemProps } from "ts/design/DListItem";
@@ -29,7 +29,7 @@ function UIScene(props: SceneProps): SceneDesign {
     return new SceneDesign(props);
 }
 
-function UIWindow(props: WindowProps): DWindow {
+function UIWindow(props: DWindowProps): DWindow {
     return new DWindow(props);
 }
 

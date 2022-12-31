@@ -1,11 +1,14 @@
 import { DElement, DElementProps } from "ts/design/DElement";
 
 
-export interface WindowProps extends DElementProps {
+export interface DWindowProps extends DElementProps {
     class: string;
     //rect?: number[];
     //itemTemplate: DElement;
     visibleCoreContents?: boolean;
+
+    /** Window のインスタンスに設定するプロパティ */
+    windowProps?: { [key: string]: any; }
 }
 
 /**
@@ -14,7 +17,7 @@ export interface WindowProps extends DElementProps {
  * Window が new されたとき (initialize() されたとき) に、このデザインを適用する。
  */
 export class DWindow extends DElement {
-    public readonly props: WindowProps;
+    public readonly props: DWindowProps;
     // name: string;
     // content: string;
 
@@ -23,7 +26,7 @@ export class DWindow extends DElement {
     public revision: number;
 
 
-    constructor(props: WindowProps) {
+    constructor(props: DWindowProps) {
         super(props);
         this.props = props;
         this.revision = 1;

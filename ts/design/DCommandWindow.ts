@@ -1,9 +1,9 @@
 import { DElement, DElementProps } from "ts/design/DElement";
 import { DCommandItem } from "./DCommandItem";
-import { DWindow, WindowProps } from "./DWindow";
+import { DWindow, DWindowProps } from "./DWindow";
 
 
-export interface DCommandWindowProps extends WindowProps {
+export interface DCommandWindowProps extends DWindowProps {
     /** コアスクリプト内で作られたコマンドに対して表示内容を定義するときのテンプレート。 */
     itemTemplate?: DCommandItem;
 

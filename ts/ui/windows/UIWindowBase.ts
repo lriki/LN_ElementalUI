@@ -98,6 +98,12 @@ export class UIWindowBase extends VUIContainer {
             rmmzWindow._contentsSprite.visible = this.design.props.visibleCoreContents;
             rmmzWindow._contentsBackSprite.visible = this.design.props.visibleCoreContents;
         }
+        
+        if (this.design.props.windowProps) {
+            for (const [key, value] of Object.entries(this.design.props.windowProps)) {
+                (rmmzWindow as any)[key] = value;
+            }
+        }
     }
 
     private onRefreshRmmzWindow(): void {

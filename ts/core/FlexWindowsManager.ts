@@ -3,7 +3,7 @@ import { DListItem, DListItemProps } from "ts/design/DListItem";
 import { UIElementFactory } from "ts/ui/UIElementFactory";
 import { SceneDesign, SceneProps } from "../design/SceneDesign";
 import { WindowBuilder } from "./WindowBuilder";
-import { DWindow, WindowProps } from "../design/DWindow";
+import { DWindow, DWindowProps } from "../design/DWindow";
 import { DPartProps } from "ts/design/DPart";
 import { assert } from "./Common";
 import { DElement, DPart } from "ts/design/DElement";
@@ -34,7 +34,16 @@ export interface EasingAnimationProps {
 }
 
 
-
+/**
+ * 
+ * 
+ * Scene初期化の流れ
+ * ----------
+ * - Scene 作成自に、UIScene のインスタンスと、VisualTree を作る。(Scene_Base.create)
+ * - Window_Base の initialUpdate で、UIWindowBase と Window_Base の紐づけ (Attach) を行う。
+ *     - 派生クラスの initialize の後に実行したいので、このタイミングの必要がある。
+ * - Scene の initialUpdate で、Attach が行われていない UIWindowBase から、新しい Window_Base(またはその派生) を作る。
+ */
 export class FlexWindowsManager {
     public static instance: FlexWindowsManager;
     public displayWindowInfo: boolean;
@@ -55,7 +64,7 @@ export class FlexWindowsManager {
         this._windowDesigns = new Map<string, DWindow>();
         this._loadedFileCount = 0;
         this._settingFiles = [];
-        this._designFilesRevision = 1;
+        this._designFilesRevision = 0;
         this._isReady = false;
         this._windowBuilder = new WindowBuilder();
         this._uiElementFactory = new UIElementFactory();
@@ -124,6 +133,7 @@ export class FlexWindowsManager {
 
 
 
+    // VisualTree と Game_Window のインスタンスが紐づいていることが前提なので、 initialUpdate した後ではないと使えない点に注意。
     public reloadSceneDesignIfNeeded(rmmzScene: Scene_Base): void {
         if (rmmzScene._flexDesignRevision === this.designFilesRevision) return;
         rmmzScene._flexDesignRevision = this.designFilesRevision;
@@ -146,8 +156,8 @@ export class FlexWindowsManager {
                 for (const rmmzWindow of attachedExistingWindows) {
                     rmmzScene._flexUIScene.attachRmmzWindowIfNeeded(rmmzWindow);
                 };
-                rmmzScene._flexUIScene.onSceneCreate();
             }
+            rmmzScene._flexUIScene.onSceneCreate();
         //}
     }
 

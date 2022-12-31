@@ -131,9 +131,6 @@ export class UIContext {
 
     private layout(width: number, height: number): void {
         assert(this._owner);
-
-        console.log("========== layout begin ==========", width, height, this);
-
         this._owner.measure(
             this, {
             width: width,

@@ -1,3 +1,4 @@
+import { assert } from "ts/core/Common";
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
 import { UIContext } from "ts/ui/UIContext";
 import { UIWindowBase } from "ts/ui/windows/UIWindowBase";
@@ -8,31 +9,32 @@ declare global {
         _flexInfoContents: Bitmap | undefined;
         _flexInfoSprite: Sprite | undefined;
         _flexUIWindow: UIWindowBase | undefined;
+        _flexUIInitialUpdate: boolean | undefined;
     }
 }
 
 const _Window_Base_initialize = Window_Base.prototype.initialize;
 Window_Base.prototype.initialize = function(rect: Rectangle): void {
+    this._flexUIInitialUpdate = true;
+
     // 本来であれば LogicalChild に追加した後の Layout で位置が決定されるのが自然だが、
     // Rect は先にオーバーライドしておかないと、初期レイアウトが上手く動かない。
     let actualRect = rect;
-    //const manager = FlexWindowsManager.instance;
     const currentScene = SceneManager._scene;
     const uiScene = currentScene._flexUIScene;
-    if (uiScene) {
-        const initialRect = uiScene.getRmmzWindowInitialRect(this.constructor.name);
-        if (initialRect) {
-            actualRect = new Rectangle(initialRect.x, initialRect.y, initialRect.width, initialRect.height);
-        }
-
+    assert(uiScene);    // Scene_Base で作られているはず。
+    const initialRect = uiScene.getRmmzWindowInitialRect(this.constructor.name);
+    if (initialRect) {
+        actualRect = new Rectangle(initialRect.x, initialRect.y, initialRect.width, initialRect.height);
     }
 
     _Window_Base_initialize.call(this, actualRect);
+
     
-    // 未初期化のプロパティにアクセスしないように、 Attach は Base.initialize() の後に行う必要がある。
-    if (uiScene) {
-        uiScene.attachRmmzWindowIfNeeded(this);
-    }
+    // // 未初期化のプロパティにアクセスしないように、 Attach は Base.initialize() の後に行う必要がある。
+    // if (uiScene) {
+    //     uiScene.attachRmmzWindowIfNeeded(this);
+    // }
 }
 
 const _Window_Base_createContents = Window_Base.prototype.createContents;
@@ -67,10 +69,22 @@ Window_Base.prototype.destroyContents = function() {
 const _Window_Base_update = Window_Base.prototype.update;
 Window_Base.prototype.update = function() {
     _Window_Base_update.call(this);
+
+    // Attach 時に windowProps を設定したいが、これを initialize でやってしまうと、
+    // その後に派生ウィンドウでプロパティの再初期化が行われてしまうので意味がなくなる。
+    // そのため、最初の update で Attach を行う。
+    if (this._flexUIInitialUpdate) {
+        this._flexUIInitialUpdate = false;
+        const currentScene = SceneManager._scene;
+        const uiScene = currentScene._flexUIScene;
+        // 未初期化のプロパティにアクセスしないように、 Attach は Base.initialize() の後に行う必要がある。
+        if (uiScene) {
+            uiScene.attachRmmzWindowIfNeeded(this);
+        }
+    }
+
+
     if (this._flexInfoSprite) {
         this._flexInfoSprite.visible = FlexWindowsManager.instance.displayWindowInfo;
     }
-    // if (this._flexUILayoutContext) {
-    //     this._flexUILayoutContext.update();
-    // }
 }

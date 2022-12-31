@@ -94,12 +94,8 @@ export class WindowBuilder {
     // }
 
     public applyElement(window: Window_Base, element: DElement): void {
-        console.log("a");
-
         if (element instanceof DListItem) {
-            console.log("a1");
             if (window instanceof Window_Command) {
-                console.log("a2", element);
                 window.addCommand(element.text, element.symbol, element.enabled, undefined);
                 window.refresh();
             }
