@@ -5,8 +5,8 @@ import { DTransition, DTransitionProps } from "ts/design/DTransition";
 import { DCommandWindow, DCommandWindowProps } from "ts/design/DCommandWindow";
 import { SceneDesign, SceneProps } from "ts/design/SceneDesign";
 import { DWindow, DWindowProps } from "ts/design/DWindow";
-import { DPartProps } from "ts/design/DPart";
-import { DElement, DPart } from "ts/design/DElement";
+import { DPart, DPartProps } from "ts/design/DPart";
+import { DElement } from "ts/design/DElement";
 import { DListItem, DListItemProps } from "ts/design/DListItem";
 import { DCommandItem, DCommandItemProps } from "ts/design/DCommandItem";
 import { DText, DTextProps } from "ts/design/DText";
@@ -33,6 +33,9 @@ function UIWindow(props: DWindowProps): DWindow {
     return new DWindow(props);
 }
 
+function UIPart(props: DPartProps): DPart {
+    return new DPart(props);
+}
 
 
 //------------------------------------------------------------------------------

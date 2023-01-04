@@ -186,7 +186,7 @@ export class VUIElement {
     // private _actualHeight: number;
     public _parent: VUIElement | undefined;
 
-    private _styles: UIStyle[];
+    private _styles: UIStyle[]; // [0] is design.defaultStyle.
     public readonly actualStyle: UIActualStyle;
     _boxSizing: UIBoxSizing;
     
@@ -548,6 +548,7 @@ export class VUIElement {
 
     
     public applyStyle(context: UIContext, style: UIStyle, reset: boolean): void {
+        console.log("applyStyle", this);
         style.evaluate(context, this);
         const props = style;
         

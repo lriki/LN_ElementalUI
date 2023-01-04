@@ -4,11 +4,12 @@ import { UIElementFactory } from "ts/ui/UIElementFactory";
 import { SceneDesign, SceneProps } from "../design/SceneDesign";
 import { WindowBuilder } from "./WindowBuilder";
 import { DWindow, DWindowProps } from "../design/DWindow";
-import { DPartProps } from "ts/design/DPart";
+import { DPart, DPartProps } from "ts/design/DPart";
 import { assert } from "./Common";
-import { DElement, DPart } from "ts/design/DElement";
+import { DElement } from "ts/design/DElement";
 import { evalDesignScript } from "./DesignScripEvaluator";
 import { paramThemeName } from "ts/PluginParameters";
+import { Log } from "./Logger";
 //import { JSDOM } from 'jsdom';
 
 
@@ -213,6 +214,7 @@ export class FlexWindowsManager {
                     this.loadTextFile(this.designDirectory + "/" + file, (str) => {
                         this.evalSetting(str)
                         this._loadedFileCount++;
+                        Log.info(`Loaded design file: ${file}`);
 
                         if (this._loadedFileCount >= this._settingFiles.length) {
                             this.buildDesigns();
@@ -237,14 +239,36 @@ export class FlexWindowsManager {
 
     public buildDesigns(): void {
         this._windowDesigns.forEach((value, key) => {
-            value.link(this);
+            this.linkHierarchical(value);
         });
         this._sceneDesigns.forEach((value, key) => {
-            value.link(this);
+            this.linkHierarchical(value);
         });
     }
 
+    public linkHierarchical(element: DElement): void {
+        const contents = element.props.contents;
+        if (contents) {
+            for (let i = 0; i < element.contents.length; i++) {
+                let child = contents[i];
+                if (child instanceof DPart) {
+                    child = this.clonePartElement(child.props);
+                    contents[i] = child;
+                }
+    
+                this.linkHierarchical(child);
+            }
+        }
 
+        // for(const child of element.contents) {
+        //     child.link(manager);
+        // }
+
+
+        // if (this.props.windowskin) {
+        //     this.props.windowskin = manager.designDirectory + "/" + this.props.windowskin;
+        // }
+    }
 
     private loadDataFile(src: string, onLoad: (obj: any) => void) {
         if (this.isNode()) {

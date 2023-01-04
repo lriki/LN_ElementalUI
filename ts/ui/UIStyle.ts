@@ -1,4 +1,5 @@
-import { DStyle, DStyleScriptValue } from "ts/design/DStyle";
+import { assert } from "ts/core/Common";
+import { DStyle, DStyleScriptValue, DStyleValue } from "ts/design/DStyle";
 import { VUIRect } from "./UICommon";
 import { UIContext } from "./UIContext";
 import { VUIElement } from "./UIElement";
@@ -106,10 +107,10 @@ export class UIStyle {
             this.y = props.y;
         }
         if (props.width !== undefined) {
-            this.width = props.width;
+            this.width = this.evalScriptAsNumber(props.width, context, self);
         }
         if (props.height !== undefined) {
-            this.height = props.height;
+            this.height = this.evalScriptAsNumber(props.height, context, self);
         }
         if (props.opacity !== undefined) {
             this.opacity = props.opacity;
@@ -142,5 +143,18 @@ export class UIStyle {
         //const self = self_.owner;
         return eval(script);
     }
+
+    private evalScriptAsNumber(value: DStyleValue, content: UIContext, self_: VUIElement): number {
+        let result;
+        if (value instanceof DStyleScriptValue) {
+            result = this.evalScript(value.script, content, self_);
+        }
+        else {
+            result = value;
+        }
+        assert(typeof result === "number");
+        return result;
+    }
+    
 }
 

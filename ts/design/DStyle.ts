@@ -26,8 +26,9 @@ export interface DStyleProps {
 
     x?: number;
     y?: number;
-    width?: number;
-    height?: number;
+    
+    width?: DStyleValue;
+    height?: DStyleValue;
 
     colorTone?: number[];
 

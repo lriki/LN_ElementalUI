@@ -23,14 +23,13 @@ Window_Base.prototype.initialize = function(rect: Rectangle): void {
     const currentScene = SceneManager._scene;
     const uiScene = currentScene._flexUIScene;
     assert(uiScene);    // Scene_Base で作られているはず。
-    const initialRect = uiScene.getRmmzWindowInitialRect(this.constructor.name);
-    if (initialRect) {
-        actualRect = new Rectangle(initialRect.x, initialRect.y, initialRect.width, initialRect.height);
+    const element = uiScene.findLogicalChildByClass(this.constructor.name);
+    if (element) {
+        //actualRect = new Rectangle(initialRect.x, initialRect.y, initialRect.width, initialRect.height);
     }
 
     _Window_Base_initialize.call(this, actualRect);
 
-    
     // // 未初期化のプロパティにアクセスしないように、 Attach は Base.initialize() の後に行う必要がある。
     // if (uiScene) {
     //     uiScene.attachRmmzWindowIfNeeded(this);
@@ -82,7 +81,6 @@ Window_Base.prototype.update = function() {
             uiScene.attachRmmzWindowIfNeeded(this);
         }
     }
-
 
     if (this._flexInfoSprite) {
         this._flexInfoSprite.visible = FlexWindowsManager.instance.displayWindowInfo;

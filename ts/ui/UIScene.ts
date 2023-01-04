@@ -50,9 +50,9 @@ export class UIScene extends VUIContainer {
         return element;
     }
 
-    public getRmmzWindowInitialRect(className: string): VUIRect | undefined {
-        return undefined;
-    }
+    // public getRmmzWindowInitialRect(className: string): VUIRect | undefined {
+    //     return undefined;
+    // }
     
     /** RMMZ コアスクリプト側で new された Window を論理的な子要素として管理下に入れる */
     public attachRmmzWindowIfNeeded(window: Window_Base): void {

@@ -82,15 +82,11 @@ export class UIWindowBase extends VUIContainer {
         }
 
         // 必要であれば、rmmzWindow の配置情報を Style の初期値として取り出しておく。
-        // if (this.actualStyle.marginLeft !== undefined) this.actualStyle.marginLeft = rmmzWindow.x;
-        // if (this.actualStyle.marginTop !== undefined) this.actualStyle.marginTop = rmmzWindow.y;
-        // if (this.actualStyle.width !== undefined) this.actualStyle.width = rmmzWindow.width;
-        // if (this.actualStyle.height !== undefined) this.actualStyle.height = rmmzWindow.height;
-        if (!this.actualStyle.marginLeft) this.actualStyle.marginLeft = rmmzWindow.x;
-        if (!this.actualStyle.marginTop) this.actualStyle.marginTop = rmmzWindow.y;
-        if (!this.actualStyle.width) this.actualStyle.width = rmmzWindow.width;
-        if (!this.actualStyle.height) this.actualStyle.height = rmmzWindow.height;
-
+        if (this.actualStyle.marginLeft === undefined) this.actualStyle.marginLeft = rmmzWindow.x;
+        if (this.actualStyle.marginTop === undefined) this.actualStyle.marginTop = rmmzWindow.y;
+        if (this.actualStyle.width === undefined) this.actualStyle.width = rmmzWindow.width;
+        if (this.actualStyle.height === undefined) this.actualStyle.height = rmmzWindow.height;
+        
         if (this.design.props.windowskin) {
             rmmzWindow.windowskin = ImageManager.loadBitmap(FlexWindowsManager.instance.designDirectory, this.design.props.windowskin);
         }

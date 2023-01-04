@@ -1,6 +1,4 @@
 import { assert } from "ts/core/Common";
-import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
-import { DPartProps } from "./DPart";
 import { DStyle, DStyleProps } from "./DStyle";
 import { DTransition } from "./DTransition";
 
@@ -122,57 +120,7 @@ export class DElement {
         }
         return undefined;
     }
-    
-    public link(manager: FlexWindowsManager) {
-
-        const contents = this.props.contents;
-        if (contents) {
-            for (let i = 0; i < this.contents.length; i++) {
-                let child = contents[i];
-                if (child instanceof DPart) {
-                    child = manager.clonePartElement(child.props);
-                    contents[i] = child;
-                }
-    
-                child.link(manager);
-            }
-        }
-
-        for(const child of this.contents) {
-            child.link(manager);
-        }
-
-
-        // if (this.props.windowskin) {
-        //     this.props.windowskin = manager.designDirectory + "/" + this.props.windowskin;
-        // }
-    }
 }
 
 
-/**
- * Desing 初期構築用のダミーデータ。
- * link で本来あるべきデータに置き換えられる。
- */
- export class DPart extends DElement {
-    readonly props: DPartProps;
-    private _target: DElement | undefined;
-
-    public constructor(props: DPartProps) {
-        super(props);
-        this.props = props;
-    }
-
-    public get target(): DElement {
-        assert(this._target)
-        return this._target;
-    }
-
-    // override link(manager: FlexWindowsManager) {
-    //     this._target = manager.windowDesigns.get(this.props.class);
-    //     assert(this._target);
-
-    //     super.link(manager);
-    // }
-}
 

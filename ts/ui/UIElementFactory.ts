@@ -64,6 +64,7 @@ export class UIElementFactory {
             return scene;
         }
         else {
+            // Create empty scene.
             const design = new SceneDesign({});
             const scene = new UIScene(design);
             return scene;

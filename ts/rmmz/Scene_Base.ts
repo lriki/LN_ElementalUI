@@ -25,6 +25,7 @@ Scene_Base.prototype.create = function() {
         const design = manager.findSceneDesign(this);
         this._flexUIScene = manager.uiElementFactory.instantiateScene(design);
         this._flexUIScene.attachRmmzScene(this);
+        this._flexUIScene.context.layoutInitial(Graphics.boxWidth, Graphics.boxHeight);
         this._flexDesignRevision = manager.designFilesRevision;
     }
     
