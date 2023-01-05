@@ -23,11 +23,11 @@ UIWindow({
                     iconIndex: 208,
                     alignment: "left",
                 }),
-                UIText({
+                UIStaticText({
                     text: Script("window.value()"),
                     alignment: "right",
                 }),
-                UIText({
+                UIStaticText({
                     text: "X"
                 }),
             ]

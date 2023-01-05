@@ -1,7 +1,8 @@
 import { DElement, DElementProps } from "./DElement";
 
 export interface DImageProps extends DElementProps {
-    source?: string;
+    file?: string;
+    frame?: number[];
 }
 
 export class DImage extends DElement {
@@ -12,7 +13,7 @@ export class DImage extends DElement {
         this.props = props;
     }
 
-    public get source(): string {
-        return this.props.source ?? "ElementalUI/BadImage";
+    public get file(): string {
+        return this.props.file ?? "img/sysyem/ElementalUI/BadImage";
     }
 }

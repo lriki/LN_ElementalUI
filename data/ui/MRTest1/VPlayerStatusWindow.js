@@ -22,14 +22,18 @@ UIWindow({
                     iconIndex: 208,
                     alignment: "left",
                 }),
-                UIText({
+                UIStaticText({
                     text: "test",
                     alignment: "right",
                 }),
-                UIText({
+                UIStaticText({
                     text: "X"
                 }),
             ]
+        }),
+        UIImage({
+            file: ":img/MRUI-1",
+            frame: [0, 0, 82, 94],
         }),
     ]
 })

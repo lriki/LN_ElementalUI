@@ -1,10 +1,10 @@
 import { assert } from "ts/core/Common";
 import { DCommandItem } from "ts/design/DCommandItem";
 import { DCommandWindow } from "ts/design/DCommandWindow";
-import { DText } from "ts/design/DText";
+import { DStaticText } from "ts/design/DText";
 import { UICommandItem } from "../components/UICommandItem";
 import { UISelectableItem } from "../components/UISelectableItem";
-import { UIText } from "../components/UIText";
+import { UIStaticText } from "../components/UIStaticText";
 import { UIWindow } from "./UIWindow";
 
 export interface RmmzCommandItem {
@@ -45,8 +45,8 @@ export class UICommandWindow extends UIWindow {
             throw new Error("not implemented");
         }
         else {
-            const textDesign = new DText({text: data.name});
-            const text = new UIText(textDesign);
+            const textDesign = new DStaticText({text: data.name});
+            const text = new UIStaticText(textDesign);
             uiItem.addLogicalChild(text);
         }
         

@@ -1048,6 +1048,9 @@ export class VUIElement {
         }
     }
 
+    /**
+     * 要素のサイズの変更など、表示内容の更新が必要な場合に呼ばれる。
+     */
     protected onRefreshVisual(context: UIContext): void {
     }
 

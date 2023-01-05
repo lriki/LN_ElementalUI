@@ -1,18 +1,18 @@
 import { assert } from "ts/core/Common";
-import { DText } from "ts/design/DText";
+import { DStaticText } from "ts/design/DText";
 import { VUIPoint, VUIRect, VUISize } from "../UICommon";
 import { UIContext } from "../UIContext";
 import { UIElementFlags, VUIElement } from "../UIElement";
 import { UIHAlignment, UIVAlignment } from "../utils/UILayoutHelper";
 
-export class UIText extends VUIElement {
-    public readonly design;
+export class UIStaticText extends VUIElement {
+    public readonly design: DStaticText;
     private _text: string;
     private _color: string | undefined;
     // private _bitmap: Bitmap | undefined;
     // private _sprite: Sprite | undefined;
     
-    public constructor(design: DText) {
+    public constructor(design: DStaticText) {
         super(design);
         this.design = design;
         this._text = "";

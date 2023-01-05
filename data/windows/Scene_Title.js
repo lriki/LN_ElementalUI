@@ -8,7 +8,7 @@ UIScene({
             width: 500,
             height: 200,
             contents: [
-                UIText({ text: "Ver: 0.1.0" }),
+                UIStaticText({ text: "Ver: 0.1.0" }),
                 UIImage({ alignment: "top-right" }),
             ]
         })

@@ -266,6 +266,15 @@ export class FlexWindowsManager {
         //     this.props.windowskin = manager.designDirectory + "/" + this.props.windowskin;
         // }
     }
+    
+    public loadBitmap(file: string): Bitmap {
+        if (file[0] == ":") {
+            return ImageManager.loadBitmap(FlexWindowsManager.instance.designDirectory, file.substring(1));
+        }
+        else {
+            return ImageManager.loadBitmap("", file);
+        }
+    }
 
     private loadDataFile(src: string, onLoad: (obj: any) => void) {
         if (this.isNode()) {

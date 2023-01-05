@@ -1,13 +1,13 @@
 import { assert } from "ts/core/Common";
 import { DCommandItem } from "ts/design/DCommandItem";
 import { DListItem } from "ts/design/DListItem";
-import { DText } from "ts/design/DText";
+import { DStaticText } from "ts/design/DText";
 import { VUIRect } from "../UICommon";
 import { VUIContainer } from "../UIContainer";
 import { UIContext } from "../UIContext";
 import { VUIElement } from "../UIElement";
 import { UISelectableItem } from "./UISelectableItem";
-import { UIText } from "./UIText";
+import { UIStaticText } from "./UIStaticText";
 
 export class UICommandItem extends UISelectableItem {
     //private _design: DCommandItem;

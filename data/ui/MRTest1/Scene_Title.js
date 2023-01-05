@@ -24,7 +24,7 @@ UIScene({
         UIWindow({
             alignment: "bottom-left",
             contents: [
-                UIText({ text: "Ver: 0.1.0, Theme: MRTest1" }),
+                UIStaticText({ text: "Ver: 0.1.0, Theme: MRTest1" }),
             ]
         })
     ],

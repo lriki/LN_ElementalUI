@@ -9,7 +9,7 @@ import { DPart, DPartProps } from "ts/design/DPart";
 import { DElement } from "ts/design/DElement";
 import { DListItem, DListItemProps } from "ts/design/DListItem";
 import { DCommandItem, DCommandItemProps } from "ts/design/DCommandItem";
-import { DText, DTextProps } from "ts/design/DText";
+import { DStaticText, DStaticTextProps } from "ts/design/DText";
 import { DImage, DImageProps } from "ts/design/DImage";
 import { DIcon, DIconProps } from "ts/design/DIcon";
 import { DStackLayout, DStackLayoutProps } from "ts/design/layout/DStackLayout";
@@ -41,8 +41,8 @@ function UIPart(props: DPartProps): DPart {
 //------------------------------------------------------------------------------
 // Components
 
-function UIText(props: DTextProps): DText {
-    return new DText(props);
+function UIStaticText(props: DStaticTextProps): DStaticText {
+    return new DStaticText(props);
 }
 
 function UIImage(props: DImageProps): DImage {

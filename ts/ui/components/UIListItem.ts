@@ -1,10 +1,10 @@
 import { assert } from "ts/core/Common";
 import { DListItem } from "ts/design/DListItem";
-import { DText } from "ts/design/DText";
+import { DStaticText } from "ts/design/DText";
 import { VUIRect, VUISize } from "../UICommon";
 import { VUIContainer } from "../UIContainer";
 import { UIContext } from "../UIContext";
-import { UIText } from "./UIText";
+import { UIStaticText } from "./UIStaticText";
 
 export class UIListItem extends VUIContainer {
     private _design: DListItem;
@@ -16,8 +16,8 @@ export class UIListItem extends VUIContainer {
         this.rmmzCommandIndex = 0;
 
         if (this._design.text !== undefined) {
-            const textDesign = new DText({text: this._design.text});
-            const text = new UIText(textDesign);
+            const textDesign = new DStaticText({text: this._design.text});
+            const text = new UIStaticText(textDesign);
             this.addLogicalChild(text);
         }
     }
