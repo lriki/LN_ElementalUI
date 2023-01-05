@@ -124,6 +124,13 @@ export class UIWindowBase extends VUIContainer {
         context.changeWindow(oldWindow);
     }
 
+    override onStyleUpdated(context: UIContext): void {
+        // if (this._rmmzWindow) {
+        //     this._rmmzWindow.frameVisible = false;
+        //     this._rmmzWindow.setBackgroundType
+        // }
+    }
+
     override measure(context: UIContext, size: VUISize): void {
         if (context.layoutInitialing) {
             // 子要素の masure 不要
@@ -209,8 +216,8 @@ export class UIWindowBase extends VUIContainer {
     override onLayoutFixed(context: UIContext, combinedVisualRect: VUIRect): void {
         if (this._rmmzWindow) {
             this._rmmzWindow.move(
-                this.actualStyle.marginLeft + combinedVisualRect.x,
-                this.actualStyle.marginTop + combinedVisualRect.y,
+                combinedVisualRect.x,
+                combinedVisualRect.y,
                 combinedVisualRect.width,
                 combinedVisualRect.height);
         }

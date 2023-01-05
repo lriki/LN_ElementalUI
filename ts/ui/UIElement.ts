@@ -17,7 +17,10 @@ export enum UIVisualStates {
 }
 
 export enum UIBoxSizing {
+    /** Width と Height は Border を含みません。 */
     ContentBox = "content-box",
+
+    /** Width と Height は Border を含みます。 */
     BorderBox = "border-box",
 }
 
@@ -548,7 +551,6 @@ export class VUIElement {
 
     
     public applyStyle(context: UIContext, style: UIStyle, reset: boolean): void {
-        console.log("applyStyle", this);
         style.evaluate(context, this);
         const props = style;
         
@@ -770,7 +772,11 @@ export class VUIElement {
             height: marginBox.height - marginHeight};
         const result = this.arrangeOverride(context, borderBoxSize);
 
-        this.setActualRect({ x: finalArea.x + marginBox.x, y: finalArea .y + marginBox.y, width: result.width, height: result.height });
+        this.setActualRect({
+            x: this.actualStyle.marginLeft + finalArea.x + marginBox.x,
+            y: this.actualStyle.marginTop + finalArea .y + marginBox.y,
+            width: result.width,
+            height: result.height });
     }
 
     /**
@@ -890,9 +896,9 @@ export class VUIElement {
         return this._combinedVisualRect;
     }
 
-    protected setCombinedVisualRect(rect: VUIRect): void {
-        this._combinedVisualRect = rect;
-    }
+    // protected setCombinedVisualRect(rect: VUIRect): void {
+    //     this._combinedVisualRect = rect;
+    // }
 
     // protected updateCombinedVisualRectOverride(context: UIContext, parentCombinedVisualRect: VUIRect): VUIRect {
     //     return {

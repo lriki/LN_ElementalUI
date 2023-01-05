@@ -29,11 +29,22 @@ UIWindow({
                 UIStaticText({
                     text: "X"
                 }),
-            ]
+            ],
         }),
+        // UIImage({
+        //     file: ":img/MRUI-1",
+        //     frame: [0, 0, 82, 94],
+        // }),
+        // UIImage({
+        //     file: ":img/MRUI-1",
+        //     frame: [82, 0, 252, 14],
+        //     left: 82,
+        //}),
         UIImage({
-            file: ":img/MRUI-1",
-            frame: [0, 0, 82, 94],
+            file: "img/faces/Actor1",
+            frame: [0, 0, 144, 144],
+            left: 100,
+            top: 50,
         }),
     ]
 })

@@ -47,10 +47,10 @@ export interface DStyleProps {
 
 
     // ailias
-    left?: number;
-    top?: number;
-    right?: number;
-    bottom?: number;
+    left?: number;      // marginLeft
+    top?: number;       // marginTop
+    right?: number;     // marginRight
+    bottom?: number;    // marginBottom
 
     // unils
     rect?: DStyleValue;
