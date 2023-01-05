@@ -38,7 +38,7 @@ export class UIWindow extends UIWindowBase {
         super.dispose();
     }
 
-    override onCreateRmmzWindow(rect: Rectangle): Window_Base {
+    override onCreateUserRmmzWindow(rect: Rectangle): Window_Base {
         return new Window_Selectable(rect);
     }
 

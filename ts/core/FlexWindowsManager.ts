@@ -144,22 +144,19 @@ export class FlexWindowsManager {
             attachedExistingWindows = [...rmmzScene._flexUIScene.attachedExistingWindows];
             this.unloadSceneDesignIfNeeded(rmmzScene);
         }
-        rmmzScene._flexUIScene = undefined;
 
-        const design = this.findSceneDesign(rmmzScene);
-        //if (design) {
-            rmmzScene._flexUIScene = this.uiElementFactory.instantiateScene(design);
-            rmmzScene._flexUIScene.attachRmmzScene(rmmzScene);
-            rmmzScene._flexUIScene.context.layoutInitial(Graphics.boxWidth, Graphics.boxHeight);
+        const design = this.findSceneDesign(rmmzScene); // 見つからなくても空 Scene を作る
+        rmmzScene._flexUIScene = this.uiElementFactory.instantiateScene(design);
+        rmmzScene._flexUIScene.attachRmmzScene(rmmzScene);
+        rmmzScene._flexUIScene.context.layoutInitial(Graphics.boxWidth, Graphics.boxHeight);
 
-            // attachedExistingWindows が存在するということは、デザインのリロードが行われたということ。
-            if (attachedExistingWindows.length > 0) {
-                for (const rmmzWindow of attachedExistingWindows) {
-                    rmmzScene._flexUIScene.attachRmmzWindowIfNeeded(rmmzWindow);
-                };
-            }
-            rmmzScene._flexUIScene.onSceneCreate();
-        //}
+        // attachedExistingWindows が存在するということは、デザインのリロードが行われたということ。
+        if (attachedExistingWindows.length > 0) {
+            for (const rmmzWindow of attachedExistingWindows) {
+                rmmzScene._flexUIScene.attachRmmzWindowIfNeeded(rmmzWindow);
+            };
+        }
+        rmmzScene._flexUIScene.onSceneCreate();
     }
 
     public unloadSceneDesignIfNeeded(rmmzScene: Scene_Base): void {

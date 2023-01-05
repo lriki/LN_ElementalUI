@@ -13,6 +13,7 @@ import { UIHAlignment, UIVAlignment } from "../utils/UILayoutHelper";
 export class UIWindowBase extends VUIContainer {
     public readonly design: DWindow;
     private _rmmzWindow: Window_Base | undefined;
+    private _userWindow: boolean;
     private _defaultRect: VUIRect;
     private _refreshFunc: (() => void) | undefined;
 
@@ -22,11 +23,15 @@ export class UIWindowBase extends VUIContainer {
         this.design = design;
         this.actualStyle.defaultHorizontalAlignment = UIHAlignment.Left;
         this.actualStyle.defaultVerticalAlignment = UIVAlignment.Top;
+        this._userWindow = false;
         this._defaultRect = {x: 0, y: 0, width: 0, height: 0};
     }
 
     override dispose(): void {
         if (this._rmmzWindow) {
+            if (this._userWindow) {
+                this._rmmzWindow.parent.removeChild(this._rmmzWindow);
+            }
             this._rmmzWindow._flexUIWindow = undefined;
             this._rmmzWindow = undefined;
         }
@@ -36,17 +41,19 @@ export class UIWindowBase extends VUIContainer {
     //--------------------------------------------------------------------------
     // Rmmz Window integration.
 
-    public createRmmzWindowIfNeeded(scene: UIScene): void {
+    // Window_Base がアタッチされていない場合、新しい Window_Base を作成する。
+    public createUserRmmzWindowIfNeeded(scene: UIScene): void {
         if (this._rmmzWindow) return;
         // この rect はダミー。
         // onLayoutFixed() で正しい値に更新される。
         const rect = new Rectangle(0, 0, 100, 100);
-        this._rmmzWindow = this.onCreateRmmzWindow(rect);
+        this._rmmzWindow = this.onCreateUserRmmzWindow(rect);
         this._rmmzWindow._flexUIWindow = this;
         scene.owner.addWindow(this._rmmzWindow);
+        this._userWindow = true;
     }
 
-    protected onCreateRmmzWindow(rect: Rectangle): Window_Base {
+    protected onCreateUserRmmzWindow(rect: Rectangle): Window_Base {
         return new Window_Base(rect);
     }
 

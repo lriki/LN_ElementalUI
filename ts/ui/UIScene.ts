@@ -30,6 +30,7 @@ export class UIScene extends VUIContainer {
     }
 
     public attachRmmzScene(owner: Scene_Base): void {
+        assert(!this._owner);
         this._owner = owner;
     }
 
@@ -83,7 +84,7 @@ export class UIScene extends VUIContainer {
 
         this.traverseVisualChildren(child => {
             if (child instanceof UIWindow) {
-                child.createRmmzWindowIfNeeded(this);
+                child.createUserRmmzWindowIfNeeded(this);
             }
         });
     }
