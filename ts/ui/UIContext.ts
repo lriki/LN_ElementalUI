@@ -1,6 +1,6 @@
 import { assert } from "ts/core/Common";
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
-import { DElement } from "ts/design/DElement";
+import { DElement, DUpdateMode } from "ts/design/DElement";
 import { DStyle, DStyleScriptValue, DStyleValue } from "ts/design/DStyle";
 import { DWindow } from "ts/design/DWindow";
 import { UISelectableLayout } from "./layout/UISelectableLayout";
@@ -45,6 +45,7 @@ export class UIContext {
     private _firstUpdate: boolean;
     private _layoutInitialing: boolean = false;
     private _fontInfo: FontInfo;
+    private _realTimeUpdateElements: VUIElement[] = [];
     //private _refreshRequestedVisualContents: VUIElement[];
 
     public constructor(owner: UIScene) {
@@ -126,6 +127,11 @@ export class UIContext {
             //FlexWindowsManager.instance.applyDesign(this._window);
             this._firstUpdate = false;
         }
+
+        for (const element of this._realTimeUpdateElements) {
+            element.update(this);
+        }
+
         if (this._owner.isInvalidate(UIInvalidateFlags.Style)) {
             this._owner._updateStyleHierarchical(this);
         }
@@ -195,11 +201,10 @@ export class UIContext {
         return true;
     }
 
-    private draw(): void {
-        if (this._owner) {
-            this._owner.draw(this);
-            //this._owner.updateRmmzRect();
-            this._owner.unsetInvalidate(UIInvalidateFlags.VisualContent);
+
+    public onElementCreated(element: VUIElement): void {
+        if (element.design.props.updateMode === DUpdateMode.RealTime) {
+            this._realTimeUpdateElements.push(element);
         }
     }
 }

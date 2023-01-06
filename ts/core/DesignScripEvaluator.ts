@@ -16,6 +16,7 @@ import { DStackLayout, DStackLayoutProps } from "ts/design/layout/DStackLayout";
 import { DGridLayout, DGridLayoutProps } from "ts/design/layout/DGridLayout";
 import { DAccordionLayout as DAccordionLayout, DAccordionLayoutProps as DAccordionLayoutProps } from "ts/design/layout/DAccordionLayout";
 import { DText, DTextProps } from "ts/design/DText";
+import { DGradientGauge, DGradientGaugeProps } from "ts/design/DGradientGauge";
 
 let designData: any = null;
 
@@ -56,6 +57,10 @@ function UIImage(props: DImageProps): DImage {
 
 function UIIcon(props: DIconProps): DIcon {
     return new DIcon(props);
+}
+
+function UIGradientGauge(props: DGradientGaugeProps): DGradientGauge {
+    return new DGradientGauge(props);
 }
 
 //------------------------------------------------------------------------------

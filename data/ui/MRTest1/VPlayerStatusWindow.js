@@ -49,6 +49,11 @@ UIWindow({
         UIText({
             text: "aaaaaaa",
         }),
+        UIGradientGauge({
+            width: 100,
+            height: 8,
+            updateMode: "real-time",
+        }),
     ]
 })
 );

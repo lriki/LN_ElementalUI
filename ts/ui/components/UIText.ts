@@ -39,7 +39,6 @@ export class UIText extends VUIElement {
     override onRefreshVisual(context: UIContext): void {
         if (!this._bitmap) return;
         const sprite = this.prepareForegroundSprite(context, this._bitmap);
-        sprite.bitmap = this._bitmap;
     }
 }
 

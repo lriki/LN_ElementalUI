@@ -52,6 +52,11 @@ export enum DAlignment {
     Stretch = "stretch",
 }
 
+export enum DUpdateMode {
+    OneTime = "one-time",
+    RealTime = "real-time",
+}
+
 export interface DElementProps extends DStyleProps {
     class?: string;
     alignment?: DAlignment;
@@ -59,6 +64,7 @@ export interface DElementProps extends DStyleProps {
     contents?: DElement[];
     transitions?: DTransition[];
     styles?: DStyle[];
+    updateMode?: DUpdateMode;
 }
 
 export class DElement {

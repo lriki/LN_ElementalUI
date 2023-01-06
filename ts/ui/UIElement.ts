@@ -90,8 +90,8 @@ export class UIActualStyle {
 
     horizontalAlignment: UIHAlignment | undefined;
     verticalAlignment: UIVAlignment | undefined;
-    defaultHorizontalAlignment: UIHAlignment = UIHAlignment.Stretch;
-    defaultVerticalAlignment: UIVAlignment = UIVAlignment.Stretch;
+    defaultHorizontalAlignment: UIHAlignment = UIHAlignment.Left;
+    defaultVerticalAlignment: UIVAlignment = UIVAlignment.Top;
 
     public constructor() {
         this.marginLeft = 0;
@@ -490,6 +490,12 @@ export class VUIElement {
     //     container.addChild(this);
     //     return this;
     // }
+
+    //--------------------------------------------------------------------------
+    // Game loop
+
+    public update(context: UIContext): void {
+    }
 
     //--------------------------------------------------------------------------
     // Visual tree

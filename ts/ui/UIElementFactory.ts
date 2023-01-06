@@ -3,6 +3,7 @@ import { DElement } from "ts/design/DElement";
 import { DIcon } from "ts/design/DIcon";
 import { DImage } from "ts/design/DImage";
 import { DListItem } from "ts/design/DListItem";
+import { DGradientGauge } from "ts/design/DGradientGauge";
 import { DStaticText } from "ts/design/DStaticText";
 import { DText } from "ts/design/DText";
 import { DWindow } from "ts/design/DWindow";
@@ -23,6 +24,8 @@ import { UIScene } from "./UIScene";
 import { UICommandWindow } from "./windows/UICommandWindow";
 import { UIWindow } from "./windows/UIWindow";
 import { UIWindowBase } from "./windows/UIWindowBase";
+import { UIGradientGauge } from "./components/UIGradientGauge";
+import { UIContext } from "./UIContext";
 
 export class UIElementFactory {
     public createUIElement(design: DElement): VUIElement {
@@ -37,6 +40,9 @@ export class UIElementFactory {
         }
         else if (design instanceof DIcon) {
             return new UIICon(design);
+        }
+        else if (design instanceof DGradientGauge) {
+            return new UIGradientGauge(design);
         }
         else if (design instanceof DListItem) {
             return new UIListItem(design);
@@ -64,7 +70,7 @@ export class UIElementFactory {
         if (design) {
             const scene = new UIScene(design);
             for (const child of design.contents) {
-                scene.addLogicalChild(this.instantiateElement(child));
+                scene.addLogicalChild(this.instantiateElement(scene.context, child));
             }
             return scene;
         }
@@ -76,10 +82,11 @@ export class UIElementFactory {
         }
     }
 
-    public instantiateElement(design: DElement): VUIElement {
+    public instantiateElement(Context: UIContext, design: DElement): VUIElement {
         const element = this.createUIElement(design);
+        Context.onElementCreated(element);
         for (const child of design.contents) {
-            element.addLogicalChild(this.instantiateElement(child));
+            element.addLogicalChild(this.instantiateElement(Context, child));
         }
         return element;
     }
