@@ -16,12 +16,35 @@ export enum UISpiteLayer {
     Overlay,
 }
 
+export class FontInfo {
+    face: string;
+    size: number;
+
+    public constructor() {
+        this.face = "";
+        this.size = 0;
+    }
+
+    public clone(): FontInfo {
+        const info = new FontInfo();
+        info.face = this.face;
+        info.size = this.size;
+        return info;
+    }
+
+    public apply(bitmap: Bitmap): void {
+        bitmap.fontFace = this.face;
+        bitmap.fontSize = this.size;
+    }
+}
+
 export class UIContext {
     private _window: Window_Base | undefined;
 
     private _owner: UIScene;
     private _firstUpdate: boolean;
     private _layoutInitialing: boolean = false;
+    private _fontInfo: FontInfo;
     //private _refreshRequestedVisualContents: VUIElement[];
 
     public constructor(owner: UIScene) {
@@ -29,6 +52,9 @@ export class UIContext {
         //this._root = new UISelectableLayout();  // TODO;
         this._firstUpdate = true;
         //this._refreshRequestedVisualContents = [];
+        this._fontInfo = new FontInfo();
+        this._fontInfo.face = $gameSystem.mainFontFace();
+        this._fontInfo.size = $gameSystem.mainFontSize();
     }
 
     public get layoutInitialing(): boolean {
@@ -42,6 +68,10 @@ export class UIContext {
     public get currentWindow(): Window_Base {
         assert(this._window);
         return this._window;
+    }
+
+    public get currentFontInfo(): FontInfo {
+        return this._fontInfo;
     }
 
     // public get rmmzSpriteOffset(): Window_Base | undefined {

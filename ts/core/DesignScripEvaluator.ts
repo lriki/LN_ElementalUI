@@ -46,7 +46,7 @@ function UIStaticText(props: DStaticTextProps): DStaticText {
     return new DStaticText(props);
 }
 
-function UText(props: DTextProps): DText {
+function UIText(props: DTextProps): DText {
     return new DText(props);
 }
 

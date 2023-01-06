@@ -1,40 +1,45 @@
-import { assert } from "ts/core/Common";
-import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
-import { DImage } from "ts/design/DImage";
-import { DStaticText } from "ts/design/DStaticText";
 import { DText } from "ts/design/DText";
-import { VUIRect, VUISize } from "../UICommon";
-import { UIContext } from "../UIContext";
-import { UIElementFlags, VUIElement } from "../UIElement";
-import { UIHAlignment, UIVAlignment } from "../utils/UILayoutHelper";
+import { VUISize } from "../UICommon";
+import { FontInfo, UIContext } from "../UIContext";
+import { UIElementFlags, UIInvalidateFlags, VUIElement } from "../UIElement";
+import { UIFontHelper } from "../utils/UIFontHelper";
 
 export class UIText extends VUIElement {
     public readonly design: DText;
-    //private _bitmap: Bitmap;
+    private _bitmap: Bitmap | undefined;
+    private _fontInfo: FontInfo;
     
     public constructor(design: DText) {
         super(design);
         this.design = design;
-        // this._bitmap = FlexWindowsManager.instance.loadBitmap(design.file);
-        // this.setFlags(UIElementFlags.RequireForegroundSprite);
+        this._fontInfo = new FontInfo();
+        this.setFlags(UIElementFlags.RequireForegroundSprite);
     }
 
-//     override measureOverride(context: UIContext, constraint: VUISize): VUISize {
-//         const frame = this.design.props.frame;
-//         if (frame) {
-//             return { width: frame[2], height: frame[3] };
-//         }
-//         else {
-//             return { width: this._bitmap.width, height: this._bitmap.height };
-//         }
-//     }
+    override measureOverride(context: UIContext, constraint: VUISize): VUISize {
+        const value = this.design.props.text;
+        if (!value) return { width: 0, height: 0 };
 
-//     override onRefreshVisual(context: UIContext): void {
-//         const sprite = this.prepareForegroundSprite(context, this._bitmap);
-//         const frame = this.design.props.frame;
-//         if (frame) {
-//             sprite.setFrame(frame[0], frame[1], frame[2], frame[3]);
-//         }
-//     }
+        const text = context.evaluateStyleValueAsString(this, value);
+        const [width, height] = UIFontHelper.measureTextSize(context.currentWindow.contents, text);
+
+        const info = context.currentFontInfo;
+        if (info.face !== this._fontInfo.face ||
+            info.size !== this._fontInfo.size) {
+            this._fontInfo = info.clone();
+            this._bitmap = new Bitmap(width, height);
+            this._fontInfo.apply(this._bitmap);
+            this._bitmap.drawText(text, 0, 0, width, height, "left");
+            this.setInvalidate(UIInvalidateFlags.VisualContent);
+        }
+
+        return { width, height };
+    }
+
+    override onRefreshVisual(context: UIContext): void {
+        if (!this._bitmap) return;
+        const sprite = this.prepareForegroundSprite(context, this._bitmap);
+        sprite.bitmap = this._bitmap;
+    }
 }
 

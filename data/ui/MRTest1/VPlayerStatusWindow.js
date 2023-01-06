@@ -46,6 +46,9 @@ UIWindow({
             left: 100,
             top: 50,
         }),
+        UIText({
+            text: "aaaaaaa",
+        }),
     ]
 })
 );
