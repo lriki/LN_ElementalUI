@@ -1,14 +1,14 @@
 import { DElement, DElementProps } from "./DElement";
 import { DStyleValue } from "./DStyle";
 
-export interface DTextProps extends DElementProps {
+export interface DStaticTextProps extends DElementProps {
     text?: DStyleValue;
 }
 
-export class DText extends DElement {
-    readonly props: DTextProps;
+export class DStaticText extends DElement {
+    readonly props: DStaticTextProps;
 
-    constructor(props: DTextProps) {
+    constructor(props: DStaticTextProps) {
         super(props);
         this.props = props;
     }

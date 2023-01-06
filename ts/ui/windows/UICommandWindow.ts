@@ -1,7 +1,7 @@
 import { assert } from "ts/core/Common";
 import { DCommandItem } from "ts/design/DCommandItem";
 import { DCommandWindow } from "ts/design/DCommandWindow";
-import { DStaticText } from "ts/design/DText";
+import { DStaticText } from "ts/design/DStaticText";
 import { UICommandItem } from "../components/UICommandItem";
 import { UISelectableItem } from "../components/UISelectableItem";
 import { UIStaticText } from "../components/UIStaticText";

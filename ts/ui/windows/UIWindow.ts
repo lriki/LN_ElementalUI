@@ -26,7 +26,6 @@ export class UIWindow extends UIWindowBase {
     private _itemsChildren: UISelectableItem[];
 
     constructor(design: DWindow) {
-        console.log("UIWindow: constructor", design);
         super(design);
         this.design = design;
         this._itemsChildren = [];

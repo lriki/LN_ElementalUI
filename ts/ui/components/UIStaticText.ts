@@ -1,5 +1,5 @@
 import { assert } from "ts/core/Common";
-import { DStaticText } from "ts/design/DText";
+import { DStaticText } from "ts/design/DStaticText";
 import { VUIPoint, VUIRect, VUISize } from "../UICommon";
 import { UIContext } from "../UIContext";
 import { UIElementFlags, VUIElement } from "../UIElement";

@@ -1,6 +1,6 @@
 import { assert } from "ts/core/Common";
 import { DListItem } from "ts/design/DListItem";
-import { DStaticText } from "ts/design/DText";
+import { DStaticText } from "ts/design/DStaticText";
 import { VUIRect, VUISize } from "../UICommon";
 import { VUIContainer } from "../UIContainer";
 import { UIContext } from "../UIContext";
