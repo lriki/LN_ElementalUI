@@ -39,7 +39,6 @@ export class UIGradientGauge extends VUIElement {
     }
 
     private drawGaugeRect(): void {
-        console.log("drawGaugeRect", this);
         if (!this._bitmap) return;
         const {width, height} = this.actualRect();
         const rate = 0.7;//this.gaugeRate();

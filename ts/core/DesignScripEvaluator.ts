@@ -17,6 +17,7 @@ import { DGridLayout, DGridLayoutProps } from "ts/design/layout/DGridLayout";
 import { DAccordionLayout as DAccordionLayout, DAccordionLayoutProps as DAccordionLayoutProps } from "ts/design/layout/DAccordionLayout";
 import { DText, DTextProps } from "ts/design/DText";
 import { DGradientGauge, DGradientGaugeProps } from "ts/design/DGradientGauge";
+import { DTheme } from "ts/design/DTheme";
 
 let designData: any = null;
 
@@ -132,6 +133,7 @@ function CommandItem(props: DCommandItemProps): DCommandItem {
 
 
 export function evalDesignScript(code: string): any {
+    const theme = new DTheme();
     eval(code);
     return designData;
 

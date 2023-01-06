@@ -7,6 +7,7 @@ import { VUIRect } from "./UICommon";
 import { VUIContainer } from "./UIContainer";
 import { UIContext } from "./UIContext";
 import { UIElementFlags, VUIElement } from "./UIElement";
+import { UIHAlignment, UIVAlignment } from "./utils/UILayoutHelper";
 import { UIWindow } from "./windows/UIWindow";
 import { UIWindowBase } from "./windows/UIWindowBase";
 
@@ -17,6 +18,8 @@ export class UIScene extends VUIContainer {
 
     public constructor(design: SceneDesign) {
         super(design);
+        this.actualStyle.defaultHorizontalAlignment = UIHAlignment.Stretch;
+        this.actualStyle.defaultVerticalAlignment = UIVAlignment.Stretch;
         this.setFlags(UIElementFlags.IsScene);
         this._context = new UIContext(this);
     }
