@@ -133,7 +133,7 @@ export class UIContext {
         }
 
         if (this._owner.isInvalidate(UIInvalidateFlags.Style)) {
-            this._owner._updateStyleHierarchical(this);
+            this._owner._updateStyleHierarchical(this, undefined);
         }
         if (this._owner.isInvalidate(UIInvalidateFlags.Layout)) {
             this.layout(width, height);
@@ -183,13 +183,20 @@ export class UIContext {
         this._owner.unsetInvalidate(UIInvalidateFlags.Layout);
     }
 
-    public evaluateStyleValueAsString(element: VUIElement, value: DStyleValue | undefined): string {
+    public evaluateStyleValue(element: VUIElement, value: DStyleValue | undefined): any {
         if (value instanceof DStyleScriptValue) {
             const scene = this._owner;
             const window = this._window;
             const self = element;
+            const data = element.dataContext;
             value = eval(value.script);
+            return value;
         }
+        return value;
+    }
+
+    public evaluateStyleValueAsString(element: VUIElement, value: DStyleValue | undefined): string {
+        value = this.evaluateStyleValue(element, value);
         if (value === undefined) return "";
         if (typeof value === "string") return value;
         if (typeof value === "number") return value.toString();

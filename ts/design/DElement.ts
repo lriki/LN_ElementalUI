@@ -1,5 +1,5 @@
 import { assert } from "ts/core/Common";
-import { DStyle, DStyleProps } from "./DStyle";
+import { DStyle, DStyleProps, DStyleScriptValue } from "./DStyle";
 import { DTransition } from "./DTransition";
 
 export enum DAlignment {
@@ -59,12 +59,17 @@ export enum DUpdateMode {
 
 export interface DElementProps extends DStyleProps {
     class?: string;
+    data?: DStyleScriptValue;
     alignment?: DAlignment;
     windowskin?: string;
     contents?: DElement[];
     transitions?: DTransition[];
     styles?: DStyle[];
     updateMode?: DUpdateMode;
+    row?: number;  
+    col?: number;
+    rowSpan?: number;
+    colSpan?: number;
 }
 
 export class DElement {

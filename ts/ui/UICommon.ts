@@ -24,3 +24,10 @@ export interface VUIThickness {
     left: number;
 }
 
+export interface UIGridInfo {
+    row: number;  
+    column: number;
+    rowSpan: number;
+    columnSpan: number;
+}
+

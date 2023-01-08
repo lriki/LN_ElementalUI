@@ -3,7 +3,7 @@ import { easing } from "ts/animation/Easing";
 import { assert } from "ts/core/Common";
 import { DAlignment, DElement } from "ts/design/DElement";
 import { DStyle } from "ts/design/DStyle";
-import { VUIRect, VUISize, VUIThickness } from "./UICommon";
+import { UIGridInfo, VUIRect, VUISize, VUIThickness } from "./UICommon";
 import { UIContext, UISpiteLayer } from "./UIContext";
 import { UIStyle } from "./UIStyle";
 import { UIHAlignment, UILayoutHelper, UIVAlignment } from "./utils/UILayoutHelper";
@@ -177,6 +177,8 @@ export class UIActualStyle {
 export class VUIElement {
     public readonly design: DElement;
     public readonly id: number;
+    
+    private _dataContext: any;
 
     private _margin: VUIThickness;
     private _padding: VUIThickness;
@@ -206,18 +208,6 @@ export class VUIElement {
     private _invalidateFlags: UIInvalidateFlags;
     private _flags: UIElementFlags;
 
-    row: number;
-    col: number;
-    rowSpan: number;
-    colSpan: number;
-
-    // x: number;
-    // y: number;
-    // opacity: number;    // 0~1.0
-
-
-    
-
     public constructor(design: DElement) {
         this.design = design;
         this._margin = {
@@ -239,10 +229,6 @@ export class VUIElement {
         // this._actualWidth = 0;
         // this._actualHeight = 0;t
         this.itemIndex = 0;
-        this.row = 0;
-        this.col = 0;
-        this.rowSpan = 1;
-        this.colSpan = 1;
         // this.x = 0;
         // this.y = 0;
         // this.opacity = 1.0;
@@ -365,6 +351,10 @@ export class VUIElement {
         }
     }
 
+    public get dataContext(): any {
+        return this._dataContext;
+    }
+
     // private onApplyDesign(): void {
 
     // }
@@ -473,12 +463,13 @@ export class VUIElement {
         return this._padding;
     }
 
-    public setGrid(col: number, row: number, colSpan: number = 1, rowSpan: number = 1): this {
-        this.row = row;
-        this.col = col;
-        this.rowSpan = rowSpan;
-        this.colSpan = colSpan;
-        return this;
+    public get gridInfo(): UIGridInfo {
+        return {
+            row: this.design.props.row ?? 0,
+            column: this.design.props.col ?? 0,
+            rowSpan: this.design.props.rowSpan ?? 1,
+            columnSpan: this.design.props.colSpan ?? 1,
+        };
     }
 
     // public setOpacity(value: number): this {
@@ -604,10 +595,18 @@ export class VUIElement {
     //     }
     // }
 
-    public _updateStyleHierarchical(context: UIContext): void {
+    public _updateStyleHierarchical(context: UIContext, parent: VUIElement | undefined): void {
+        const data = this.design.props.data;
+        if (data) {
+            this._dataContext = context.evaluateStyleValue(this, data);
+        }
+        else if (parent) {
+            this._dataContext = parent._dataContext;
+        }
+
         this.updateStyle(context);
         for (const child of this._visualChildren) {
-            child._updateStyleHierarchical(context);
+            child._updateStyleHierarchical(context, this);
         }
     }
 

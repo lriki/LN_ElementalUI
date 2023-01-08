@@ -16,10 +16,6 @@ UIScene({
             left: 480,
 
         }),
-        // テスト用ウィンドウ。中身は VPlayerStatusWindow.js
-        UIPart({
-            class: "VPlayerStatusWindow",
-        }),
         // 左下にバージョン表示
         UIWindow({
             alignment: "bottom-left",

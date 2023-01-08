@@ -118,9 +118,9 @@ export class UIWindowBase extends VUIContainer {
 
     //--------------------------------------------------------------------------
 
-    override _updateStyleHierarchical(context: UIContext): void {
+    override _updateStyleHierarchical(context: UIContext, parent: VUIElement | undefined): void {
         const oldWindow = context.changeWindow(this._rmmzWindow);
-        super._updateStyleHierarchical(context);
+        super._updateStyleHierarchical(context, parent);
         context.changeWindow(oldWindow);
     }
 

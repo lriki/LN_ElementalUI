@@ -8,7 +8,6 @@ UIWindow({
     // Window 自身の設定
     //--------------------------------------------------------------------------
     class: "VPlayerStatusWindow",
-
     visibleCoreContents: false,
     width: 200,
 
@@ -20,7 +19,7 @@ UIWindow({
             orientation: "vertical",
             contents: [
                 UIText({
-                    text: "TestText",
+                    text: Script("data.name()"),
                 }),
                 UIImage({
                     file: "img/faces/Actor1",
@@ -28,15 +27,45 @@ UIWindow({
                     left: 0,
                     top: 0,
                 }),
-                UIGradientGauge({
-                    width: 100,
-                    height: 8,
-                    updateMode: "real-time",
-                }),
-                UIGradientGauge({
-                    width: 100,
-                    height: 8,
-                    color1: theme.color(20),
+                UIGridLayout({
+                    contents: [
+                        UIText({
+                            text: "HP",
+                            row: 0,
+                            col: 0,
+                        }),
+                        UIText({
+                            text: Script("data.hp"),
+                            alignment: "right",
+                            row: 0,
+                            col: 1,
+                        }),
+                        UIGradientGauge({
+                            width: 100,
+                            height: 8,
+                            updateMode: "real-time",
+                            row: 1,
+                            colSpan: 2,
+                        }),
+                        UIText({
+                            text: "MP",
+                            row: 2,
+                            col: 0,
+                        }),
+                        UIText({
+                            text: Script("data.mp"),
+                            alignment: "right",
+                            row: 2,
+                            col: 1,
+                        }),
+                        UIGradientGauge({
+                            width: 100,
+                            height: 8,
+                            color1: theme.color(20),
+                            row: 3,
+                            colSpan: 2,
+                        }),
+                    ],
                 }),
                 UIAccordionLayout({
                     contents: [

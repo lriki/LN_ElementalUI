@@ -75,7 +75,7 @@ function UIAccordionLayout(props: DAccordionLayoutProps): DAccordionLayout {
     return new DAccordionLayout(props);
 }
 
-function UOGridLayout(props: DGridLayoutProps): DGridLayout {
+function UIGridLayout(props: DGridLayoutProps): DGridLayout {
     return new DGridLayout(props);
 }
 
