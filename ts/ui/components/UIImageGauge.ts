@@ -1,6 +1,5 @@
 import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
-import { DGradientGauge } from "ts/design/DGradientGauge";
-import { DImageGauge } from "ts/design/DImageGauge";
+import { DImageGauge, DImageGaugeOrientation } from "ts/design/DImageGauge";
 import { VUISize } from "../UICommon";
 import { UIContext } from "../UIContext";
 import { UIElementFlags, VUIElement } from "../UIElement";
@@ -62,12 +61,22 @@ export class UIImageGauge extends VUIElement {
         if (!frame) return;
         if (!this._gaugeSprite) return;
 
-        const frameWidth = frame[2];
         const rate = this._value / (this._maxValue <= 0 ? 1 : this._maxValue);
-        const width = Math.floor(frameWidth * rate);
-        this._gaugeSprite.setFrame(frame[0], frame[1], width, frame[3]);
-        this._gaugeSprite.x = this.design.gaugeOffsetX;
-        this._gaugeSprite.y = this.design.gaugeOffsetY;
+
+        if (this.design.orientation == DImageGaugeOrientation.LeftToRight) {
+            const frameWidth = frame[2];
+            const width = Math.floor(frameWidth * rate);
+            this._gaugeSprite.setFrame(frame[0], frame[1], width, frame[3]);
+            this._gaugeSprite.x = this.design.gaugeOffsetX;
+            this._gaugeSprite.y = this.design.gaugeOffsetY;
+        }
+        else if (this.design.orientation == DImageGaugeOrientation.BottomToTop) {
+            const frameHeight = frame[3];
+            const height = Math.floor(frameHeight * rate);
+            this._gaugeSprite.setFrame(frame[0], frame[1] + (frameHeight - height), frame[2], height);
+            this._gaugeSprite.x = this.design.gaugeOffsetX;
+            this._gaugeSprite.y = this.design.gaugeOffsetY + (frameHeight - height);
+        }
     }
 }
 

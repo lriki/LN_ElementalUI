@@ -1,8 +1,14 @@
 import { DElement, DElementProps } from "./DElement";
 import { DStyleValue } from "./DStyle";
 
+export enum DImageGaugeOrientation {
+    LeftToRight = "LeftToRight",
+    BottomToTop = "BottomToTop",
+}
+
 export interface DImageGaugeProps extends DElementProps {
     file?: string;
+    orientation?: DImageGaugeOrientation;
     backFrame?: number[];
     gaugeFrame?: number[];
     gaugeOffsetX?: number;
@@ -21,6 +27,10 @@ export class DImageGauge extends DElement {
 
     public get file(): string {
         return this.props.file ?? "img/sysyem/ElementalUI/BadImage";
+    }
+
+    public get orientation(): DImageGaugeOrientation {
+        return this.props.orientation ?? DImageGaugeOrientation.LeftToRight;
     }
 
     public get gaugeOffsetX(): number {

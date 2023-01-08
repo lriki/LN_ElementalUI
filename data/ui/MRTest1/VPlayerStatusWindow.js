@@ -97,7 +97,17 @@ UIWindow({
                     gaugeOffsetY: 4,
                     value: 70,
                     maxValue: 100,
-                })
+                }),
+                UIImageGauge({
+                    file: ":img/MRUI-1",
+                    orientation: "BottomToTop",
+                    backFrame: [48, 96, 48, 48],
+                    gaugeFrame: [0, 96, 48, 48],
+                    gaugeOffsetX: 0,
+                    gaugeOffsetY: 0,
+                    value: 70,
+                    maxValue: 100,
+                }),
                 // UIImage({
                 //     file: ":img/MRUI-1",
                 //     frame: [0, 0, 82, 94],
