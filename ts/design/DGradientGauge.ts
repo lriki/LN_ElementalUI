@@ -35,7 +35,7 @@ export class DGradientGauge extends DElement {
     }
 
     public get value(): DStyleValue {
-        return this.props.value ?? 0;
+        return this.props.value ?? 50;
     }
 
     public get maxValue(): DStyleValue {

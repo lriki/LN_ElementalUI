@@ -19,6 +19,7 @@ import { DText, DTextProps } from "ts/design/DText";
 import { DGradientGauge, DGradientGaugeProps } from "ts/design/DGradientGauge";
 import { DTheme } from "ts/design/DTheme";
 import { DFaceImage, DFaceImageProps } from "ts/design/DFaceImage";
+import { DImageGauge, DImageGaugeProps } from "ts/design/DImageGauge";
 
 let designData: any = null;
 
@@ -67,6 +68,10 @@ function UIIcon(props: DIconProps): DIcon {
 
 function UIGradientGauge(props: DGradientGaugeProps): DGradientGauge {
     return new DGradientGauge(props);
+}
+
+function UIImageGauge(props: DImageGaugeProps): DImageGauge {
+    return new DImageGauge(props);
 }
 
 //------------------------------------------------------------------------------

@@ -26,6 +26,8 @@ import { UIWindow } from "./windows/UIWindow";
 import { UIWindowBase } from "./windows/UIWindowBase";
 import { UIGradientGauge } from "./components/UIGradientGauge";
 import { UIContext } from "./UIContext";
+import { DImageGauge } from "ts/design/DImageGauge";
+import { UIImageGauge } from "./components/UIImageGauge";
 
 export class UIElementFactory {
     public createUIElement(design: DElement): VUIElement {
@@ -43,6 +45,9 @@ export class UIElementFactory {
         }
         else if (design instanceof DGradientGauge) {
             return new UIGradientGauge(design);
+        }
+        else if (design instanceof DImageGauge) {
+            return new UIImageGauge(design);
         }
         else if (design instanceof DListItem) {
             return new UIListItem(design);
