@@ -107,6 +107,10 @@ export class DElement {
         return this.props.transitions ?? [];
     }
 
+    public get updateMode(): DUpdateMode {
+        return this.props.updateMode ?? DUpdateMode.OneTime;
+    }
+
     public findElementByClass(className: string): DElement | undefined {
         if(this.props.class === className) {
             return this;

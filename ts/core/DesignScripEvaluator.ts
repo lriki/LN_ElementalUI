@@ -18,6 +18,7 @@ import { DAccordionLayout as DAccordionLayout, DAccordionLayoutProps as DAccordi
 import { DText, DTextProps } from "ts/design/DText";
 import { DGradientGauge, DGradientGaugeProps } from "ts/design/DGradientGauge";
 import { DTheme } from "ts/design/DTheme";
+import { DFaceImage, DFaceImageProps } from "ts/design/DFaceImage";
 
 let designData: any = null;
 
@@ -54,6 +55,10 @@ function UIText(props: DTextProps): DText {
 
 function UIImage(props: DImageProps): DImage {
     return new DImage(props);
+}
+
+function UIFaceImage(props: DFaceImageProps): DFaceImage {
+    return new DFaceImage(props);
 }
 
 function UIIcon(props: DIconProps): DIcon {

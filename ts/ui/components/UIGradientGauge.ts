@@ -1,32 +1,29 @@
-import { assert } from "ts/core/Common";
-import { FlexWindowsManager } from "ts/core/FlexWindowsManager";
 import { DGradientGauge } from "ts/design/DGradientGauge";
-import { DIcon } from "ts/design/DIcon";
-import { DStaticText } from "ts/design/DStaticText";
-import { VUIPoint, VUIRect, VUISize } from "../UICommon";
 import { UIContext } from "../UIContext";
 import { UIElementFlags, VUIElement } from "../UIElement";
-import { UIHAlignment, UIVAlignment } from "../utils/UILayoutHelper";
 
 export class UIGradientGauge extends VUIElement {
     public readonly design: DGradientGauge;
     private _bitmap: Bitmap | undefined;
+    private _value: number;
+    private _maxValue: number;
     
     public constructor(design: DGradientGauge) {
         super(design);
         this.design = design;
+        this._value = 0;
+        this._maxValue = 0;
         this.setFlags(UIElementFlags.RequireForegroundSprite);
     }
 
-    // override measureOverride(context: UIContext, constraint: VUISize): VUISize {
-    //     return {
-    //         width: ImageManager.iconWidth,
-    //         height: ImageManager.iconHeight,
-    //     };
-    // }
-
     override update(context: UIContext): void {
-        //console.log("UIGradientGauge.update", this);
+        const value = context.evaluateStyleValueAsNumber(this, this.design.value);
+        const maxValue = context.evaluateStyleValueAsNumber(this, this.design.maxValue);
+        if (this._value != value || this._maxValue != maxValue) {
+            this._value = value;
+            this._maxValue = maxValue;
+            this.drawGaugeRect();
+        }
     }
 
     override onRefreshVisual(context: UIContext): void {
@@ -41,14 +38,16 @@ export class UIGradientGauge extends VUIElement {
     private drawGaugeRect(): void {
         if (!this._bitmap) return;
         const {width, height} = this.actualRect();
-        const rate = 0.7;//this.gaugeRate();
-        const fillW = Math.floor((width - 2) * rate);
-        const fillH = height - 2;
+        const rate = this._value / (this._maxValue <= 0 ? 1 : this._maxValue);
+        const padding = this.design.gaugePadding;
+        const fillW = Math.floor((width - (padding * 2)) * rate);
+        const fillH = height - (padding * 2);
         const color0 = this.design.backColor;
         const color1 = this.design.startingColor;
         const color2 = this.design.endingColor;
+        this._bitmap.clear();
         this._bitmap.fillRect(0, 0, width, height, color0);
-        this._bitmap.gradientFillRect(1, 1, fillW, fillH, color1, color2, false);
-    };
+        this._bitmap.gradientFillRect(padding, padding, fillW, fillH, color1, color2, false);
+    }
 }
 

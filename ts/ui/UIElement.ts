@@ -372,8 +372,8 @@ export class VUIElement {
 
             const newRoutingFlags = this._invalidateFlags & UIInvalidateFlags.Routing;
             if (oldRoutingFlags != newRoutingFlags) {
-                if (this._parent) {
-                    this._parent.setInvalidate(newRoutingFlags);
+                if (this._visualParent) {
+                    this._visualParent.setInvalidate(newRoutingFlags);
                 }
             }
         }

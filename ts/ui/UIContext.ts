@@ -45,6 +45,7 @@ export class UIContext {
     private _firstUpdate: boolean;
     private _layoutInitialing: boolean = false;
     private _fontInfo: FontInfo;
+    private _oneTimeUpdateElementsQueue: VUIElement[] = [];
     private _realTimeUpdateElements: VUIElement[] = [];
     //private _refreshRequestedVisualContents: VUIElement[];
 
@@ -127,14 +128,26 @@ export class UIContext {
             //FlexWindowsManager.instance.applyDesign(this._window);
             this._firstUpdate = false;
         }
-
-        for (const element of this._realTimeUpdateElements) {
-            element.update(this);
-        }
+        
 
         if (this._owner.isInvalidate(UIInvalidateFlags.Style)) {
             this._owner._updateStyleHierarchical(this, undefined);
         }
+
+        // 今のところ dataContext の更新を _updateStyleHierarchical() で行っている。
+        // update の中ではこれを参照することがあるため、ここで更新する。
+        if (this._oneTimeUpdateElementsQueue.length > 0) {
+            for (const element of this._oneTimeUpdateElementsQueue) {
+                element.update(this);
+            }
+            this._oneTimeUpdateElementsQueue.splice(0);
+        }
+        for (const element of this._realTimeUpdateElements) {
+            element.update(this);
+        }
+
+
+
         if (this._owner.isInvalidate(UIInvalidateFlags.Layout)) {
             this.layout(width, height);
         }
@@ -166,6 +179,7 @@ export class UIContext {
     }
 
     private layout(width: number, height: number): void {
+
         assert(this._owner);
         this._owner.measure(
             this, {
@@ -183,6 +197,7 @@ export class UIContext {
         this._owner.unsetInvalidate(UIInvalidateFlags.Layout);
     }
 
+    // 0.1ms 程度の時間がかかる
     public evaluateStyleValue(element: VUIElement, value: DStyleValue | undefined): any {
         if (value instanceof DStyleScriptValue) {
             const scene = this._owner;
@@ -195,7 +210,18 @@ export class UIContext {
         return value;
     }
 
+    public evaluateStyleValueAsNumber(element: VUIElement, value: DStyleValue | undefined): number {
+        if (value === undefined) return 0;
+        value = this.evaluateStyleValue(element, value);
+        if (value === undefined) return 0;
+        if (typeof value === "string") throw new Error("evaluateStyleValueAsNumber: string");
+        if (typeof value === "number") return value;
+        if (typeof value === "boolean") throw new Error("evaluateStyleValueAsNumber: boolean");
+        return 0;
+    }
+
     public evaluateStyleValueAsString(element: VUIElement, value: DStyleValue | undefined): string {
+        if (value === undefined) return "";
         value = this.evaluateStyleValue(element, value);
         if (value === undefined) return "";
         if (typeof value === "string") return value;
@@ -210,7 +236,10 @@ export class UIContext {
 
 
     public onElementCreated(element: VUIElement): void {
-        if (element.design.props.updateMode === DUpdateMode.RealTime) {
+        if (element.design.updateMode === DUpdateMode.OneTime) {
+            this._oneTimeUpdateElementsQueue.push(element);
+        }
+        if (element.design.updateMode === DUpdateMode.RealTime) {
             this._realTimeUpdateElements.push(element);
         }
     }
