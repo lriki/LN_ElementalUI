@@ -197,14 +197,23 @@ export class UIContext {
         this._owner.unsetInvalidate(UIInvalidateFlags.Layout);
     }
 
-    // 0.1ms 程度の時間がかかる
     public evaluateStyleValue(element: VUIElement, value: DStyleValue | undefined): any {
         if (value instanceof DStyleScriptValue) {
             const scene = this._owner;
             const window = this._window;
             const self = element;
             const data = element.dataContext;
+            // 0.1ms 程度の時間がかかる
             value = eval(value.script);
+            return value;
+        }
+        if (typeof value == "function") {
+            const scene = this._owner;
+            const window = this._window;
+            const self = element;
+            const data = element.dataContext;
+            // 0.005ms 程度の時間がかかる
+            value = value(data, self, window, scene);
             return value;
         }
         return value;

@@ -35,15 +35,15 @@ UIWindow({
                             col: 0,
                         }),
                         UIText({
-                            text: Script("data.hp"),
+                            text: data => data.hp,//Script("data.hp"),
                             alignment: "right",
                             row: 0,
                             col: 1,
                             updateMode: "real-time",
                         }),
                         UIGradientGauge({
-                            value: Script("data.hp"),
-                            maxValue: Script("data.mhp"),
+                            value: data => data.hp,//Script("data.hp"),
+                            maxValue: data => data.mhp,//Script("data.mhp"),
                             color1: theme.color(20),
                             width: 100,
                             height: 8,

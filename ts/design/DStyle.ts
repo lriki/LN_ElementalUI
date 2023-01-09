@@ -8,7 +8,7 @@ export class DStyleScriptValue {
     }
 }
 
-export type DStyleValue = number | boolean | string | DStyleScriptValue;
+export type DStyleValue = number | boolean | string | Function | DStyleScriptValue;
 
 
 export interface DStyleProps {
